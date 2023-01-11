@@ -25,3 +25,7 @@ password.send_keys(u'\ue007')
 time.sleep(5)
 #driver.get("http://192.168.253.20/client/index.html")
 
+system = driver.find_element('id', "elem_63")
+system.click()
+time.sleep(2)
+
