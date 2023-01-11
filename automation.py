@@ -33,3 +33,11 @@ trend_export = driver.find_element('id', "elem_115")
 trend_export.click()
 time.sleep(5)
 
+driver.switch_to.frame(1)
+print('switched to frame')
+time.sleep(2)
+
+csv = driver.find_element('id', "csvlink1")
+csv.click()
+
+time.sleep(2)
