@@ -4,8 +4,6 @@ import webbrowser
 import time
 from selenium.webdriver.common.by import By
 from selenium.webdriver.common.keys import Keys
-# urllib.request.urlretrieve("http://192.168.253.20", "mp3.mp3")
-# print("Downloaded")
 
 options = webdriver.ChromeOptions()
 options.add_experimental_option('excludeSwitches', ['enable-logging'])
@@ -23,7 +21,6 @@ password.send_keys(u'\ue007')
 # password_submit_button = driver.find_element(By.CLASS_NAME, "gwt-Button")
 # password_submit_button.click()
 time.sleep(5)
-#driver.get("http://192.168.253.20/client/index.html")
 
 system = driver.find_element('id', "elem_63")
 system.click()
