@@ -29,3 +29,7 @@ system = driver.find_element('id', "elem_63")
 system.click()
 time.sleep(2)
 
+trend_export = driver.find_element('id', "elem_115")
+trend_export.click()
+time.sleep(5)
+
