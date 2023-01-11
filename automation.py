@@ -16,3 +16,12 @@ button = driver.find_element('id',"elem_4")
 button.click()
 time.sleep(1)
 
+password = driver.find_element(By.CLASS_NAME, "gwt-PasswordTextBox")
+password.send_keys("0007")
+time.sleep(2)
+password.send_keys(u'\ue007')
+# password_submit_button = driver.find_element(By.CLASS_NAME, "gwt-Button")
+# password_submit_button.click()
+time.sleep(5)
+#driver.get("http://192.168.253.20/client/index.html")
+
