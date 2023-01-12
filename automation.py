@@ -34,7 +34,22 @@ driver.switch_to.frame(1)
 print('switched to frame')
 time.sleep(2)
 
-csv = driver.find_element('id', "csvlink1")
-csv.click()
 
-time.sleep(2)
+# csv = driver.find_element('id', "csvlink1")
+# arrow = driver.find_element('id','noPointsSection')
+# test = arrow.find_element('id','csvColumn1')
+
+# csv.click()
+
+
+# trs = driver.find_elements(By.TAG_NAME, "tr") 
+
+# tds = trs[4].find_elements(By.TAG_NAME, "td")
+# for td in tds:
+#     print(td.text)
+
+# checkbox = driver.find_element('id', "checkbox2")
+# checkbox.click()
+# time.sleep(2)
+
+
