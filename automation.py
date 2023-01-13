@@ -52,4 +52,11 @@ time.sleep(2)
 # checkbox.click()
 # time.sleep(2)
 
+files = driver.find_elements('xpath', "//*[@id[contains(.,'csvlink')]]")
+print(len(files))
 
+checkboxes = driver.find_elements('xpath', "//*[@id[contains(.,'checkbox')]]")
+for i in range(len(checkboxes)):
+    checkboxes[i].click()
+    # time.sleep(0.5)
+    files[i+1].click()
