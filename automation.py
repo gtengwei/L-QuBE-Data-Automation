@@ -5,8 +5,16 @@ import time
 from selenium.webdriver.common.by import By
 from selenium.webdriver.common.keys import Keys
 
+chrome_prefs = {"download.default_directory": r"C:\Users\tengwei.goh\Documents\Github\L-QuBE-Data-Automation"} # (windows)
+
 options = webdriver.ChromeOptions()
 options.add_experimental_option('excludeSwitches', ['enable-logging'])
+
+options.add_argument("--headless")
+options.add_argument("--no-sandbox")
+options.add_argument("--disable-dev-shm-usage")
+options.experimental_options["prefs"] = chrome_prefs
+
 driver = webdriver.Chrome(options=options)
 driver.get("http://192.168.253.20")
 
