@@ -4,10 +4,13 @@ import webbrowser
 import time
 from selenium.webdriver.common.by import By
 from selenium.webdriver.common.keys import Keys
+import os
 
 # Must wait for 'Run' LED light to start blinking before running the program
 # Change directory on different desktops
-chrome_prefs = {"download.default_directory": r"C:\Users\tengwei.goh\Documents\Github\L-QuBE-Data-Automation"} # (windows)
+directory = os.getcwd()
+# chrome_prefs = {"download.default_directory": r"C:\Users\tengwei.goh\Documents\Github\L-QuBE-Data-Automation"} # (windows)
+chrome_prefs = {"download.default_directory": directory}
 
 options = webdriver.ChromeOptions()
 options.add_experimental_option('excludeSwitches', ['enable-logging'])
