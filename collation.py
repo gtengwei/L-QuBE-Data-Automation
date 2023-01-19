@@ -1,4 +1,5 @@
 import pandas as pd
+import os
 
 def clean_dataframe(csv):
     f = open(csv, 'r')
