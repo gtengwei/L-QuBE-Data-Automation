@@ -31,3 +31,20 @@ def clean_dataframe(csv):
 def merge_dataframes(df1,df2):
     df = pd.merge(df1,df2, on=['Date','Timestamp'], how='outer')
     return df
+
+def collate_dataframes():
+    path = os.getcwd()
+    directory = os.path.join("c:\\",path)
+    collated_df = pd.DataFrame(columns=['Date','Timestamp'])
+    for root,dirs,files in os.walk(directory):
+        for file in files:
+            # Ignore collated file to avoid errors
+            if file.startswith("collated"):
+                continue
+            if file.endswith(".csv"):
+                    clean_df = clean_dataframe(file)
+                    print(clean_df)
+                    collated_df = merge_dataframes(collated_df,clean_df)
+    collated_df.to_csv('collated.csv', index=False)
+
+# collate_dataframes()

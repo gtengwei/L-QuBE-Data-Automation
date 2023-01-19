@@ -5,6 +5,7 @@ import time
 from selenium.webdriver.common.by import By
 from selenium.webdriver.common.keys import Keys
 import os
+from collation import *
 
 # Must wait for 'Run' LED light to start blinking before running the program
 # Change directory on different desktops
@@ -95,3 +96,5 @@ for i in range(len(checkboxes)):
     checkboxes[i].click()
     # time.sleep(0.5)
     files[i+1].click()
+
+collate_dataframes()
