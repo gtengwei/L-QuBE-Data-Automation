@@ -44,7 +44,6 @@ def collate_dataframes():
                 continue
             if file.endswith(".csv"):
                     clean_df = clean_dataframe(file)
-                    print(clean_df)
                     collated_df = merge_dataframes(collated_df,clean_df)
     collated_df.to_csv('collated.csv', index=False)
 

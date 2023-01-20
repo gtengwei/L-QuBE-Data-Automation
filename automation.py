@@ -25,6 +25,9 @@ options.experimental_options["prefs"] = chrome_prefs
 # Initialise driver with curated options
 driver = webdriver.Chrome(options=options)
 driver.get("http://192.168.253.20")
+# ip = input("Enter IP address: ")
+# driver.get("http://" + ip)
+
 
 # Find and click the 'password' button
 # button = driver.find_element('id',"elem_4")
