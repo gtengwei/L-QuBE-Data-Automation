@@ -69,11 +69,6 @@ driver.implicitly_wait(10)
 driver.switch_to.frame(1)
 print('switched to frame')
 
-# csv = driver.find_element('id', "csvlink1")
-# arrow = driver.find_element('id','noPointsSection')
-# test = arrow.find_element('id','csvColumn1')
-
-# csv.click()
 
 
 # trs = driver.find_elements(By.TAG_NAME, "tr") 
