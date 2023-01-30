@@ -15,18 +15,24 @@ chrome_prefs = {"download.default_directory": directory}
 
 options = webdriver.ChromeOptions()
 options.add_experimental_option('excludeSwitches', ['enable-logging'])
+options.experimental_options["prefs"] = chrome_prefs
 
 # For headless version of software
-options.add_argument("--headless")
-options.add_argument("--no-sandbox")
-options.add_argument("--disable-dev-shm-usage")
-options.experimental_options["prefs"] = chrome_prefs
+# options.add_argument("--headless")
+# options.add_argument("--no-sandbox")
+# options.add_argument("--disable-dev-shm-usage")
+
 
 # Initialise driver with curated options
 driver = webdriver.Chrome(options=options)
-driver.get("http://192.168.253.20")
-# ip = input("Enter IP address: ")
-# driver.get("http://" + ip)
+# driver.get("http://192.168.253.20")
+while True:
+    try:
+        ip = input("Enter IP address: ")
+        driver.get("http://" + ip)
+        break
+    except:
+        print("Invalid IP address, try again")
 
 
 # Find and click the 'password' button
@@ -96,3 +102,4 @@ for i in range(len(checkboxes)):
     files[i+1].click()
 
 collate_dataframes()
+driver.close()
