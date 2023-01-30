@@ -75,14 +75,6 @@ driver.implicitly_wait(10)
 driver.switch_to.frame(1)
 print('switched to frame')
 
-
-
-# trs = driver.find_elements(By.TAG_NAME, "tr") 
-
-# tds = trs[4].find_elements(By.TAG_NAME, "td")
-# for td in tds:
-#     print(td.text)
-
 # checkbox = driver.find_element('id', "checkbox2")
 # checkbox.click()
 # time.sleep(2)
