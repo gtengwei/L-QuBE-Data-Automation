@@ -10,6 +10,7 @@ from collation import *
 # Must wait for 'Run' LED light to start blinking before running the program
 # Change directory on different desktops
 directory = os.getcwd()
+print(directory)
 # chrome_prefs = {"download.default_directory": r"C:\Users\tengwei.goh\Documents\Github\L-QuBE-Data-Automation"} # (windows)
 chrome_prefs = {"download.default_directory": directory}
 
@@ -18,9 +19,9 @@ options.add_experimental_option('excludeSwitches', ['enable-logging'])
 options.experimental_options["prefs"] = chrome_prefs
 
 # For headless version of software
-# options.add_argument("--headless")
-# options.add_argument("--no-sandbox")
-# options.add_argument("--disable-dev-shm-usage")
+options.add_argument("--headless")
+options.add_argument("--no-sandbox")
+options.add_argument("--disable-dev-shm-usage")
 
 
 # Initialise driver with curated options
@@ -88,10 +89,25 @@ print(len(files))
 checkboxes = driver.find_elements('xpath', "//*[@id[contains(.,'checkbox')]]")
 
 # Iterate through all the checkboxes and click them to download the csv files
-for i in range(len(checkboxes)):
-    checkboxes[i].click()
-    # time.sleep(0.5)
-    files[i+1].click()
+# for i in range(len(checkboxes)):
+#     checkboxes[i].click()
+#     # time.sleep(0.5)
+#     files[i+1].click()
+
+name = input("Enter slot name: ")
+# TRF-01 GENERAL ALARM
+slot_name = driver.find_element('xpath', "//*[.='" + name + "']").get_attribute("id")
+print(slot_name)
+time.sleep(1)
+slot_num = slot_name[-1]
+print(slot_num)
+
+checkbox = driver.find_element('id', "checkbox" + slot_num)
+checkbox.click()
+# time.sleep(1)
+csv = driver.find_element('id', "csvlink" + slot_num)
+csv.click()
+print('downloaded csv')
 
 collate_dataframes()
 driver.close()
