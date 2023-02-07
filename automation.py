@@ -109,5 +109,8 @@ def choose_slot(driver):
     csv.click()
     print('downloaded csv')
 
+driver = initialise_driver()
+run_to_trend_export_page(driver)
+choose_slot(driver)
 # collate_dataframes()
 driver.close()
