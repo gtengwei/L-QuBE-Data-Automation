@@ -94,20 +94,24 @@ def download_csv(driver):
         print('downloaded csv ' + str(i+1))
 
 def choose_slot(driver):
-    name = input("Enter slot name: ")
-    # TRF-01 GENERAL ALARM
-    slot_name = driver.find_element('xpath', "//*[.='" + name + "']").get_attribute("id")
-    print(slot_name)
-    time.sleep(1)
-    slot_num = slot_name[-1]
-    print(slot_num)
+    while True:
+        name = input("Enter slot name(press 'Q' to exit): ")
+        # TRF-01 GENERAL ALARM
 
-    checkbox = driver.find_element('id', "checkbox" + slot_num)
-    checkbox.click()
-    # time.sleep(1)
-    csv = driver.find_element('id', "csvlink" + slot_num)
-    csv.click()
-    print('downloaded csv')
+        if name == 'Q' or name == 'q':
+            break
+        slot_name = driver.find_element('xpath', "//*[.='" + name + "']").get_attribute("id")
+        print(slot_name)
+        time.sleep(1)
+        slot_num = slot_name[-1]
+        print(slot_num)
+
+        checkbox = driver.find_element('id', "checkbox" + slot_num)
+        checkbox.click()
+        # time.sleep(1)
+        csv = driver.find_element('id', "csvlink" + slot_num)
+        csv.click()
+        print('downloaded csv')
 
 driver = initialise_driver()
 run_to_trend_export_page(driver)
