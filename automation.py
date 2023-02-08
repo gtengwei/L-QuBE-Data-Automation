@@ -7,7 +7,7 @@ from selenium.webdriver.common.keys import Keys
 import os
 from collation import *
 
-def initialise_driver():
+def initialise_driver(ip):
     # Must wait for 'Run' LED light to start blinking before running the program
     directory = os.getcwd()
     chrome_prefs = {"download.default_directory": directory} # (windows)
@@ -28,11 +28,13 @@ def initialise_driver():
     # driver.get("http://192.168.253.20")
     while True:
         try:
-            ip = input("Enter IP address: ")
             driver.get("http://" + ip)
             return driver
         except:
             print("Invalid IP address, try again")
+            ip = input("Enter IP address: ")
+            driver.get("http://" + ip)
+            return driver
     
 
 
@@ -97,7 +99,7 @@ def choose_slot(driver):
     while True:
         name = input("Enter slot name(press 'Q' to exit): ")
         # TRF-01 GENERAL ALARM
-
+        # FCU-B1-CORRIDOR-1 RA TEMP
         if name == 'Q' or name == 'q':
             break
         slot_name = driver.find_element('xpath', "//*[.='" + name + "']").get_attribute("id")
@@ -113,8 +115,17 @@ def choose_slot(driver):
         csv.click()
         print('downloaded csv')
 
-driver = initialise_driver()
-run_to_trend_export_page(driver)
-choose_slot(driver)
+def run_automation(ip):
+    driver = initialise_driver(ip)
+    run_to_trend_export_page(driver)
+    driver.implicitly_wait(10)
+
+    download_csv(driver)
+    collate_dataframes()
+    driver.close()
+
+# driver = initialise_driver()
+# run_to_trend_export_page(driver)
+# choose_slot(driver)
 # collate_dataframes()
-driver.close()
+# driver.close()
