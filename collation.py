@@ -46,5 +46,5 @@ def collate_dataframes():
                     clean_df = clean_dataframe(file)
                     collated_df = merge_dataframes(collated_df,clean_df)
     collated_df.to_csv('collated.csv', index=False)
-
+    print('collated csv created')
 # collate_dataframes()

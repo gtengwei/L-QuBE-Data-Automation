@@ -15,7 +15,6 @@ def main(ip):
     print('Choose your option')
     print('1. Collate all data')
     print('2. Choose specific slots to collate')
-    # print('3. Choose specific date period to collate')
     print('3. Exit')
     input_option = input()
     print(input_option)
@@ -31,16 +30,9 @@ def main(ip):
                 # TRF-01 GENERAL ALARM
                 # FCU-B1-CORRIDOR-1 RA TEMP
                 driver.close()
+                collate_dataframes()
                 main(ip)
             case '3':
-                # driver = initialise_driver(ip)
-                # run_to_trend_export_page(driver)
-                # # choose_date(driver)
-                # driver.close()
-                # main(ip)
-                print('Exiting...')
-                exit()
-            case '4':
                 print('Exiting...')
                 exit()
                 
