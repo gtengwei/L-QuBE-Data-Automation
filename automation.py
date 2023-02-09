@@ -115,8 +115,8 @@ def choose_slot(driver):
         csv.click()
         print('downloaded csv')
 
-def run_automation(ip):
-    driver = initialise_driver(ip)
+def run_automation(driver):
+    # driver = initialise_driver(ip)
     run_to_trend_export_page(driver)
     driver.implicitly_wait(10)
 

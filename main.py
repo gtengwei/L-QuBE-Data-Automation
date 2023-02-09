@@ -9,7 +9,7 @@ def get_ip():
     ip = input('Enter the IP address of the Training Device: ')
     return ip
 
-def main(ip):
+def main(driver):
     print('')
     print('Welcome to the Trend Export Automation Software')
     print('Choose your option')
@@ -21,25 +21,25 @@ def main(ip):
     while True:
         match input_option:
             case '1':
-                run_automation(ip)
-                main(ip)
+                run_automation(driver)
+                main(driver)
             case '2':
-                driver = initialise_driver(ip)
                 run_to_trend_export_page(driver)
                 choose_slot(driver)
                 # TRF-01 GENERAL ALARM
                 # FCU-B1-CORRIDOR-1 RA TEMP
                 driver.close()
                 collate_dataframes()
-                main(ip)
+                main(driver)
             case '3':
                 print('Exiting...')
                 exit()
                 
             case _:
                 print('Invalid option')
-                main(ip)
+                main(driver)
 
 if __name__ == '__main__':
     ip = get_ip()
-    main(ip)
+    driver = initialise_driver(ip)
+    main(driver)
