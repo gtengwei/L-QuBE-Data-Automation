@@ -125,8 +125,7 @@ def run_automation(driver):
 
     download_csv(driver)
     collate_dataframes()
-    driver.close()
-
+    
 # driver = initialise_driver()
 # run_to_trend_export_page(driver)
 # choose_slot(driver)

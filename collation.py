@@ -1,5 +1,6 @@
 import pandas as pd
 import os
+import time
 
 def clean_dataframe(csv):
     f = open(csv, 'r')
@@ -33,7 +34,11 @@ def merge_dataframes(df1,df2):
     df = pd.merge(df1,df2, on=['Date','Timestamp'], how='outer')
     return df
 
+def rename_file(file):
+    os.rename(file, 'collated.csv')
+
 def collate_dataframes():
+    time.sleep(0.5)
     path = os.getcwd()
     directory = os.path.join("c:\\",path)
     collated_df = pd.DataFrame(columns=['Date','Timestamp'])

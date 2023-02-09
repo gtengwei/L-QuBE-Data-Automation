@@ -28,11 +28,11 @@ def main(driver):
                 choose_slot(driver)
                 # TRF-01 GENERAL ALARM
                 # FCU-B1-CORRIDOR-1 RA TEMP
-                driver.close()
                 collate_dataframes()
                 main(driver)
             case '3':
                 print('Exiting...')
+                driver.close()
                 exit()
                 
             case _:
