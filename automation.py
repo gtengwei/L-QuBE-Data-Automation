@@ -97,23 +97,26 @@ def download_csv(driver):
 
 def choose_slot(driver):
     while True:
-        name = input("Enter slot name(press 'Q' to exit): ")
-        # TRF-01 GENERAL ALARM
-        # FCU-B1-CORRIDOR-1 RA TEMP
-        if name == 'Q' or name == 'q':
-            break
-        slot_name = driver.find_element('xpath', "//*[.='" + name + "']").get_attribute("id")
-        print(slot_name)
-        time.sleep(1)
-        slot_num = slot_name[-1]
-        print(slot_num)
+        try:
+            name = input("Enter slot name(press 'Q' to exit): ")
+            # TRF-01 GENERAL ALARM
+            # FCU-B1-CORRIDOR-1 RA TEMP
+            if name == 'Q' or name == 'q':
+                break
+            slot_name = driver.find_element('xpath', "//*[.='" + name + "']").get_attribute("id")
+            print(slot_name)
+            time.sleep(1)
+            slot_num = slot_name[-1]
+            print(slot_num)
 
-        checkbox = driver.find_element('id', "checkbox" + slot_num)
-        checkbox.click()
-        # time.sleep(1)
-        csv = driver.find_element('id', "csvlink" + slot_num)
-        csv.click()
-        print('downloaded csv')
+            checkbox = driver.find_element('id', "checkbox" + slot_num)
+            checkbox.click()
+            # time.sleep(1)
+            csv = driver.find_element('id', "csvlink" + slot_num)
+            csv.click()
+            print('downloaded csv')
+        except:
+            print("Invalid slot name, try again")
 
 def run_automation(driver):
     # driver = initialise_driver(ip)
