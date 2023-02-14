@@ -40,7 +40,7 @@ def merge_dataframes(df1,df2):
     return df
 
 def get_current_date():
-    return dt.now().strftime("%Y-%m-%d")
+    return dt.datetime.now().strftime("%Y-%m-%d")
 
 def collate_dataframes():
     time.sleep(0.5)
@@ -50,7 +50,7 @@ def collate_dataframes():
     for root,dirs,files in os.walk(directory):
         for file in files:
             # Ignore collated file to avoid errors
-            if file.startswith("collated"):
+            if file.endswith("collated.csv"):
                 continue
             if file.endswith(".csv"):
                     clean_df = clean_dataframe(file)
@@ -58,4 +58,5 @@ def collate_dataframes():
     current_date_time = get_current_date()
     collated_df.to_csv(f"{current_date_time}_collated.csv", index = False)
     print('collated csv created')
+
 # collate_dataframes()
