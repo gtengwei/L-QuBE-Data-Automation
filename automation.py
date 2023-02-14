@@ -95,28 +95,63 @@ def download_csv(driver):
         files[i+1].click()
         print('downloaded csv ' + str(i+1))
 
-def choose_slot(driver):
+def choose_slot(driver, slots):
+    # part 1: no slot number
+    print('This is the list of slot names: ')
+    for slot in slots:
+        print(slot)
     while True:
-        try:
-            name = input("Enter slot name(press 'Q' to exit): ")
-            # TRF-01 GENERAL ALARM
-            # FCU-B1-CORRIDOR-1 RA TEMP
-            if name == 'Q' or name == 'q':
-                break
+        name = input("Enter slot name(press 'Q' to exit): ")
+        if name == 'Q' or name == 'q':
+            driver.close()
+            break
+        elif name in slots:
             slot_name = driver.find_element('xpath', "//*[.='" + name + "']").get_attribute("id")
             print(slot_name)
             time.sleep(1)
-            slot_num = slot_name[-1]
+            slot_num = slot_name[7:]
             print(slot_num)
 
             checkbox = driver.find_element('id', "checkbox" + slot_num)
             checkbox.click()
-            # time.sleep(1)
+
             csv = driver.find_element('id', "csvlink" + slot_num)
             csv.click()
-            print('downloaded csv')
-        except:
-            print("Invalid slot name, try again")
+            print('downloaded csv file')
+            time.sleep(1)
+        else:
+            print('Slot name not found. Please try again.')
+
+    # while True:
+    #     try:
+    #         name = input("Enter slot name(press 'Q' to exit): ")
+    #         # TRF-01 GENERAL ALARM
+    #         # FCU-B1-CORRIDOR-1 RA TEMP
+    #         if name == 'Q' or name == 'q':
+    #             break
+    #         slot_name = driver.find_element('xpath', "//*[.='" + name + "']").get_attribute("id")
+    #         print(slot_name)
+    #         time.sleep(1)
+    #         slot_num = slot_name[-1]
+    #         print(slot_num)
+
+    #         checkbox = driver.find_element('id', "checkbox" + slot_num)
+    #         checkbox.click()
+    #         # time.sleep(1)
+    #         csv = driver.find_element('id', "csvlink" + slot_num)
+    #         csv.click()
+    #         print('downloaded csv')
+    #     except:
+    #         print("Invalid slot name, try again")
+
+def find_all_slots(driver):
+    slots = []
+    slot_names = driver.find_elements('xpath', "//*[@id[contains(.,'slotbez')]]")
+    print(len(slot_names))
+    for slot_name in slot_names:
+        # print(slot_name.text)
+        slots.append(slot_name.text)
+    return slots
 
 def run_automation(driver):
     # driver = initialise_driver(ip)

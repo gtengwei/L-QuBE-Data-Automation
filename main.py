@@ -25,7 +25,8 @@ def main(driver):
                 main(driver)
             case '2':
                 run_to_trend_export_page(driver)
-                choose_slot(driver)
+                slots = find_all_slots(driver)
+                choose_slot(driver, slots)
                 # TRF-01 GENERAL ALARM
                 # FCU-B1-CORRIDOR-1 RA TEMP
                 collate_dataframes()
