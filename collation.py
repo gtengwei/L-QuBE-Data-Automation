@@ -56,7 +56,7 @@ def collate_dataframes():
                     clean_df = clean_dataframe(file)
                     collated_df = merge_dataframes(collated_df,clean_df)
     current_date_time = get_current_date()
-    collated_df.to_csv(f"{current_date_time}_collated.csv", index = False)
+    collated_df.to_excel(f"{current_date_time}_collated.xlsx", index = False)
     print('collated csv created')
 
 # collate_dataframes()
