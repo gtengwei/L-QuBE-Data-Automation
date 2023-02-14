@@ -29,7 +29,7 @@ def clean_dataframe(csv):
     slot_name = slot_name.split(':')[1][1:]
     currentDate = get_current_date()
     try:
-        os.rename(csv, currentDate + '_' + slot_name + '.csv')
+        os.rename(csv, f"{currentDate}_{slot_name}.csv")
     except:
         pass
     clean_df = temp_df.rename({'Value': slot_name}, axis=1)
