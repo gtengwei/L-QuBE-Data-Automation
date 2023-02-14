@@ -24,7 +24,7 @@ def main(driver):
                 run_automation(driver)
                 main(driver)
             case '2':
-                run_to_trend_export_page(driver)
+                # run_to_trend_export_page(driver)
                 slots = find_all_slots(driver)
                 choose_slot(driver, slots)
                 # TRF-01 GENERAL ALARM

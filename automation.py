@@ -29,11 +29,13 @@ def initialise_driver(ip):
     while True:
         try:
             driver.get("http://" + ip)
+            run_to_trend_export_page(driver)
             return driver
         except:
             print("Invalid IP address, try again")
             ip = input("Enter IP address: ")
             driver.get("http://" + ip)
+            run_to_trend_export_page(driver)
             return driver
     
 
@@ -180,7 +182,7 @@ def find_all_slots(driver):
 
 def run_automation(driver):
     # driver = initialise_driver(ip)
-    run_to_trend_export_page(driver)
+    # run_to_trend_export_page(driver)
     driver.implicitly_wait(10)
 
     download_csv(driver)
