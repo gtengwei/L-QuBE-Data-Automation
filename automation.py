@@ -78,24 +78,39 @@ def run_to_trend_export_page(driver):
     driver.switch_to.frame(1)
     print('switched to frame')
 
-# checkbox = driver.find_element('id', "checkbox2")
-# checkbox.click()
-# time.sleep(2)
 
 # Find and download all the csv files
-def download_csv(driver):
+def download_csv(driver, option):
     files = driver.find_elements('xpath', "//*[@id[contains(.,'csvlink')]]")
     print(len(files))
 
     # Find all the checkboxes to toggle appearance of csv files
     checkboxes = driver.find_elements('xpath', "//*[@id[contains(.,'checkbox')]]")
 
-    # Iterate through all the checkboxes and click them to download the csv files
-    for i in range(len(checkboxes)):
-        checkboxes[i].click()
-        # time.sleep(0.5)
-        files[i+1].click()
-        print('downloaded csv ' + str(i+1))
+    if option == 'all':
+        # Iterate through all the checkboxes and click them to download the csv files
+        for i in range(len(checkboxes)):
+            checkboxes[i].click()
+            # time.sleep(0.5)
+            files[i+1].click()
+            print('downloaded csv ' + str(i+1))
+    
+    elif option == 'daily':
+        period_button = driver.find_element('id', "periodselection")
+        period_button.click()
+        print('clicked period button')
+        driver.implicitly_wait(10)
+        date = driver.find_element('id', "gestern") # yesterday
+        date.click()
+        print('chose yesterday')
+
+        daily_csvlink = driver.find_element('id', "csvlink")
+        daily_button = daily_csvlink.find_element('xpath', "//img[@alt='csvicon']")
+
+        for i in range(len(checkboxes)):
+            checkboxes[i].click()
+            daily_button.click()
+            print('downloaded csv ' + str(i+1))
 
 def choose_slot(driver, slots):
     # part 1: no slot number
@@ -180,14 +195,14 @@ def find_all_slots(driver):
         slots.append(slot_name.text)
     return slots
 
-def run_automation(driver):
+def collate(driver, option):
     # driver = initialise_driver(ip)
     # run_to_trend_export_page(driver)
     driver.implicitly_wait(10)
 
-    download_csv(driver)
+    download_csv(driver, option)
     collate_dataframes()
-    
+
 # driver = initialise_driver()
 # run_to_trend_export_page(driver)
 # choose_slot(driver)

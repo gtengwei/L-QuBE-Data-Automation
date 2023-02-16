@@ -14,16 +14,20 @@ def main(driver):
     print('Welcome to the Trend Export Automation Software')
     print('Choose your option')
     print('1. Collate all data')
-    print('2. Choose specific slots to collate')
-    print('3. Exit')
+    print('2. Collate yesterday\'s data')
+    print('3. Choose specific slots to collate')
+    print('4. Exit')
     input_option = input()
     print(input_option)
     while True:
         match input_option:
             case '1':
-                run_automation(driver)
+                collate(driver, 'all')
                 main(driver)
             case '2':
+                collate(driver, 'daily')
+                main(driver)
+            case '3':
                 # run_to_trend_export_page(driver)
                 slots = find_all_slots(driver)
                 choose_slot(driver, slots)
@@ -31,7 +35,7 @@ def main(driver):
                 # FCU-B1-CORRIDOR-1 RA TEMP
                 collate_dataframes()
                 main(driver)
-            case '3':
+            case '4':
                 print('Exiting...')
                 driver.close()
                 exit()
