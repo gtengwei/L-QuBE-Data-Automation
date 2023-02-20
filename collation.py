@@ -27,9 +27,9 @@ def clean_dataframe(csv):
 
     slot_name = result[0]
     slot_name = slot_name.split(':')[1][1:]
-    currentDate = get_current_date()
+    yesterday_date = get_yesterday_date()
     try:
-        os.rename(csv, f"{currentDate}_{slot_name}.csv")
+        os.rename(csv, f"{yesterday_date}_{slot_name}.csv")
     except:
         pass
     clean_df = temp_df.rename({'Value': slot_name}, axis=1)
@@ -41,6 +41,9 @@ def merge_dataframes(df1,df2):
 
 def get_current_date():
     return dt.datetime.now().strftime("%Y-%m-%d")
+
+def get_yesterday_date():
+    return (dt.datetime.now() - dt.timedelta(days=1)).strftime("%Y-%m-%d")
 
 def collate_dataframes():
     time.sleep(0.5)
@@ -55,8 +58,8 @@ def collate_dataframes():
             if file.endswith(".csv"):
                     clean_df = clean_dataframe(file)
                     collated_df = merge_dataframes(collated_df,clean_df)
-    current_date_time = get_current_date()
-    collated_df.to_excel(f"{current_date_time}_collated.xlsx", index = False)
+    yesterday_date = get_yesterday_date()
+    collated_df.to_excel(f"{yesterday_date}_collated.xlsx", index = False)
     print('collated csv created')
 
 # collate_dataframes()
