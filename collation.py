@@ -45,6 +45,16 @@ def get_current_date():
 def get_yesterday_date():
     return (dt.datetime.now() - dt.timedelta(days=1)).strftime("%Y-%m-%d")
 
+def create_new_folder():
+    yesterday_date = get_yesterday_date()
+    path = os.getcwd()
+    directory = os.path.join("c:\\",path)
+    change_directory = os.path.join(directory, 'Daily_Collation')
+    new_directory = os.path.join(change_directory, yesterday_date)
+    if not os.path.exists(new_directory):
+        os.makedirs(new_directory)
+    return change_directory
+
 def collate_dataframes():
     time.sleep(0.5)
     path = os.getcwd()
