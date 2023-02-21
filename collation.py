@@ -31,7 +31,7 @@ def clean_dataframe(csv):
     try:
         os.rename(csv, f"{yesterday_date}_{slot_name}.csv")
     except:
-        pass
+        os.rename(csv, f"{yesterday_date}_{slot_name}_(1).csv")
     clean_df = temp_df.rename({'Value': slot_name}, axis=1)
     return clean_df
 
