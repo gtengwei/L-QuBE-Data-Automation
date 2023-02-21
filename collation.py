@@ -3,6 +3,8 @@ import os
 import time
 import datetime as dt
 
+main_directory = os.getcwd()
+
 def clean_dataframe(csv):
     f = open(csv, 'r')
     result = []
@@ -45,15 +47,14 @@ def get_current_date():
 def get_yesterday_date():
     return (dt.datetime.now() - dt.timedelta(days=1)).strftime("%Y-%m-%d")
 
-def create_new_folder():
+def create_new_directory():
     yesterday_date = get_yesterday_date()
     path = os.getcwd()
     directory = os.path.join("c:\\",path)
-    change_directory = os.path.join(directory, 'Daily_Collation')
-    new_directory = os.path.join(change_directory, yesterday_date)
+    new_directory = os.path.join(directory, yesterday_date)
     if not os.path.exists(new_directory):
         os.makedirs(new_directory)
-    return change_directory
+    os.chdir(new_directory)
 
 def collate_dataframes():
     time.sleep(0.5)
@@ -68,6 +69,8 @@ def collate_dataframes():
             if file.endswith(".csv"):
                     clean_df = clean_dataframe(file)
                     collated_df = merge_dataframes(collated_df,clean_df)
+
+    os.chdir(main_directory)
     yesterday_date = get_yesterday_date()
     collated_df.to_excel(f"{yesterday_date}_collated.xlsx", index = False)
     print('collated csv created')

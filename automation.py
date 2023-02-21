@@ -195,13 +195,15 @@ def find_all_slots(driver):
         slots.append(slot_name.text)
     return slots
 
-def collate(driver, option):
-    # driver = initialise_driver(ip)
+def collate(ip, option):
+    create_new_directory()
+    driver = initialise_driver(ip)
     # run_to_trend_export_page(driver)
     driver.implicitly_wait(10)
 
     download_csv(driver, option)
     collate_dataframes()
+    driver.close()
 
 # driver = initialise_driver()
 # run_to_trend_export_page(driver)
