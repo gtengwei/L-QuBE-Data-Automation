@@ -1,6 +1,5 @@
 from collation import *
 from automation import *
-import tzlocal
 from threading import Thread
 import warnings
 warnings.filterwarnings("ignore", category=DeprecationWarning) 
