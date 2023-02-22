@@ -88,7 +88,7 @@ def automate_time(ip):
 
     trigger = CronTrigger(
         year="*", month="*", day="*", 
-        hour="8", minute="*", second="*", timezone=SG
+        hour="15", minute="01", second="0", timezone=SG
     )
     scheduler.add_job(run_automation,args=[ip,'daily'], trigger=trigger)
     while True:
