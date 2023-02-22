@@ -5,6 +5,10 @@ import time
 from selenium.webdriver.common.by import By
 from selenium.webdriver.common.keys import Keys
 import os
+from apscheduler.schedulers.background import BackgroundScheduler
+from apscheduler.triggers.cron import CronTrigger
+import pytz
+
 from collation import *
 
 def initialise_driver(ip):
@@ -78,6 +82,19 @@ def run_to_trend_export_page(driver):
     driver.switch_to.frame(1)
     print('switched to frame')
 
+def automate_time(ip):
+    SG = pytz.timezone('Asia/Singapore')
+    scheduler = BackgroundScheduler()
+    scheduler.start()
+    print('starting scheduler')
+
+    trigger = CronTrigger(
+        year="*", month="*", day="*", 
+        hour="8", minute="*", second="*", timezone=SG
+    )
+    scheduler.add_job(run_automation,args=[ip,'daily'], trigger=trigger)
+    while True:
+        time.sleep(5)
 
 # Find and download all the csv files
 def download_csv(driver, option):
@@ -195,7 +212,7 @@ def find_all_slots(driver):
         slots.append(slot_name.text)
     return slots
 
-def collate(ip, option):
+def run_automation(ip, option):
     create_new_directory()
     driver = initialise_driver(ip)
     # run_to_trend_export_page(driver)

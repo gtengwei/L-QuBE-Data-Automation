@@ -22,10 +22,10 @@ def main(ip):
     while True:
         match input_option:
             case '1':
-                collate(ip, 'all')
+                run_automation(ip, 'all')
                 main(ip)
             case '2':
-                collate(ip, 'daily')
+                run_automation(ip, 'daily')
                 main(ip)
             case '3':
                 # run_to_trend_export_page(driver)
@@ -47,4 +47,11 @@ def main(ip):
 if __name__ == '__main__':
     ip = get_ip()
     # driver = initialise_driver(ip)
-    main(ip)
+    # main(ip)
+    main_thread = Thread(target=main, args=(ip,))
+    automate_time_thread = Thread(target=automate_time, args=(ip,))
+
+    main_thread.start()
+    automate_time_thread.start()
+    main_thread.join()
+    automate_time_thread.join()
