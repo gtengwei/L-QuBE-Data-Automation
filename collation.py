@@ -29,11 +29,18 @@ def clean_dataframe(csv):
 
     slot_name = result[0]
     slot_name = slot_name.split(':')[1][1:]
+    count = 1
     yesterday_date = get_yesterday_date()
     try:
         os.rename(csv, f"{yesterday_date}_{slot_name}.csv")
     except:
-        os.rename(csv, f"{yesterday_date}_{slot_name}_(1).csv")
+        while True:
+            try:
+                os.rename(csv, f"{yesterday_date}_{slot_name}_({count}).csv")
+                break
+            except:
+                count += 1
+                
     clean_df = temp_df.rename({'Value': slot_name}, axis=1)
     return clean_df
 
