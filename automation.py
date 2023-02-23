@@ -126,9 +126,11 @@ def download_csv(driver, option):
             checkboxes[i].click()
             daily_button.click()
             print('downloaded csv ' + str(i+1))
-
+    elif option == 'choose':
+        slots = find_all_slots(driver)
+        choose_slot(driver, slots)
+        
 def choose_slot(driver, slots):
-
     # part 2: add slot number to choose
     print('This is the list of slot names: ')
     for i in range(len(slots)):

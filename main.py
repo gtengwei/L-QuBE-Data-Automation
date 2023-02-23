@@ -27,12 +27,7 @@ def main(ip):
                 run_automation(ip, 'daily')
                 main(ip)
             case '3':
-                # run_to_trend_export_page(driver)
-                slots = find_all_slots(ip)
-                choose_slot(ip, slots)
-                # TRF-01 GENERAL ALARM
-                # FCU-B1-CORRIDOR-1 RA TEMP
-                collate_dataframes()
+                run_automation(ip, 'choose')
                 main(ip)
             case '4':
                 print('Exiting...')
