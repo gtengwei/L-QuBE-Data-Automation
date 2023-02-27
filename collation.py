@@ -54,16 +54,37 @@ def get_current_date():
 def get_yesterday_date():
     return (dt.datetime.now() - dt.timedelta(days=1)).strftime("%Y-%m-%d")
 
-def create_new_directory():
-    yesterday_date = get_yesterday_date()
-    path = os.getcwd()
-    directory = os.path.join("c:\\",path)
-    new_directory = os.path.join(directory, yesterday_date)
-    if not os.path.exists(new_directory):
-        os.makedirs(new_directory)
+def create_new_directory(option):
+    if option == 'all':
+        currentDateTime = get_current_date()
+        path = os.getcwd()
+        directory = os.path.join("c:\\",path)
+        change_directory = os.path.join(directory, 'All_Collation')
+        new_directory = os.path.join(change_directory, currentDateTime)
+        if not os.path.exists(new_directory):
+            os.makedirs(new_directory)
+    
+    elif option == 'daily':
+        yesterday_date = get_yesterday_date()
+        path = os.getcwd()
+        directory = os.path.join("c:\\",path)
+        change_directory = os.path.join(directory, 'Daily_Collation')
+        new_directory = os.path.join(change_directory, yesterday_date)
+        if not os.path.exists(new_directory):
+            os.makedirs(new_directory)
+    
+    elif option == 'choose':
+        currentDateTime = get_current_date()
+        path = os.getcwd()
+        directory = os.path.join("c:\\",path)
+        change_directory = os.path.join(directory, 'Selected_Collation')
+        new_directory = os.path.join(change_directory, currentDateTime)
+        if not os.path.exists(new_directory):
+            os.makedirs(new_directory)
     os.chdir(new_directory)
+    return change_directory
 
-def collate_dataframes():
+def collate_dataframes(option, change_directory):
     time.sleep(0.5)
     path = os.getcwd()
     directory = os.path.join("c:\\",path)
@@ -77,9 +98,21 @@ def collate_dataframes():
                     clean_df = clean_dataframe(file)
                     collated_df = merge_dataframes(collated_df,clean_df)
 
+    collated_df = collated_df.sort_values(by=['Timestamp'], ascending=True)
+    if option == 'all':
+        os.chdir(change_directory)
+        currentDateTime = get_current_date()
+        collated_df.to_csv(f"AllData_{currentDateTime}_collated.csv", index = False)
+    elif option == 'daily':
+        os.chdir(change_directory)
+        yesterdayDate = get_yesterday_date()
+        collated_df.to_csv(f"{yesterdayDate}_collated.csv", index = False)
+    elif option == 'choose':
+        os.chdir(change_directory)
+        currentDateTime = get_current_date()
+        collated_df.to_csv(f"SelectedData_{currentDateTime}_collated.csv", index = False)
+    # collated_df.to_csv('collated.csv', index=False)
+    print("Collation Complete")
     os.chdir(main_directory)
-    yesterday_date = get_yesterday_date()
-    collated_df.to_excel(f"{yesterday_date}_collated.xlsx", index = False)
-    print('collated csv created')
 
 # collate_dataframes()

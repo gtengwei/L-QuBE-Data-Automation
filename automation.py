@@ -168,13 +168,13 @@ def find_all_slots(driver):
     return slots
 
 def run_automation(ip, option):
-    create_new_directory()
+    directory = create_new_directory(option)
     driver = initialise_driver(ip)
     # run_to_trend_export_page(driver)
     driver.implicitly_wait(10)
 
     download_csv(driver, option)
-    collate_dataframes()
+    collate_dataframes(option, directory)
     driver.close()
 
 # driver = initialise_driver()
