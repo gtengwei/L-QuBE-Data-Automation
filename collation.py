@@ -4,6 +4,7 @@ import time
 import datetime as dt
 
 main_directory = os.getcwd()
+change_diretory = ''
 
 def clean_dataframe(csv, option):
     f = open(csv, 'r')
