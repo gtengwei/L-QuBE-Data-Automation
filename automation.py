@@ -126,6 +126,7 @@ def download_csv(driver, option):
             checkboxes[i].click()
             daily_button.click()
             print('downloaded csv ' + str(i+1))
+
     elif option == 'choose':
         slots = find_all_slots(driver)
         choose_slot(driver, slots)
@@ -137,13 +138,13 @@ def choose_slot(driver, slots):
         print(str(i+1) + '. ' + slots[i])
     while True:
         try:
-            name = input("Enter slot number(press 'Q' to exit): ")
-            if name == 'Q' or name == 'q':
+            number = input("Enter slot number(press 'Q' to exit): ")
+            if number == 'Q' or number == 'q':
                 break
-            elif slots[int(name)-1] in slots:
-                slot_name = driver.find_element('xpath', "//*[.='" + slots[int(name)-1] + "']").get_attribute("id")
+            elif slots[int(number)-1] in slots:
+                slot_name = driver.find_element('xpath', "//*[.='" + slots[int(number)-1] + "']").get_attribute("id")
                 print(slot_name)
-                time.sleep(1)
+                # time.sleep(1)
                 slot_num = slot_name[7:]
                 print(slot_num)
 
@@ -153,7 +154,7 @@ def choose_slot(driver, slots):
                 csv = driver.find_element('id', "csvlink" + slot_num)
                 csv.click()
                 print('downloaded csv file')
-                time.sleep(1)
+                # time.sleep(1)
         except:
             print('Slot number not found. Please try again.')
 
