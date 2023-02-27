@@ -5,7 +5,7 @@ import datetime as dt
 
 main_directory = os.getcwd()
 
-def clean_dataframe(csv):
+def clean_dataframe(csv, option):
     f = open(csv, 'r')
     result = []
     for l in f.readlines():
@@ -30,16 +30,28 @@ def clean_dataframe(csv):
     slot_name = result[0]
     slot_name = slot_name.split(':')[1][1:]
     count = 1
-    yesterday_date = get_yesterday_date()
-    try:
-        os.rename(csv, f"{yesterday_date}_{slot_name}.csv")
-    except:
-        while True:
-            try:
-                os.rename(csv, f"{yesterday_date}_{slot_name}_({count}).csv")
-                break
-            except:
-                count += 1
+    if option == 'all':
+        currentDateTime = get_current_date()
+        try:
+            os.rename(csv, f"{currentDateTime}_{slot_name}.csv")
+        except:
+            while True:
+                try:
+                    os.rename(csv, f"{currentDateTime}_{slot_name}_({count}).csv")
+                    break
+                except:
+                    count += 1
+    elif option == 'daily':
+        yesterday_date = get_yesterday_date()
+        try:
+            os.rename(csv, f"{yesterday_date}_{slot_name}.csv")
+        except:
+            while True:
+                try:
+                    os.rename(csv, f"{yesterday_date}_{slot_name}_({count}).csv")
+                    break
+                except:
+                    count += 1
                 
     clean_df = temp_df.rename({'Value': slot_name}, axis=1)
     return clean_df
@@ -95,7 +107,7 @@ def collate_dataframes(option, change_directory):
             if file.endswith("collated.csv"):
                 continue
             if file.endswith(".csv"):
-                    clean_df = clean_dataframe(file)
+                    clean_df = clean_dataframe(file, option)
                     collated_df = merge_dataframes(collated_df,clean_df)
 
     collated_df = collated_df.sort_values(by=['Timestamp'], ascending=True)
