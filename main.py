@@ -1,5 +1,6 @@
 from collation import *
 from automation import *
+from configuration import *
 from threading import Thread
 import warnings
 warnings.filterwarnings("ignore", category=DeprecationWarning) 
@@ -39,11 +40,14 @@ def main(ip):
                 main(ip)
 
 if __name__ == '__main__':
-    ip = get_ip()
+    # ip = get_ip()
     # driver = initialise_driver(ip)
     # main(ip)
-    main_thread = Thread(target=main, args=(ip,))
-    automate_time_thread = Thread(target=automate_time, args=(ip,))
+    config = get_config()
+    print('IP address: ' + config.ip)
+
+    main_thread = Thread(target=main, args=(config.ip,))
+    automate_time_thread = Thread(target=automate_time, args=(config,))
 
     main_thread.start()
     automate_time_thread.start()

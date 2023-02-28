@@ -80,17 +80,17 @@ def run_to_trend_export_page(driver):
     driver.switch_to.frame(1)
     print('switched to frame')
 
-def automate_time(ip):
+def automate_time(config):
     SG = pytz.timezone('Asia/Singapore')
     scheduler = BackgroundScheduler()
     scheduler.start()
     print('starting scheduler')
 
     trigger = CronTrigger(
-        year="*", month="*", day="*", 
-        hour="15", minute="01", second="0", timezone=SG
+        year="*", month=config.month, day=config.day, 
+        hour=config.hour, minute=config.minute, second=config.second, timezone=SG
     )
-    scheduler.add_job(run_automation,args=[ip,'daily'], trigger=trigger)
+    scheduler.add_job(run_automation,args=[config.ip,'daily'], trigger=trigger)
     while True:
         time.sleep(5)
 
