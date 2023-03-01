@@ -27,7 +27,9 @@ def clean_dataframe(csv, option):
         temp[i] = temp[i].split(',')
 
     temp_df = pd.DataFrame(temp[1:],columns=temp[0])
-
+    for i in range(len(temp_df['Timestamp'])):
+        temp_df['Timestamp'][i] = temp_df['Timestamp'][i].split(':')
+        temp_df['Timestamp'][i] = temp_df['Timestamp'][i][0] + ':' + temp_df['Timestamp'][i][1]
     slot_name = result[0]
     slot_name = slot_name.split(':')[1][1:]
     count = 1
