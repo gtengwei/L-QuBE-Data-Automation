@@ -27,10 +27,12 @@ def clean_dataframe(csv, option):
         temp[i] = temp[i].split(',')
 
     temp_df = pd.DataFrame(temp[1:],columns=temp[0])
+    
     for i in range(len(temp_df['Timestamp'])):
         temp_df['Timestamp'][i] = temp_df['Timestamp'][i].split(':')
         temp_df['Timestamp'][i] = temp_df['Timestamp'][i][0] + ':' + temp_df['Timestamp'][i][1]
-    slot_name = result[0]
+    
+        slot_name = result[0]
     slot_name = slot_name.split(':')[1][1:]
     count = 1
     if option == 'all':
@@ -44,6 +46,7 @@ def clean_dataframe(csv, option):
                     break
                 except:
                     count += 1
+
     elif option == 'daily':
         yesterday_date = get_yesterday_date()
         try:
@@ -118,10 +121,12 @@ def collate_dataframes(option, change_directory):
         os.chdir(change_directory)
         currentDateTime = get_current_date()
         collated_df.to_csv(f"AllData_{currentDateTime}_collated.csv", index = False)
+    
     elif option == 'daily':
         os.chdir(change_directory)
         yesterdayDate = get_yesterday_date()
         collated_df.to_csv(f"{yesterdayDate}_collated.csv", index = False)
+    
     elif option == 'choose':
         os.chdir(change_directory)
         currentDateTime = get_current_date()
