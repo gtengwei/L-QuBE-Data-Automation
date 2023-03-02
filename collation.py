@@ -120,17 +120,17 @@ def collate_dataframes(option, change_directory):
     if option == 'all':
         os.chdir(change_directory)
         currentDateTime = get_current_date()
-        collated_df.to_csv(f"AllData_{currentDateTime}_collated.csv", index = False)
+        collated_df.to_excel(f"AllData_{currentDateTime}_collated.xlsx", index = False)
     
     elif option == 'daily':
         os.chdir(change_directory)
         yesterdayDate = get_yesterday_date()
-        collated_df.to_csv(f"{yesterdayDate}_collated.csv", index = False)
+        collated_df.to_excel(f"{yesterdayDate}_collated.xlsx", index = False)
     
     elif option == 'choose':
         os.chdir(change_directory)
         currentDateTime = get_current_date()
-        collated_df.to_csv(f"SelectedData_{currentDateTime}_collated.csv", index = False)
+        collated_df.to_excel(f"SelectedData_{currentDateTime}_collated.xlsx", index = False)
     # collated_df.to_csv('collated.csv', index=False)
     print("Collation Complete")
     os.chdir(main_directory)
