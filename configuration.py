@@ -1,9 +1,8 @@
 import json
 class Configuration:
-    def __init__(self, ip, month, day, hour, minute, second):
-        self.ip = ip
-        self.month = month
-        self.day = day
+    def __init__(self, ip_1, ip_2, hour, minute, second):
+        self.ip_1 = ip_1
+        self.ip_2 = ip_2
         self.hour = hour
         self.minute = minute
         self.second = second
