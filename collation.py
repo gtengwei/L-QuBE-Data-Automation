@@ -116,7 +116,7 @@ def collate_dataframes(option, change_directory):
                     clean_df = clean_dataframe(file, option)
                     collated_df = merge_dataframes(collated_df,clean_df)
 
-    collated_df = collated_df.sort_values(by=['Timestamp'], ascending=True)
+    collated_df = collated_df.sort_values(by=['Date','Timestamp'], ascending=True)
     if option == 'all':
         os.chdir(change_directory)
         currentDateTime = get_current_date()
