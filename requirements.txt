@@ -1,0 +1,4 @@
+APScheduler==3.9.1.post1
+pandas==1.5.2
+pytz==2022.7
+selenium==4.8.2
