@@ -87,7 +87,7 @@ def automate_time(config):
     print('starting scheduler')
 
     trigger = CronTrigger(
-        year="*", month=config.month, day=config.day, 
+        year="*", month="*", day="*", 
         hour=config.hour, minute=config.minute, second=config.second, timezone=SG
     )
     scheduler.add_job(run_automation,args=[config.ip,'daily'], trigger=trigger)
