@@ -169,9 +169,9 @@ def find_all_slots(driver):
     return slots
 
 def run_automation(config, option):
-    ip = config.ip['ip_1']
+    ip = config.ip[config.ip['ip_choice']]
     directory = create_new_directory(ip, option)
-    driver = initialise_driver(config.ip)
+    driver = initialise_driver(ip)
     # run_to_trend_export_page(driver)
     driver.implicitly_wait(10)
 

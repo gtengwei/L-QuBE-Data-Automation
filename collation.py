@@ -72,12 +72,13 @@ def get_current_date():
 def get_yesterday_date():
     return (dt.datetime.now() - dt.timedelta(days=1)).strftime("%Y-%m-%d")
 
-def create_new_directory(option):
+def create_new_directory(ip, option):
     if option == 'all':
         currentDateTime = get_current_date()
         path = os.getcwd()
         directory = os.path.join("c:\\",path)
-        change_directory = os.path.join(directory, 'All_Collation')
+        temp_directory = os.path.join(directory, ip)
+        change_directory = os.path.join(temp_directory, 'All_Collation')
         new_directory = os.path.join(change_directory, currentDateTime)
         if not os.path.exists(new_directory):
             os.makedirs(new_directory)
@@ -86,7 +87,8 @@ def create_new_directory(option):
         yesterday_date = get_yesterday_date()
         path = os.getcwd()
         directory = os.path.join("c:\\",path)
-        change_directory = os.path.join(directory, 'Daily_Collation')
+        temp_directory = os.path.join(directory, ip)
+        change_directory = os.path.join(temp_directory, 'Daily_Collation')
         new_directory = os.path.join(change_directory, yesterday_date)
         if not os.path.exists(new_directory):
             os.makedirs(new_directory)
@@ -95,7 +97,8 @@ def create_new_directory(option):
         currentDateTime = get_current_date()
         path = os.getcwd()
         directory = os.path.join("c:\\",path)
-        change_directory = os.path.join(directory, 'Selected_Collation')
+        temp_directory = os.path.join(directory, ip)
+        change_directory = os.path.join(temp_directory, 'Selected_Collation')
         new_directory = os.path.join(change_directory, currentDateTime)
         if not os.path.exists(new_directory):
             os.makedirs(new_directory)
