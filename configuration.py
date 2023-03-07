@@ -1,8 +1,7 @@
 import json
 class Configuration:
-    def __init__(self, ip_1, ip_2, hour, minute, second):
-        self.ip_1 = ip_1
-        self.ip_2 = ip_2
+    def __init__(self, ip, hour, minute, second):
+        self.ip = ip
         self.hour = hour
         self.minute = minute
         self.second = second
@@ -17,8 +16,7 @@ def get_config():
     try:
         json_config = get_json()
         user_config = json_config['config']
-        config = Configuration(user_config['ip'], user_config['month'], 
-                               user_config['day'], user_config['hour'], 
+        config = Configuration(user_config['ip'], user_config['hour'], 
                                user_config['minute'], user_config['second'])
         return config
     except Exception as e:
