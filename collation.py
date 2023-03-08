@@ -72,6 +72,9 @@ def get_current_date():
 def get_yesterday_date():
     return (dt.datetime.now() - dt.timedelta(days=1)).strftime("%Y-%m-%d")
 
+def get_current_datetime():
+    return dt.datetime.now().strftime("%Y-%m-%d %H.%M")
+
 def create_new_directory(ip, user_directory, option):
     if option == 'all':
         currentDateTime = get_current_date()
@@ -94,12 +97,12 @@ def create_new_directory(ip, user_directory, option):
             os.makedirs(new_directory)
     
     elif option == 'choose':
-        currentDateTime = get_current_date()
+        current_datetime = get_current_datetime()
         path = user_directory
         directory = os.path.join("c:\\",path)
         temp_directory = os.path.join(directory, ip)
         change_directory = os.path.join(temp_directory, 'Selected_Collation')
-        new_directory = os.path.join(change_directory, currentDateTime)
+        new_directory = os.path.join(change_directory, current_datetime)
         if not os.path.exists(new_directory):
             os.makedirs(new_directory)
     os.chdir(new_directory)
@@ -132,8 +135,8 @@ def collate_dataframes(option, change_directory):
     
     elif option == 'choose':
         os.chdir(change_directory)
-        currentDateTime = get_current_date()
-        collated_df.to_excel(f"SelectedData_{currentDateTime}_collated.xlsx", index = False)
+        current_datetime = get_current_date()
+        collated_df.to_excel(f"SelectedData_{current_datetime}_collated.xlsx", index = False)
     # collated_df.to_csv('collated.csv', index=False)
     print("Collation Complete")
     os.chdir(main_directory)
