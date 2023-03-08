@@ -77,12 +77,12 @@ def get_current_datetime():
 
 def create_new_directory(ip, user_directory, option):
     if option == 'all':
-        currentDateTime = get_current_date()
+        current_date = get_current_date()
         path = user_directory
         directory = os.path.join("c:\\",path)
         temp_directory = os.path.join(directory, ip)
         change_directory = os.path.join(temp_directory, 'All_Collation')
-        new_directory = os.path.join(change_directory, currentDateTime)
+        new_directory = os.path.join(change_directory, current_date)
         if not os.path.exists(new_directory):
             os.makedirs(new_directory)
     
@@ -125,13 +125,13 @@ def collate_dataframes(option, change_directory):
     collated_df = collated_df.sort_values(by=['Date','Timestamp'], ascending=True)
     if option == 'all':
         os.chdir(change_directory)
-        currentDateTime = get_current_date()
-        collated_df.to_excel(f"AllData_{currentDateTime}_collated.xlsx", index = False)
+        current_date = get_current_date()
+        collated_df.to_excel(f"AllData_{current_date}_collated.xlsx", index = False)
     
     elif option == 'daily':
         os.chdir(change_directory)
-        yesterdayDate = get_yesterday_date()
-        collated_df.to_excel(f"{yesterdayDate}_collated.xlsx", index = False)
+        yesterday_date = get_yesterday_date()
+        collated_df.to_excel(f"{yesterday_date}_collated.xlsx", index = False)
     
     elif option == 'choose':
         os.chdir(change_directory)
