@@ -170,7 +170,7 @@ def find_all_slots(driver):
 
 def run_automation(config, option):
     ip = config.ip[config.ip['ip_choice']]
-    directory = create_new_directory(ip, option)
+    directory = create_new_directory(ip, config.directory, option)
     driver = initialise_driver(ip)
     # run_to_trend_export_page(driver)
     driver.implicitly_wait(10)

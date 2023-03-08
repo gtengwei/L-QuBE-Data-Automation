@@ -72,10 +72,10 @@ def get_current_date():
 def get_yesterday_date():
     return (dt.datetime.now() - dt.timedelta(days=1)).strftime("%Y-%m-%d")
 
-def create_new_directory(ip, option):
+def create_new_directory(ip, user_directory, option):
     if option == 'all':
         currentDateTime = get_current_date()
-        path = os.getcwd()
+        path = user_directory
         directory = os.path.join("c:\\",path)
         temp_directory = os.path.join(directory, ip)
         change_directory = os.path.join(temp_directory, 'All_Collation')
@@ -85,7 +85,7 @@ def create_new_directory(ip, option):
     
     elif option == 'daily':
         yesterday_date = get_yesterday_date()
-        path = os.getcwd()
+        path = user_directory
         directory = os.path.join("c:\\",path)
         temp_directory = os.path.join(directory, ip)
         change_directory = os.path.join(temp_directory, 'Daily_Collation')
@@ -95,7 +95,7 @@ def create_new_directory(ip, option):
     
     elif option == 'choose':
         currentDateTime = get_current_date()
-        path = os.getcwd()
+        path = user_directory
         directory = os.path.join("c:\\",path)
         temp_directory = os.path.join(directory, ip)
         change_directory = os.path.join(temp_directory, 'Selected_Collation')
