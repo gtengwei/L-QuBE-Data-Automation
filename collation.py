@@ -35,14 +35,14 @@ def clean_dataframe(csv, option):
         slot_name = result[0]
     slot_name = slot_name.split(':')[1][1:]
     count = 1
-    if option == 'all':
-        currentDateTime = get_current_date()
+    if option == 'all' or option == 'choose':
+        current_date = get_current_date()
         try:
-            os.rename(csv, f"{currentDateTime}_{slot_name}.csv")
+            os.rename(csv, f"{current_date}_{slot_name}.csv")
         except:
             while True:
                 try:
-                    os.rename(csv, f"{currentDateTime}_{slot_name}_({count}).csv")
+                    os.rename(csv, f"{current_date}_{slot_name}_({count}).csv")
                     break
                 except:
                     count += 1
