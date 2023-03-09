@@ -73,7 +73,7 @@ def get_yesterday_date():
     return (dt.datetime.now() - dt.timedelta(days=1)).strftime("%Y-%m-%d")
 
 def get_current_datetime():
-    return dt.datetime.now().strftime("%Y-%m-%d %H.%M")
+    return dt.datetime.now().strftime("%Y-%m-%d_%H-%M")
 
 def create_new_directory(ip, user_directory, option):
     if option == 'all':
@@ -136,7 +136,7 @@ def collate_dataframes(option, change_directory):
     
     elif option == 'choose':
         os.chdir(change_directory)
-        current_datetime = get_current_date()
+        current_datetime = get_current_datetime()
         collated_df.to_excel(f"SelectedData_{current_datetime}_collated.xlsx", index = False)
     # collated_df.to_csv('collated.csv', index=False)
     print("Collation Complete")
