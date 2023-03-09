@@ -105,6 +105,7 @@ def create_new_directory(ip, user_directory, option):
         new_directory = os.path.join(change_directory, current_datetime)
         if not os.path.exists(new_directory):
             os.makedirs(new_directory)
+    print(f"New Directory {user_directory} Created")
     os.chdir(new_directory)
     return change_directory
 
