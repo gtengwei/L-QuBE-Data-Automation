@@ -105,7 +105,7 @@ def create_new_directory(ip, user_directory, option):
         new_directory = os.path.join(change_directory, current_datetime)
         if not os.path.exists(new_directory):
             os.makedirs(new_directory)
-    print(f"New Directory {user_directory} Created")
+    print(f"New Directory {new_directory} Created")
     os.chdir(new_directory)
     return change_directory
 
@@ -132,7 +132,7 @@ def collate_dataframes(option, change_directory):
     elif option == 'daily':
         os.chdir(change_directory)
         yesterday_date = get_yesterday_date()
-        collated_df.to_excel(f"{yesterday_date}_collated.xlsx", index = False)
+        collated_df.to_excel(f"Daily_{yesterday_date}_collated.xlsx", index = False)
     
     elif option == 'choose':
         os.chdir(change_directory)

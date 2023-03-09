@@ -1,13 +1,13 @@
 {
     "config": {
-        "directory": "C:\\Users\\tengwei.goh\\Desktop\\test",
+        "directory": "C:\\Users\\tengwei.goh\\Documents\\GitHub\\L-QuBE-Data-Automation",
         "ip": {
             "ip_choice": "ip_1",
             "ip_1": "192.168.253.20",
             "ip_2": "192.168.254.30"
         },
-        "hour": "10",
-        "minute": "40",
-        "second": "0"
+        "hour": "12",
+        "minute": "37",
+        "second": "30"
     }
 }

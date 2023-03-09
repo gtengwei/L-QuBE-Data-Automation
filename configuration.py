@@ -1,4 +1,6 @@
 import json
+# C:\\Users\\tengwei.goh\\Documents\\GitHub\\L-QuBE-Data-Automation
+# C:\\Users\\tengwei.goh\\Desktop\\test
 class Configuration:
     def __init__(self, ip, directory, hour, minute, second):
         self.ip = ip
