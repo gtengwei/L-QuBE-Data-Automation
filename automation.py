@@ -86,7 +86,7 @@ def automate_time(config):
         year="*", month="*", day="*", 
         hour=config.hour, minute=config.minute, second=config.second, timezone=SG
     )
-    scheduler.add_job(run_automation,args=[config.ip,'daily'], trigger=trigger)
+    scheduler.add_job(run_automation,args=[config,'daily'], trigger=trigger)
     while True:
         time.sleep(5)
 
