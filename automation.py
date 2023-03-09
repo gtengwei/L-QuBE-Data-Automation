@@ -1,3 +1,4 @@
+from collation import *
 from selenium import webdriver
 import time
 from selenium.webdriver.common.by import By
@@ -6,8 +7,6 @@ import os
 from apscheduler.schedulers.background import BackgroundScheduler
 from apscheduler.triggers.cron import CronTrigger
 import pytz
-
-from collation import *
 
 def initialise_driver(ip):
     # Must wait for 'Run' LED light to start blinking before running the program
@@ -34,11 +33,8 @@ def initialise_driver(ip):
             run_to_trend_export_page(driver)
             return driver
         except:
-            print("Invalid IP address, try again")
-            ip = input("Enter IP address: ")
-            driver.get("http://" + ip)
-            run_to_trend_export_page(driver)
-            return driver
+            print("Invalid IP address, please check your ip in config.json and try again")
+            break
     
 
 
