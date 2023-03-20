@@ -6,6 +6,7 @@ from selenium.webdriver.common.keys import Keys
 import os
 from apscheduler.schedulers.background import BackgroundScheduler
 from apscheduler.triggers.cron import CronTrigger
+from apscheduler.executors.debug import DebugExecutor
 import pytz
 
 def initialise_driver(ip):
@@ -86,7 +87,9 @@ def automate_time(config):
         year="*", month="*", day="*", 
         hour=config.hour, minute=config.minute, second=config.second, timezone=SG
     )
-    scheduler.add_job(run_automation,args=[config,'daily'], trigger=trigger)
+    scheduler.add_executor(DebugExecutor(), 'consecutive')
+    scheduler.add_job(run_automation,args=[config,'daily'], trigger=trigger, id='daily', executor='consecutive')
+    scheduler.add_job(run_automation,args=[config,'daily_selected'], trigger=trigger, id='daily_selected', executor='consecutive', misfire_grace_time=600)
     while True:
         time.sleep(5)
 
