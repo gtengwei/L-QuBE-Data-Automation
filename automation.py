@@ -127,6 +127,30 @@ def download_csv(driver, config, option):
         slots = find_all_slots(driver)
         choose_slot(driver, slots)
     
+    elif option == 'daily_selected':
+        period_button = driver.find_element('id', "periodselection")
+        period_button.click()
+        print('clicked period button')
+        driver.implicitly_wait(10)
+        date = driver.find_element('id', "gestern") # yesterday
+        date.click()
+        print('chose yesterday')
+        for _,slot in config.slots.items():
+            slot_name = driver.find_element('xpath', "//*[.='" + slot + "']").get_attribute("id")
+            print(slot_name)
+            time.sleep(0.5)
+            slot_num = slot_name[7:]
+            print(slot_num)
+
+            checkbox = driver.find_element('id', "checkbox" + slot_num)
+            checkbox.click()
+
+            # csv = driver.find_element('id', "csvlink" + slot_num)
+            # csv.click()
+            daily_csvlink = driver.find_element('id', "csvlink")
+            daily_button = daily_csvlink.find_element('xpath', "//img[@alt='csvicon']")
+            daily_button.click()
+            print('downloaded csv file')
         
 def choose_slot(driver, slots):
     # part 2: add slot number to choose

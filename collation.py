@@ -47,7 +47,7 @@ def clean_dataframe(csv, option):
                 except:
                     count += 1
 
-    elif option == 'daily':
+    elif option == 'daily' or option == 'daily_selected':
         yesterday_date = get_yesterday_date()
         try:
             os.rename(csv, f"{yesterday_date}_{slot_name}.csv")
@@ -105,6 +105,16 @@ def create_new_directory(ip, user_directory, option):
         new_directory = os.path.join(change_directory, current_datetime)
         if not os.path.exists(new_directory):
             os.makedirs(new_directory)
+    elif option == 'daily_selected':
+        yesterday_date = get_yesterday_date()
+        path = user_directory
+        directory = os.path.join("c:\\",path)
+        temp_directory = os.path.join(directory, ip)
+        change_directory = os.path.join(temp_directory, 'Daily_Selected_Collation')
+        new_directory = os.path.join(change_directory, yesterday_date)
+        if not os.path.exists(new_directory):
+            os.makedirs(new_directory)
+
     print(f"New Directory {new_directory} Created")
     os.chdir(new_directory)
     return change_directory
@@ -138,7 +148,11 @@ def collate_dataframes(option, change_directory):
         os.chdir(change_directory)
         current_datetime = get_current_datetime()
         collated_df.to_excel(f"SelectedData_{current_datetime}_collated.xlsx", index = False)
-    # collated_df.to_csv('collated.csv', index=False)
+    
+    elif option == 'daily_selected':
+        os.chdir(change_directory)
+        yesterday_date = get_yesterday_date()
+        collated_df.to_excel(f"Daily_Selected_{yesterday_date}_collated.xlsx", index = False)
     print("Collation Complete")
     os.chdir(main_directory)
 
