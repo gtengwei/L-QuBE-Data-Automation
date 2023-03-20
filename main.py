@@ -16,7 +16,8 @@ def main(config):
     print('1. Collate all data')
     print('2. Collate yesterday\'s data')
     print('3. Choose specific slots to collate')
-    print('4. Exit')
+    print('4. Collate yesterday\'s selected slots')
+    print('5. Exit')
     input_option = input()
     print(input_option)
     while True:
@@ -31,6 +32,9 @@ def main(config):
                 run_automation(config, 'choose')
                 main(config)
             case '4':
+                run_automation(config, 'daily_selected')
+                main(config)
+            case '5':
                 print('Exiting...')
                 # driver.close()
                 exit()

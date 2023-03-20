@@ -91,7 +91,7 @@ def automate_time(config):
         time.sleep(5)
 
 # Find and download all the csv files
-def download_csv(driver, option):
+def download_csv(driver, config, option):
     files = driver.find_elements('xpath', "//*[@id[contains(.,'csvlink')]]")
     print(len(files))
 
@@ -126,6 +126,7 @@ def download_csv(driver, option):
     elif option == 'choose':
         slots = find_all_slots(driver)
         choose_slot(driver, slots)
+    
         
 def choose_slot(driver, slots):
     # part 2: add slot number to choose
@@ -171,7 +172,7 @@ def run_automation(config, option):
     # run_to_trend_export_page(driver)
     driver.implicitly_wait(10)
 
-    download_csv(driver, option)
+    download_csv(driver, config, option)
     collate_dataframes(option, directory)
     driver.close()
 
