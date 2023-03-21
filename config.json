@@ -7,8 +7,15 @@
             "ip_2": "192.168.254.30"
         },
         "slots" : {
-            "1" : "TRF-02 GENERAL ALARM",
-            "2" : "TRF-01 GENERAL ALARM"
+            "192.168.253.20" : {
+                "1" : "TRF-02 GENERAL ALARM",
+                "2" : "TRF-01 GENERAL ALARM"
+            },
+            "192.168.254.30" : {
+                "1" : "TRF-02 GENERAL ALARM",
+                "2" : "TRF-01 GENERAL ALARM"
+            }
+
         },
         "hour": "12",
         "minute": "37",

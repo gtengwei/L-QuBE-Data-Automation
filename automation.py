@@ -94,7 +94,7 @@ def automate_time(config):
         time.sleep(5)
 
 # Find and download all the csv files
-def download_csv(driver, config, option):
+def download_csv(driver, config, option, ip):
     files = driver.find_elements('xpath', "//*[@id[contains(.,'csvlink')]]")
     print(len(files))
 
@@ -138,7 +138,7 @@ def download_csv(driver, config, option):
         date = driver.find_element('id', "gestern") # yesterday
         date.click()
         print('chose yesterday')
-        for _,slot in config.slots.items():
+        for _, slot in config.slots[ip].items():
             slot_name = driver.find_element('xpath', "//*[.='" + slot + "']").get_attribute("id")
             print(slot_name)
             time.sleep(0.5)
@@ -200,7 +200,7 @@ def run_automation(config, option):
             run_to_trend_export_page(driver)
             driver.implicitly_wait(10)
 
-            download_csv(driver,config, option)
+            download_csv(driver, config, option)
             collate_dataframes(option, directory)
             driver.close()
     else:
@@ -210,7 +210,7 @@ def run_automation(config, option):
         # run_to_trend_export_page(driver)
         driver.implicitly_wait(10)
 
-        download_csv(driver, config, option)
+        download_csv(driver, config, option, ip)
         collate_dataframes(option, directory)
         driver.close()
 

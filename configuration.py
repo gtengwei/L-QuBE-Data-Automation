@@ -30,7 +30,12 @@ def get_config():
         return None
 
 config = get_config()
-for key, items in config.ip.items():
-    print(key, items)
-print(config.ip[config.ip_choice])
-# print(config.directory) 
+# for key, items in config.ip.items():
+#     print(key, items)
+# print(config.ip[config.ip_choice])
+# for key, items in config.slots.items():
+#     print(config.slots[key])
+# print(config.slots['192.168.253.20'])
+for key, items in config.slots['192.168.253.20'].items():
+    print(items)
+# print(config.slots['ip_1'])
