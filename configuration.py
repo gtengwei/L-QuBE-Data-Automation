@@ -2,7 +2,8 @@ import json
 # C:\\Users\\tengwei.goh\\Documents\\GitHub\\L-QuBE-Data-Automation
 # C:\\Users\\tengwei.goh\\Desktop\\test
 class Configuration:
-    def __init__(self, ip, directory, slots, hour, minute, second):
+    def __init__(self, ip_choice, ip, directory, slots, hour, minute, second):
+        self.ip_choice = ip_choice
         self.ip = ip
         self.directory = directory
         self.slots = slots
@@ -20,7 +21,7 @@ def get_config():
     try:
         json_config = get_json()
         user_config = json_config['config']
-        config = Configuration(user_config['ip'], user_config['directory'],
+        config = Configuration(user_config['ip_choice'], user_config['ip'], user_config['directory'],
                                user_config['slots'], user_config['hour'], 
                                user_config['minute'], user_config['second'])
         return config
@@ -28,5 +29,8 @@ def get_config():
         print(e)
         return None
 
-# config = get_config()
+config = get_config()
+for key, items in config.ip.items():
+    print(key, items)
+print(config.ip[config.ip_choice])
 # print(config.directory) 

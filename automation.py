@@ -193,15 +193,26 @@ def find_all_slots(driver):
     return slots
 
 def run_automation(config, option):
-    ip = config.ip[config.ip['ip_choice']]
-    directory = create_new_directory(ip, config.directory, option)
-    driver = initialise_driver(ip)
-    # run_to_trend_export_page(driver)
-    driver.implicitly_wait(10)
+    if option != 'choose':
+        for _, ip in config.ip.items():
+            directory = create_new_directory(ip, config.directory, option)
+            driver = initialise_driver(ip)
+            run_to_trend_export_page(driver)
+            driver.implicitly_wait(10)
 
-    download_csv(driver, config, option)
-    collate_dataframes(option, directory)
-    driver.close()
+            download_csv(driver,config, option)
+            collate_dataframes(option, directory)
+            driver.close()
+    else:
+        ip = config.ip[config.ip_choice]
+        directory = create_new_directory(ip, config.directory, option)
+        driver = initialise_driver(ip)
+        # run_to_trend_export_page(driver)
+        driver.implicitly_wait(10)
+
+        download_csv(driver, config, option)
+        collate_dataframes(option, directory)
+        driver.close()
 
 # driver = initialise_driver()
 # run_to_trend_export_page(driver)
