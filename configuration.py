@@ -2,11 +2,10 @@ import json
 # C:\\Users\\tengwei.goh\\Documents\\GitHub\\L-QuBE-Data-Automation
 # C:\\Users\\tengwei.goh\\Desktop\\test
 class Configuration:
-    def __init__(self, ip_choice, ip, directory, slots, hour, minute):
-        self.ip_choice = ip_choice
-        self.ip = ip
+    def __init__(self, directory, device_choice, devices, hour, minute):
         self.directory = directory
-        self.slots = slots
+        self.device_choice = device_choice
+        self.devices = devices
         self.hour = hour
         self.minute = minute
 
@@ -20,15 +19,27 @@ def get_config():
     try:
         json_config = get_json()
         user_config = json_config['config']
-        config = Configuration(user_config['ip_choice'], user_config['ip'], user_config['directory'],
-                               user_config['slots'], user_config['hour'], 
-                               user_config['minute'])
+        config = Configuration(user_config['directory'], user_config['device_choice'],
+                               user_config['devices'], 
+                               user_config['hour'], user_config['minute'])
         return config
     except Exception as e:
         print(e)
         return None
 
-# config = get_config()
+config = get_config()
+# print(config.devices['device_1']['slots']['1'])
+# print(config.devices[config.device_choice]['ip'])
+print(config.devices[config.device_choice])
+device = config.devices[config.device_choice]
+ip = device['ip']
+print(ip)
+for _, slots in device['slots'].items():
+    print(slots)
+# for _, device in config.devices.items():
+#             for key, item in device.items():
+#                 if key == 'ip':
+#                      print(device['password'])
 # for key, items in config.ip.items():
 #     print(key, items)
 # print(config.ip[config.ip_choice])

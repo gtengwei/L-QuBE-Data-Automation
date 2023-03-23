@@ -11,7 +11,7 @@ from apscheduler.triggers.cron import CronTrigger
 from apscheduler.executors.debug import DebugExecutor
 import pytz
 
-def initialise_driver(ip):
+def initialise_driver(ip, password):
     # Must wait for 'Run' LED light to start blinking before running the program
     directory = os.getcwd()
     chrome_prefs = {"download.default_directory": directory} # (windows)
@@ -34,7 +34,7 @@ def initialise_driver(ip):
     while True:
         try:
             driver.get("http://" + ip)
-            run_to_trend_export_page(driver)
+            run_to_trend_export_page(driver, password)
             return driver
         except:
             print("Invalid IP address, please check your ip in config.json and try again")
@@ -42,7 +42,7 @@ def initialise_driver(ip):
     
 
 
-def run_to_trend_export_page(driver):
+def run_to_trend_export_page(driver, password):
     
     driver.implicitly_wait(10)
     # password_button = driver.find_element('id',"elem_4")
@@ -52,11 +52,11 @@ def run_to_trend_export_page(driver):
     print('clicked password button')
 
     driver.implicitly_wait(10)
-    password = driver.find_element(By.CLASS_NAME, "gwt-PasswordTextBox")
-    password.send_keys("0007")
+    password_textbox = driver.find_element(By.CLASS_NAME, "gwt-PasswordTextBox")
+    password_textbox.send_keys(password)
 
     driver.implicitly_wait(10)
-    password.send_keys(u'\ue007')
+    password_textbox.send_keys(u'\ue007')
     print('entered and submitted password')
     # password_submit_button = driver.find_element(By.CLASS_NAME, "gwt-Button")
     # password_submit_button.click()
@@ -97,7 +97,7 @@ def automate_time(config):
         time.sleep(5)
 
 # Find and download all the csv files
-def download_csv(driver, config, option, ip):
+def download_csv(driver, device, option, ip):
     files = driver.find_elements('xpath', "//*[@id[contains(.,'csvlink')]]")
     print(len(files))
 
@@ -141,7 +141,7 @@ def download_csv(driver, config, option, ip):
         date = driver.find_element('id', "gestern") # yesterday
         date.click()
         print('chose yesterday')
-        for _, slot in config.slots[ip].items():
+        for _, slot in device['slots'].items():
             slot_name = driver.find_element('xpath', "//*[.='" + slot + "']").get_attribute("id")
             print(slot_name)
             time.sleep(0.5)
@@ -197,22 +197,27 @@ def find_all_slots(driver):
 
 def run_automation(config, option):
     if option != 'choose':
-        for _, ip in config.ip.items():
-            directory = create_new_directory(ip, config.directory, option)
-            driver = initialise_driver(ip)
-            driver.implicitly_wait(10)
+        for _, device in config.devices.items():
+            for key, item in device.items():
+                if key == 'ip':
+                    ip = item
+                    print(ip)
+                    directory = create_new_directory(ip, config.directory, option)
+                    driver = initialise_driver(ip, device['password'])
+                    driver.implicitly_wait(10)
 
-            download_csv(driver, config, option, ip)
-            collate_dataframes(option, directory)
-            driver.close()
+                    download_csv(driver, device, option, ip)
+                    collate_dataframes(option, directory)
+                    driver.close()
     else:
-        ip = config.ip[config.ip_choice]
+        device = config.devices[config.device_choice]
+        ip = device['ip']
         directory = create_new_directory(ip, config.directory, option)
-        driver = initialise_driver(ip)
+        driver = initialise_driver(ip, device['password'])
         # run_to_trend_export_page(driver)
         driver.implicitly_wait(10)
 
-        download_csv(driver, config, option, ip)
+        download_csv(driver, device, option, ip)
         collate_dataframes(option, directory)
         driver.close()
 
