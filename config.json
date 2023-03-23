@@ -3,8 +3,7 @@
         "directory": "C:\\Users\\tengwei.goh\\Documents\\GitHub\\L-QuBE-Data-Automation",
         "ip_choice": "ip_1",
         "ip": {
-            "ip_1": "192.168.253.20",
-            "ip_2": "192.168.254.30"
+            "ip_1": "192.168.253.20"
         },
         "slots" : {
             "192.168.253.20" : {
@@ -17,8 +16,8 @@
             }
 
         },
-        "hour": "9",
-        "minute": "25",
+        "hour": "10",
+        "minute": "05",
         "second": "0"
     }
 }

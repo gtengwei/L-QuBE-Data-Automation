@@ -3,6 +3,8 @@ from selenium import webdriver
 import time
 from selenium.webdriver.common.by import By
 from selenium.webdriver.common.keys import Keys
+from selenium.webdriver.chrome.service import Service as ChromeService # Similar thing for firefox also!
+from subprocess import CREATE_NO_WINDOW # This flag will only be available in windows
 import os
 from apscheduler.schedulers.background import BackgroundScheduler
 from apscheduler.triggers.cron import CronTrigger
@@ -23,10 +25,11 @@ def initialise_driver(ip):
     options.add_argument("--no-sandbox")
     options.add_argument("--disable-dev-shm-usage")
     
-
+    chrome_service = ChromeService('chromedriver')
+    chrome_service.creation_flags = CREATE_NO_WINDOW
     # ip = input("Enter IP address: ")
     #initialise driver with curated options
-    driver = webdriver.Chrome(options=options)
+    driver = webdriver.Chrome(service=chrome_service, options=options)
     # driver.get("http://192.168.253.20")
     while True:
         try:
