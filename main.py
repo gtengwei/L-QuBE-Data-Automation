@@ -44,16 +44,13 @@ def main(config):
                 main(config)
 
 if __name__ == '__main__':
-    # ip = get_ip()
-    # driver = initialise_driver(ip)
-    # main(ip)
     config = get_config()
-    # print('IP address: ' + config.ip)
+    main(config)
 
-    main_thread = Thread(target=main, args=(config,))
-    automate_time_thread = Thread(target=automate_time, args=(config,))
+    # main_thread = Thread(target=main, args=(config,))
+    # automate_time_thread = Thread(target=automate_time, args=(config,))
 
-    main_thread.start()
-    automate_time_thread.start()
-    main_thread.join()
-    automate_time_thread.join()
+    # main_thread.start()
+    # automate_time_thread.start()
+    # main_thread.join()
+    # automate_time_thread.join()
