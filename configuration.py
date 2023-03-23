@@ -30,12 +30,12 @@ def get_config():
 config = get_config()
 # print(config.devices['device_1']['slots']['1'])
 # print(config.devices[config.device_choice]['ip'])
-print(config.devices[config.device_choice])
-device = config.devices[config.device_choice]
-ip = device['ip']
-print(ip)
-for _, slots in device['slots'].items():
-    print(slots)
+# print(config.devices[config.device_choice])
+# device = config.devices[config.device_choice]
+# ip = device['ip']
+# print(ip)
+# for _, slots in device['slots'].items():
+#     print(slots)
 # for _, device in config.devices.items():
 #             for key, item in device.items():
 #                 if key == 'ip':

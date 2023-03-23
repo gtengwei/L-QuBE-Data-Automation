@@ -88,11 +88,13 @@ def automate_time(config):
 
     trigger = CronTrigger(
         year="*", month="*", day="*", 
-        hour=config.hour, minute=config.minute, second="*", timezone=SG
+        hour=config.hour, minute=config.minute, second="0", timezone=SG
     )
     scheduler.add_executor(DebugExecutor(), 'consecutive')
-    scheduler.add_job(run_automation,args=[config,'daily'], trigger=trigger, id='daily', executor='consecutive')
-    scheduler.add_job(run_automation,args=[config,'daily_selected'], trigger=trigger, id='daily_selected', executor='consecutive', misfire_grace_time=600)
+    scheduler.add_job(run_automation,args=[config,'daily'], trigger=trigger, id='daily', 
+                      executor='consecutive', max_instances=1)
+    scheduler.add_job(run_automation,args=[config,'daily_selected'], trigger=trigger, id='daily_selected', 
+                      executor='consecutive', misfire_grace_time=600, max_instances=1)
     while True:
         time.sleep(5)
 
