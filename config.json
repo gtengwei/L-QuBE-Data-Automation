@@ -3,21 +3,21 @@
         "directory": "C:\\Users\\tengwei.goh\\Documents\\GitHub\\L-QuBE-Data-Automation",
         "ip_choice": "ip_1",
         "ip": {
-            "ip_1": "192.168.253.20"
+            "ip_1": "192.168.170.103",
+            "ip_2": "192.168.170.104"
         },
         "slots" : {
-            "192.168.253.20" : {
-                "1" : "TRF-02 GENERAL ALARM",
-                "2" : "TRF-01 GENERAL ALARM"
+            "192.168.170.103" : {
+                "1" : "HDR_CDW_FL",
+                "2" : "HDR2_CDW_FL"
             },
-            "192.168.254.30" : {
-                "1" : "TRF-02 GENERAL ALARM",
-                "2" : "TRF-01 GENERAL ALARM"
+            "192.168.170.104" : {
+                "1" : "HDR_CDW_FL",
+                "2" : "HDR2_CDW_FL"
             }
 
         },
-        "hour": "10",
-        "minute": "05",
-        "second": "0"
+        "hour": "11",
+        "minute": "04"
     }
 }

@@ -88,7 +88,7 @@ def automate_time(config):
 
     trigger = CronTrigger(
         year="*", month="*", day="*", 
-        hour=config.hour, minute=config.minute, second=config.second, timezone=SG
+        hour=config.hour, minute=config.minute, second="*", timezone=SG
     )
     scheduler.add_executor(DebugExecutor(), 'consecutive')
     scheduler.add_job(run_automation,args=[config,'daily'], trigger=trigger, id='daily', executor='consecutive')
