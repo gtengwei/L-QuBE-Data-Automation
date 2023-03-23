@@ -197,10 +197,9 @@ def run_automation(config, option):
         for _, ip in config.ip.items():
             directory = create_new_directory(ip, config.directory, option)
             driver = initialise_driver(ip)
-            run_to_trend_export_page(driver)
             driver.implicitly_wait(10)
 
-            download_csv(driver, config, option)
+            download_csv(driver, config, option, ip)
             collate_dataframes(option, directory)
             driver.close()
     else:
