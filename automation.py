@@ -97,7 +97,7 @@ def automate_time(config):
         time.sleep(5)
 
 # Find and download all the csv files
-def download_csv(driver, device, option, ip):
+def download_csv(driver, device, option):
     files = driver.find_elements('xpath', "//*[@id[contains(.,'csvlink')]]")
     print(len(files))
 
@@ -206,7 +206,7 @@ def run_automation(config, option):
                     driver = initialise_driver(ip, device['password'])
                     driver.implicitly_wait(10)
 
-                    download_csv(driver, device, option, ip)
+                    download_csv(driver, device, option)
                     collate_dataframes(option, directory)
                     driver.close()
     else:
@@ -217,7 +217,7 @@ def run_automation(config, option):
         # run_to_trend_export_page(driver)
         driver.implicitly_wait(10)
 
-        download_csv(driver, device, option, ip)
+        download_csv(driver, device, option)
         collate_dataframes(option, directory)
         driver.close()
 
