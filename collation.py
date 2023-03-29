@@ -132,7 +132,7 @@ def insert_empty_slot_1(df):
             hour_minute_list.remove([temp[0],temp[1]])
     # print(hour_minute_list)
 
-    empty_row = [None for i in range(len(df.columns))]
+    empty_row = [None for _ in range(len(df.columns))]
     for i in range(len(hour_minute_list)):
         hour_minute_list[i] = ':'.join(hour_minute_list[i])
         empty_row[0] = df['Date'][0]
@@ -140,6 +140,32 @@ def insert_empty_slot_1(df):
         df.loc[len(df)] = empty_row
 
     df = df.sort_values(by=['Timestamp'], ascending=True)
+    # df.to_csv('test.csv', index=False)
+    return df
+
+def insert_empty_slot_2(df):
+    # df = pd.read_csv('2023-02-09-collated.csv')
+
+    temp_df = df.copy()
+
+    temp_df['Timestamp'] = pd.to_datetime(df['Timestamp'])
+    temp_df['time_interval'] = temp_df['Timestamp'].diff().fillna(dt.timedelta(0)).apply(lambda x: x.total_seconds() / 60)
+
+    print(temp_df['time_interval'])
+    empty_row = [None for i in range(len(df.columns))]
+    for i in range(len(temp_df)):
+        if temp_df['time_interval'][i] > 1:
+            empty_row[0] = temp_df['Date'][i]
+            empty_row[1] = temp_df['Timestamp'][i] - dt.timedelta(minutes=1)
+
+            df.loc[i] = empty_row
+
+    for i in range(len(df['Timestamp'])):
+        if type(df['Timestamp'][i]) == pd.Timestamp:
+            df['Timestamp'][i] = df['Timestamp'][i].time()
+
+    df['Timestamp'] = df['Timestamp'].astype(str)
+    df = df.sort_values(by=['Date','Timestamp'])
     # df.to_csv('test.csv', index=False)
     return df
 
