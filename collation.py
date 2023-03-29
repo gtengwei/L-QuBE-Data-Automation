@@ -184,25 +184,26 @@ def collate_dataframes(option, change_directory):
                     collated_df = merge_dataframes(collated_df,clean_df)
 
     collated_df = collated_df.sort_values(by=['Date','Timestamp'], ascending=True)
+    filled_collated_df = insert_empty_slot_1(collated_df)
     if option == 'all':
         os.chdir(change_directory)
         current_date = get_current_date()
-        collated_df.to_excel(f"AllData_{current_date}_collated.xlsx", index = False)
+        filled_collated_df.to_excel(f"AllData_{current_date}_collated.xlsx", index = False)
     
     elif option == 'daily':
         os.chdir(change_directory)
         yesterday_date = get_yesterday_date()
-        collated_df.to_excel(f"Daily_{yesterday_date}_collated.xlsx", index = False)
+        filled_collated_df.to_excel(f"Daily_{yesterday_date}_collated.xlsx", index = False)
     
     elif option == 'choose':
         os.chdir(change_directory)
         current_datetime = get_current_datetime()
-        collated_df.to_excel(f"SelectedData_{current_datetime}_collated.xlsx", index = False)
+        filled_collated_df.to_excel(f"SelectedData_{current_datetime}_collated.xlsx", index = False)
     
     elif option == 'daily_selected':
         os.chdir(change_directory)
         yesterday_date = get_yesterday_date()
-        collated_df.to_excel(f"Daily_Selected_{yesterday_date}_collated.xlsx", index = False)
+        filled_collated_df.to_excel(f"Daily_Selected_{yesterday_date}_collated.xlsx", index = False)
     print("Collation Complete")
     os.chdir(main_directory)
 
