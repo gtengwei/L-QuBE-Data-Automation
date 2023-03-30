@@ -159,7 +159,15 @@ def download_csv(driver, device, option):
             daily_button = daily_csvlink.find_element('xpath', "//img[@alt='csvicon']")
             daily_button.click()
             print('downloaded csv file')
-        
+    
+    elif option == 'today':
+        daily_csvlink = driver.find_element('id', "csvlink")
+        daily_button = daily_csvlink.find_element('xpath', "//img[@alt='csvicon']")
+
+        for i in range(len(checkboxes)):
+            checkboxes[i].click()
+            daily_button.click()
+            print('downloaded csv ' + str(i+1))
 def choose_slot(driver, slots):
     # part 2: add slot number to choose
     print('This is the list of slot names: ')

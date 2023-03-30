@@ -35,7 +35,7 @@ def clean_dataframe(csv, option):
         slot_name = result[0]
     slot_name = slot_name.split(':')[1][1:]
     count = 1
-    if option == 'all' or option == 'choose':
+    if option == 'all' or option == 'choose' or option == 'today':
         current_date = get_current_date()
         try:
             os.rename(csv, f"{current_date}_{slot_name}.csv")
@@ -105,6 +105,7 @@ def create_new_directory(ip, user_directory, option):
         new_directory = os.path.join(change_directory, current_datetime)
         if not os.path.exists(new_directory):
             os.makedirs(new_directory)
+
     elif option == 'daily_selected':
         yesterday_date = get_yesterday_date()
         path = user_directory
@@ -112,6 +113,16 @@ def create_new_directory(ip, user_directory, option):
         temp_directory = os.path.join(directory, ip)
         change_directory = os.path.join(temp_directory, 'Daily_Selected_Collation')
         new_directory = os.path.join(change_directory, yesterday_date)
+        if not os.path.exists(new_directory):
+            os.makedirs(new_directory)
+    
+    elif option == 'today':
+        current_date = get_current_date()
+        path = user_directory
+        directory = os.path.join("c:\\",path)
+        temp_directory = os.path.join(directory, ip)
+        change_directory = os.path.join(temp_directory, 'Today_Collation')
+        new_directory = os.path.join(change_directory, current_date)
         if not os.path.exists(new_directory):
             os.makedirs(new_directory)
 
@@ -204,6 +215,11 @@ def collate_dataframes(option, change_directory):
         os.chdir(change_directory)
         yesterday_date = get_yesterday_date()
         filled_collated_df.to_excel(f"Daily_Selected_{yesterday_date}_collated.xlsx", index = False)
+    
+    elif option == 'today':
+        os.chdir(change_directory)
+        current_date = get_current_date()
+        filled_collated_df.to_excel(f"Today_{current_date}_collated.xlsx", index = False)
     print("Collation Complete")
     os.chdir(main_directory)
 
