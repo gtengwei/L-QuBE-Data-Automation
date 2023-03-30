@@ -143,6 +143,7 @@ def download_csv(driver, device, option):
         date = driver.find_element('id', "gestern") # yesterday
         date.click()
         print('chose yesterday')
+
         for _, slot in device['slots'].items():
             slot_name = driver.find_element('xpath', "//*[.='" + slot + "']").get_attribute("id")
             print(slot_name)
@@ -212,6 +213,10 @@ def run_automation(config, option):
                 if key == 'ip':
                     ip = item
                     print(ip)
+                    if option == 'daily_selected':
+                        if len(device['slots']) == 0:
+                            print('No slots selected')
+                            continue
                     directory = create_new_directory(ip, config.directory, option)
                     driver = initialise_driver(ip, device['password'])
                     driver.implicitly_wait(10)

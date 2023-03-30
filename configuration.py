@@ -27,7 +27,9 @@ def get_config():
         print(e)
         return None
 
-config = get_config()
+# config = get_config()
+# for _, device in config.devices.items():
+#     print(len(device['slots']) == 0)
 # print(config.devices['device_1']['slots']['1'])
 # print(config.devices[config.device_choice]['ip'])
 # print(config.devices[config.device_choice])

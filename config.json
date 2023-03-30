@@ -6,10 +6,8 @@
             "device_1" : {
                 "ip" : "192.168.170.103",
                 "password" : "0007",
-                "slots" : {
-                    "1" : "HDR_CDW_FL",
-                    "2" : "HDR2_CDW_FL"
-                }    
+                "slots" : {      
+                } 
             },
             "device_2" : {
                 "ip" : "192.168.170.104",
