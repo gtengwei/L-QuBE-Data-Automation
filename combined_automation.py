@@ -47,5 +47,45 @@ def KAL_collation(KAL_directory):
 
     collated_df.to_excel('KAL_collated.xlsx', index=False)
 
+def e2i_collation(e2i_directory):
+    # path = os.getcwd()
+    # directory = os.path.join("c:\\",path)
+    # print(directory)
+    directory = e2i_directory
+    os.chdir(directory)
+    collated_df = pd.DataFrame()
+    for root,dirs,files in os.walk(directory):
+        for file in files:
+            # print(file)
+            # Ignore collated file to avoid errors
+            if file.startswith('CET'):
+                try:
+                    # df = pd.read_csv('CET WEST Greenmark Data - Chiller 42-2022.csv')
+                    df = pd.read_csv(file)
+                    cols = list(df.iloc[0].name)
+                    to_drop = df.head(0)
+                    df = df.drop(to_drop, axis=1)
+                    df = df.reset_index()
+                    df.columns = cols
+                    df = df.drop(df.index[0])
+                    df = df.reset_index()
+                    df = df.drop(df.columns[0], axis=1)
+                    try:
+                        df.columns.get_loc('Timestamp')
+                    except:
+                        df = df.rename(columns={'Time': 'Timestamp'})
+
+                    for i in range(len(df)):
+                        temp = df['Timestamp'][i].split(':')
+                        hour = str('%02d' % int(temp[0])) + ':'
+                        minute = str('%02d' % int(temp[1]))
+                        df['Timestamp'][i] = hour + minute
+                    df = insert_empty_slot_1(df)
+                    collated_df = pd.concat([collated_df, df], axis=0)
+                except:
+                    print(file)
+                    pass
+    collated_df.to_excel('e2i_collated.xlsx', index=False)
+
 # config = get_config()
-# KAL_collation(config.collation['KAL_directory'])
+# e2i_collation(config.collation['directory'])
