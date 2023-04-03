@@ -1,5 +1,5 @@
 from collation import *
-from automation import *
+from selenium_automation import *
 from configuration import *
 from threading import Thread
 import warnings
