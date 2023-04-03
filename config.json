@@ -19,6 +19,11 @@
             }
         
         },
+        "collation" : {
+            "directory" : "C:\\Users\\tengwei.goh\\Desktop\\Sample Data\\yishun_test",
+            "vendor" : "Yishun",
+            "excel_column_header_row" : "7"
+        },
         "hour": "15",
         "minute": "48"
     }
