@@ -1,4 +1,4 @@
-from automation import *
+from selenium_automation import *
 from configuration import *
 from collation import *
 # python -m PyInstaller -F run_automation.py
