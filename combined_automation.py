@@ -184,11 +184,12 @@ def e2i_collation_2(e2i_directory):
                         df['Timestamp'][i] = hour + minute
                     df = insert_empty_slot_1(df)
                     collated_df = pd.concat([collated_df, df], axis=0)
-                    
+
                 except:
                     print(file)
                     pass
     collated_df.to_excel('e2i_collated_2.xlsx', index=False)
+
 def yishun_collation(yishun_directory):
     directory = yishun_directory
     os.chdir(directory)
@@ -220,6 +221,120 @@ def yishun_collation(yishun_directory):
                 collated_df = pd.concat([collated_df, df], axis=0)
     current_date = get_current_date()
     collated_df.to_excel(f'{current_date}_collated.xlsx', index=False)
+
+def one_for_all_collation(user_directory, vendor, excel_column_header_row):
+    directory = user_directory
+    os.chdir(directory)
+    collated_df = pd.DataFrame()
+    for root,dirs,files in os.walk(directory):
+        for file in files:
+            # print(file)
+            # Ignore collated file to avoid errors
+            if file.endswith('collated.csv'):
+                continue
+
+            if file.endswith('.csv'):
+                try:
+                    # df = pd.read_csv('CET WEST Greenmark Data - Chiller 42-2022.csv')
+                    f = open(file, 'r')
+                    result = []
+                    for l in f.readlines():
+                        vals = [l for l in l.split('#') if l]
+                        index = vals[0]
+                        result.append(index)
+                    ...
+                    # fill dataframe
+                    f.close()
+
+                    for i in range(len(result)):
+                        result[i] = result[i].replace('\n','')
+                        # result = result.split(',')
+
+                    temp = result[1:]
+
+                    for i in range(len(temp)):
+                        temp[i] = temp[i].split(',')
+                    df = pd.DataFrame(temp[1:],columns=temp[0])
+                    # df.head()
+                    try:
+                        df.columns.get_loc('Timestamp')
+                    except:
+                        df = df.rename(columns={'Time': 'Timestamp'})
+                    
+                    for i in range(len(df)):
+                        temp = df['Timestamp'][i].split(':')
+                        hour = str('%02d' % int(temp[0])) + ':'
+                        minute = str('%02d' % int(temp[1]))
+                        df['Timestamp'][i] = hour + minute
+                    df = insert_empty_slot_1(df)
+                    collated_df = pd.concat([collated_df, df], axis=0)
+                except:
+                    
+                        temp_df = pd.read_csv(file, index_col=False)
+                        # print(df)
+                        try:
+                            temp_df.columns.get_loc('Timestamp')
+                        except:
+                            temp_df = temp_df.rename(columns={'Time': 'Timestamp'})
+                        # print(temp_df.head(5))
+                        # print(temp_df['Timestamp'])
+                        for i in range(len(temp_df)):
+                            temp = temp_df['Timestamp'][i].split(':')
+                            hour = str('%02d' % int(temp[0])) + ':'
+                            minute = str('%02d' % int(temp[1]))
+                            temp_df['Timestamp'][i] = hour + minute
+                            # print(df['Timestamp'])
+                        # print(df)
+                        df = insert_empty_slot_1(df)
+                        collated_df = pd.concat([collated_df, df], axis=0)
+                    # except:
+                    #     print(file)
+                    #     pass
+            
+            if file.endswith('.xlsx'):
+                try:
+                    df = pd.read_excel(file, sheet_name=0)
+                    # print(df.head(6))
+                    df = df.reset_index(drop=True)
+                    df.columns = df.iloc[excel_column_header_row-2]
+                    df = df.drop(df.index[:excel_column_header_row-1])
+                    df = df.reset_index()
+                    df = df.dropna(how='all')
+                    df.drop(columns=['index'], axis=1, inplusace=True)
+
+                    try:
+                        df.columns.get_loc('Timestamp')
+                    except:
+                        df = df.rename(columns={'Time': 'Timestamp'})
+                    
+                    df['date and time'] = df['date and time'].str.split(' ')
+                    # df["Date"] = ""
+                    # df["Timestamp"] = ""
+                    # df['Date'] = df['date and time'][0][0]
+
+                    for i in range(len(df['date and time'])):
+                        try:
+                            df['Date'] = df['date and time'][0][0]
+                            df['Timestamp'][i] = df['date and time'][i][1][1:6]
+                        except:
+                            pass
+                    print(df['Date'].head())
+                    print(df['Timestamp'].head())
+
+                    df = df.sort_values(by=['Timestamp'])
+
+                    cols_to_move = ['Date','Timestamp']
+                    df = df[ cols_to_move + [ col for col in df.columns if col not in cols_to_move ] ]
+                    df.drop(columns=['date and time'], axis=1, inplace=True)
+                    df['Timestamp'].replace('', np.nan, inplace=True)
+                    df.dropna(subset=['Timestamp'], inplace=True)
+                    df = insert_empty_slot_1(df)
+                    collated_df = pd.concat([collated_df, df], axis=0)
+                except:
+                    print(file)
+                    pass
+    current_date = get_current_date()
+    collated_df.to_excel(f'{vendor}_{current_date}_collated.xlsx', index=False)
 
 # config = get_config()
 # e2i_collation(config.collation['directory'])
