@@ -270,19 +270,19 @@ def one_for_all_collation(user_directory, vendor, excel_column_header_row):
                     collated_df = pd.concat([collated_df, df], axis=0)
                 except:
                     
-                        temp_df = pd.read_csv(file, index_col=False)
+                        df = pd.read_csv(file, index_col=False)
                         # print(df)
                         try:
-                            temp_df.columns.get_loc('Timestamp')
+                            df.columns.get_loc('Timestamp')
                         except:
-                            temp_df = temp_df.rename(columns={'Time': 'Timestamp'})
-                        # print(temp_df.head(5))
-                        # print(temp_df['Timestamp'])
-                        for i in range(len(temp_df)):
-                            temp = temp_df['Timestamp'][i].split(':')
+                            df = df.rename(columns={'Time': 'Timestamp'})
+                        # print(df.head(5))
+                        # print(df['Timestamp'])
+                        for i in range(len(df)):
+                            temp = df['Timestamp'][i].split(':')
                             hour = str('%02d' % int(temp[0])) + ':'
                             minute = str('%02d' % int(temp[1]))
-                            temp_df['Timestamp'][i] = hour + minute
+                            df['Timestamp'][i] = hour + minute
                             # print(df['Timestamp'])
                         # print(df)
                         df = insert_empty_slot_1(df)
@@ -335,6 +335,7 @@ def one_for_all_collation(user_directory, vendor, excel_column_header_row):
                     pass
     current_date = get_current_date()
     collated_df.to_excel(f'{vendor}_{current_date}_collated.xlsx', index=False)
-
-# config = get_config()
+    
+config = get_config()
 # e2i_collation(config.collation['directory'])
+# one_for_all_collation(config.collation['directory'], config.collation['vendor'], config.collation['excel_column_header_row'])
