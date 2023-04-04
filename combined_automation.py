@@ -87,5 +87,37 @@ def e2i_collation(e2i_directory):
                     pass
     collated_df.to_excel('e2i_collated.xlsx', index=False)
 
+def yishun_collation(yishun_directory):
+    directory = yishun_directory
+    os.chdir(directory)
+    collated_df = pd.DataFrame()
+    for root,dirs,files in os.walk(directory):
+        for file in files:
+            # print(file)
+            # Ignore collated file to avoid errors
+            if file.endswith('collated.csv'):
+                continue
+
+            if file.endswith('.csv'):
+                temp_df = pd.read_csv(file)
+                # print(df)
+                try:
+                    temp_df.columns.get_loc('Timestamp')
+                except:
+                    temp_df = temp_df.rename(columns={'Time': 'Timestamp'})
+                print(temp_df.head(5))
+                # print(df['Timestamp'])
+                for i in range(len(temp_df)):
+                    temp = temp_df['Timestamp'][i].split(':')
+                    hour = str('%02d' % int(temp[0])) + ':'
+                    minute = str('%02d' % int(temp[1]))
+                    temp_df['Timestamp'][i] = hour + minute
+                    # print(df['Timestamp'])
+                print(temp_df)
+                df = insert_empty_slot_1(df)
+                collated_df = pd.concat([collated_df, df], axis=0)
+    current_date = get_current_date()
+    collated_df.to_excel(f'{current_date}_collated.xlsx', index=False)
+
 # config = get_config()
 # e2i_collation(config.collation['directory'])
