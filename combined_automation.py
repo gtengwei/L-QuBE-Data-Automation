@@ -260,7 +260,8 @@ def one_for_all_collation(user_directory, vendor, excel_column_header_row):
                         df.columns.get_loc('Timestamp')
                     except:
                         df = df.rename(columns={'Time': 'Timestamp'})
-                    
+                    print(file)
+                    print(df.head(5))
                     for i in range(len(df)):
                         temp = df['Timestamp'][i].split(':')
                         hour = str('%02d' % int(temp[0])) + ':'
@@ -269,27 +270,27 @@ def one_for_all_collation(user_directory, vendor, excel_column_header_row):
                     df = insert_empty_slot_1(df)
                     collated_df = pd.concat([collated_df, df], axis=0)
                 except:
-                    
-                        df = pd.read_csv(file, index_col=False)
-                        # print(df)
                         try:
-                            df.columns.get_loc('Timestamp')
-                        except:
-                            df = df.rename(columns={'Time': 'Timestamp'})
-                        # print(df.head(5))
-                        # print(df['Timestamp'])
-                        for i in range(len(df)):
-                            temp = df['Timestamp'][i].split(':')
-                            hour = str('%02d' % int(temp[0])) + ':'
-                            minute = str('%02d' % int(temp[1]))
-                            df['Timestamp'][i] = hour + minute
+                            df = pd.read_csv(file, index_col=False)
+                            # print(df)
+                            try:
+                                df.columns.get_loc('Timestamp')
+                            except:
+                                df = df.rename(columns={'Time': 'Timestamp'})
+                            # print(df.head(5))
                             # print(df['Timestamp'])
-                        # print(df)
-                        df = insert_empty_slot_1(df)
-                        collated_df = pd.concat([collated_df, df], axis=0)
-                    # except:
-                    #     print(file)
-                    #     pass
+                            for i in range(len(df)):
+                                temp = df['Timestamp'][i].split(':')
+                                hour = str('%02d' % int(temp[0])) + ':'
+                                minute = str('%02d' % int(temp[1]))
+                                df['Timestamp'][i] = hour + minute
+                                # print(df['Timestamp'])
+                            # print(df)
+                            df = insert_empty_slot_1(df)
+                            collated_df = pd.concat([collated_df, df], axis=0)
+                        except:
+                            print(file)
+                            pass
             
             if file.endswith('.xlsx'):
                 try:
@@ -338,4 +339,4 @@ def one_for_all_collation(user_directory, vendor, excel_column_header_row):
     
 config = get_config()
 # e2i_collation(config.collation['directory'])
-# one_for_all_collation(config.collation['directory'], config.collation['vendor'], config.collation['excel_column_header_row'])
+one_for_all_collation(config.collation['directory'], config.collation['vendor'], config.collation['excel_column_header_row'])
