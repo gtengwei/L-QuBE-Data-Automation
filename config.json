@@ -20,8 +20,8 @@
         
         },
         "collation" : {
-            "directory" : "C:\\Users\\tengwei.goh\\Desktop\\Sample Data\\KAL_test",
-            "vendor" : "KAL",
+            "directory" : "C:\\Users\\tengwei.goh\\Desktop\\Sample Data\\e2i_test",
+            "vendor" : "e2i",
             "excel_column_header_row" : "7"
             
         },

@@ -226,7 +226,8 @@ def one_for_all_collation(user_directory, vendor, excel_column_header_row):
     files_with_errors = []
     directory = user_directory
     os.chdir(directory)
-    collated_df = pd.DataFrame()
+    collated_df = pd.DataFrame(columns=['Date','Timestamp'])
+    # collated_df = pd.DataFrame()
     for root,dirs,files in os.walk(directory):
         for file in files:
             # print(file)
@@ -235,6 +236,7 @@ def one_for_all_collation(user_directory, vendor, excel_column_header_row):
                 continue
 
             if file.endswith('.csv'):
+                print(file)
                 try:
                     # df = pd.read_csv('CET WEST Greenmark Data - Chiller 42-2022.csv')
                     f = open(file, 'r')
@@ -268,9 +270,19 @@ def one_for_all_collation(user_directory, vendor, excel_column_header_row):
                         hour = str('%02d' % int(temp[0])) + ':'
                         minute = str('%02d' % int(temp[1]))
                         df['Timestamp'][i] = hour + minute
-                    df = insert_empty_slot_1(df)
-                    collated_df = pd.concat([collated_df, df], axis=0)
-                except:
+                    # cols_to_use = df.columns.difference(collated_df.columns)
+                    # print(cols_to_use)
+                    # collated_df = pd.merge(collated_df, df[cols_to_use], left_index=True, right_index=True, how='outer')
+                    collated_df = pd.merge(collated_df, df, on=['Date','Timestamp'], how='outer', suffixes=('', '_test'))
+                    # print(collated_df)
+                    to_drop = [x for x in collated_df if x.endswith('_test')]
+                    print(to_drop)
+                    collated_df.drop(to_drop, axis=1, inplace=True)
+                    # collated_df = collated_df.sort_values(by=['Date','Timestamp'], ascending=True)
+                    # df = insert_empty_slot_1(df)
+                    # collated_df = pd.concat([collated_df, df], ignore_index=False)
+                except Exception as e:
+                        print(e)
                         try:
                             df = pd.read_csv(file, index_col=False)
                             # print(df)
@@ -289,8 +301,8 @@ def one_for_all_collation(user_directory, vendor, excel_column_header_row):
                             # print(df)
                             df = insert_empty_slot_1(df)
                             collated_df = pd.concat([collated_df, df], axis=0)
-                        except:
-                            files_with_errors.append(file)
+                        except Exception as e:
+                            files_with_errors.append((file, e))
                             pass
             
             if file.endswith('.xlsx'):
@@ -332,13 +344,91 @@ def one_for_all_collation(user_directory, vendor, excel_column_header_row):
                     df.dropna(subset=['Timestamp'], inplace=True)
                     df = insert_empty_slot_1(df)
                     collated_df = pd.concat([collated_df, df], axis=0)
-                except:
-                    files_with_errors.append(file)
+                except Exception as e:
+                    files_with_errors.append((file, e))
                     pass
+    
+    # for col in collated_df:
+    #     if col.endswith('_x'):
+    #         collated_df.rename(columns={col:col.rstrip('_x')}, inplace=True)
+    collated_df = collated_df.sort_values(by=['Date','Timestamp'], ascending=True)
     print(f'These are the files with errors: {files_with_errors}')
     current_date = get_current_date()
     collated_df.to_excel(f'{vendor}_{current_date}_collated.xlsx', index=False)
-    
+
+def e2i_redo_collation():
+    import os
+    import pandas as pd
+    files_with_errors = []
+    directory = "C:\\Users\\tengwei.goh\\Desktop\\Sample Data\\e2i_test"
+    os.chdir(directory)
+    collated_df = pd.DataFrame(columns=['Date','Timestamp'])
+    temp_df = pd.DataFrame()
+    count = 0
+    cols_to_use = ['Date', 'Timestamp']
+    # collated_df = pd.DataFrame()
+    for root,dirs,files in os.walk(directory):
+        for file in files:
+            count += 1
+            # print(file)
+            # Ignore collated file to avoid errors
+            if file.endswith('collated.csv'):
+                continue
+
+            if file.endswith('.csv'):
+                print(file)
+                # df = pd.read_csv('CET WEST Greenmark Data - Chiller 42-2022.csv')
+                f = open(file, 'r')
+                result = []
+                for l in f.readlines():
+                    vals = [l for l in l.split('#') if l]
+                    index = vals[0]
+                    result.append(index)
+                ...
+                # fill dataframe
+                f.close()
+
+                for i in range(len(result)):
+                    result[i] = result[i].replace('\n','')
+                    # result = result.split(',')
+
+                temp = result[1:]
+
+                for i in range(len(temp)):
+                    temp[i] = temp[i].split(',')
+                df = pd.DataFrame(temp[1:],columns=temp[0])
+                # df.head()
+                try:
+                    df.columns.get_loc('Timestamp')
+                except:
+                    df = df.rename(columns={'Time': 'Timestamp'})
+                # print(file)
+                # print(df.head(5))
+                for i in range(len(df)):
+                    temp = df['Timestamp'][i].split(':')
+                    hour = str('%02d' % int(temp[0])) + ':'
+                    minute = str('%02d' % int(temp[1]))
+                    df['Timestamp'][i] = hour + minute
+
+                    
+                #TODO: NEED HELP FROM HERE
+                if count > 1:
+                    cols_to_use = df.columns.difference(temp_df.columns).tolist()
+                    # cols_to_use += temp_cols
+                    print(cols_to_use)
+                    collated_df.reindex(columns=cols_to_use)
+                    print(collated_df.columns)
+                # collated_df = pd.merge(collated_df, df[cols_to_use], left_index=True, right_index=True, how='outer')
+                try:
+                    collated_df = pd.merge(collated_df, df, on=cols_to_use, how='outer', suffixes=('', '_test'))
+                except:
+                    collated_df = pd.merge(collated_df, df, on=['Date','Timestamp'], how='outer')
+                print(collated_df.columns)
+                to_drop = [x for x in collated_df if x.endswith('_test')]
+                print(to_drop)
+                collated_df.drop(to_drop, axis=1, inplace=True)
+    print(collated_df.tail())
+    collated_df.to_csv('collated.csv', index=False)
 config = get_config()
 # e2i_collation(config.collation['directory'])
 one_for_all_collation(config.collation['directory'], config.collation['vendor'], config.collation['excel_column_header_row'])
