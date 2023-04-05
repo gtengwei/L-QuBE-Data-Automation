@@ -223,6 +223,7 @@ def yishun_collation(yishun_directory):
     collated_df.to_excel(f'{current_date}_collated.xlsx', index=False)
 
 def one_for_all_collation(user_directory, vendor, excel_column_header_row):
+    files_with_errors = []
     directory = user_directory
     os.chdir(directory)
     collated_df = pd.DataFrame()
@@ -260,8 +261,8 @@ def one_for_all_collation(user_directory, vendor, excel_column_header_row):
                         df.columns.get_loc('Timestamp')
                     except:
                         df = df.rename(columns={'Time': 'Timestamp'})
-                    print(file)
-                    print(df.head(5))
+                    # print(file)
+                    # print(df.head(5))
                     for i in range(len(df)):
                         temp = df['Timestamp'][i].split(':')
                         hour = str('%02d' % int(temp[0])) + ':'
@@ -289,7 +290,7 @@ def one_for_all_collation(user_directory, vendor, excel_column_header_row):
                             df = insert_empty_slot_1(df)
                             collated_df = pd.concat([collated_df, df], axis=0)
                         except:
-                            print(file)
+                            files_with_errors.append(file)
                             pass
             
             if file.endswith('.xlsx'):
@@ -297,11 +298,11 @@ def one_for_all_collation(user_directory, vendor, excel_column_header_row):
                     df = pd.read_excel(file, sheet_name=0)
                     # print(df.head(6))
                     df = df.reset_index(drop=True)
-                    df.columns = df.iloc[excel_column_header_row-2]
-                    df = df.drop(df.index[:excel_column_header_row-1])
+                    df.columns = df.iloc[int(excel_column_header_row)-2]
+                    df = df.drop(df.index[:int(excel_column_header_row)-1])
                     df = df.reset_index()
                     df = df.dropna(how='all')
-                    df.drop(columns=['index'], axis=1, inplusace=True)
+                    df.drop(columns=['index'], axis=1, inplace=True)
 
                     try:
                         df.columns.get_loc('Timestamp')
@@ -332,11 +333,18 @@ def one_for_all_collation(user_directory, vendor, excel_column_header_row):
                     df = insert_empty_slot_1(df)
                     collated_df = pd.concat([collated_df, df], axis=0)
                 except:
-                    print(file)
+                    files_with_errors.append(file)
                     pass
+    print(f'These are the files with errors: {files_with_errors}')
     current_date = get_current_date()
     collated_df.to_excel(f'{vendor}_{current_date}_collated.xlsx', index=False)
     
 config = get_config()
 # e2i_collation(config.collation['directory'])
 one_for_all_collation(config.collation['directory'], config.collation['vendor'], config.collation['excel_column_header_row'])
+
+# issues with excel file: date and time column, and format of date and time(2022-08-26 :23:59:00 PM)
+# e2i: 01:50 chiller 41 has duplicate timestamp
+# e2i: chiller 217 has no column header
+# e2i: mixture of files within
+# e2i: MSB has no column header
