@@ -270,10 +270,35 @@ def csv_collation(file, collated_df, files_with_errors):
         df = df.set_index(['Date','Timestamp'])
         collated_df = collated_df.combine_first(df)
         return collated_df, files_with_errors
-    except Exception as e:
-        print(e)
-        files_with_errors.append(file)
-        return collated_df, files_with_errors
+    except:
+        try:
+            df = pd.read_csv(file, index_col=False)
+            try:
+                df.columns.get_loc('Timestamp')
+            except:
+                df = df.rename(columns={'Time': 'Timestamp'})
+            
+            df['Timestamp'] = df['Timestamp'].astype(str)
+            print(df['Timestamp'])
+            for i in range(len(df)):
+                temp = df['Timestamp'][i].split(':')
+                hour = str('%02d' % int(temp[0])) + ':'
+                minute = str('%02d' % int(temp[1]))
+                df['Timestamp'][i] = hour + minute
+                # print(df['Timestamp'])
+
+            
+            df = df.loc[:, df.columns.notna()]
+            df = df[df['Timestamp'].notna()]
+            df = insert_empty_slot_1(df)
+            # print(collated_df.columns)
+            df = df.set_index(['Date','Timestamp'])
+            collated_df = collated_df.combine_first(df)
+            return collated_df, files_with_errors
+        except Exception as e:
+            print(e)
+            files_with_errors.append(file)
+            return collated_df, files_with_errors
 
 def excel_collation(file, collated_df, files_with_errors, excel_column_header_row):
     try:
@@ -301,6 +326,7 @@ def excel_collation(file, collated_df, files_with_errors, excel_column_header_ro
                 pass
             
         df.drop(columns=['date and time'], axis=1, inplace=True)
+        
         # NEED TO DROP EMPTY COLUMN NAMES AND CELLS to prevent error
         df = df.loc[:, df.columns.notna()]
         df = df[df['Timestamp'].notna()]
@@ -340,8 +366,8 @@ def combined_collation(collation):
     collated_df.to_excel(f'{vendor}_{current_date}_collated.xlsx')
     # collated_df.to_csv(f'{vendor}_{current_date}_collated.csv')
 
-# config = get_config()
-# combined_collation(config.collation)
+config = get_config()
+combined_collation(config.collation)
 
 # issues with excel file: date and time column, and format of date and time(2022-08-26 :23:59:00 PM)
 # e2i: 01:50 chiller 41 has duplicate timestamp
