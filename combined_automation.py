@@ -561,6 +561,114 @@ def KAL_redo_collation():
     # current_date = get_current_date()
     collated_df.to_excel('collated.xlsx')
 
+def csv_collation(file, collated_df, files_with_errors):
+    try:
+        f = open(file, 'r')
+        result = []
+        for l in f.readlines():
+            vals = [l for l in l.split('#') if l]
+            index = vals[0]
+            result.append(index)
+        ...
+        # fill dataframe
+        f.close()
+
+        for i in range(len(result)):
+            result[i] = result[i].replace('\n','')
+            # result = result.split(',')
+
+        temp = result[1:]
+
+        for i in range(len(temp)):
+            temp[i] = temp[i].split(',')
+        df = pd.DataFrame(temp[1:],columns=temp[0])
+        try:
+            df.columns.get_loc('Timestamp')
+        except:
+            df = df.rename(columns={'Time': 'Timestamp'})
+        
+        for i in range(len(df)):
+            temp = df['Timestamp'][i].split(':')
+            hour = str('%02d' % int(temp[0])) + ':'
+            minute = str('%02d' % int(temp[1]))
+            df['Timestamp'][i] = hour + minute
+
+        #TODO: FINALLY FIXED
+        df = df.loc[:, df.columns.notna()]
+        df = df[df['Timestamp'].notna()]
+        df = insert_empty_slot_1(df)
+        df = df.set_index(['Date','Timestamp'])
+        collated_df = collated_df.combine_first(df)
+        return collated_df, files_with_errors
+    except Exception as e:
+        print(e)
+        files_with_errors.append(file)
+        return collated_df, files_with_errors
+
+def excel_collation(file, collated_df, files_with_errors, excel_column_header_row):
+    try:
+        df = pd.read_excel(file, sheet_name=0)
+        df = df.reset_index(drop=True)
+        df.columns = df.iloc[excel_column_header_row-2]
+        df = df.drop(df.index[:excel_column_header_row-1])
+        df = df.reset_index()
+        df = df.dropna(how='all')
+        df.drop(columns=['index'], axis=1, inplace=True)
+        print(file)
+        try:
+            df.columns.get_loc('Timestamp')
+        except:
+            df = df.rename(columns={'Time': 'Timestamp'})
+
+        df['date and time'] = df['date and time'].str.split(' ')
+
+        for i in range(len(df['date and time'])):
+            try:
+                df['Date'] = df['date and time'][0][0]
+                df['Timestamp'][i] = df['date and time'][i][1][1:6]
+                
+            except:
+                pass
+            
+        df.drop(columns=['date and time'], axis=1, inplace=True)
+        # NEED TO DROP EMPTY COLUMN NAMES AND CELLS to prevent error
+        df = df.loc[:, df.columns.notna()]
+        df = df[df['Timestamp'].notna()]
+        df = insert_empty_slot_1(df)
+        df = df.set_index(['Date','Timestamp'])
+        collated_df = collated_df.combine_first(df)
+        collated_df = collated_df.rename_axis(None, axis=1)
+        return collated_df, files_with_errors
+    except Exception as e:
+        print(e)
+        files_with_errors.append(file)
+        return collated_df, files_with_errors
+    
+def combined_collation(collation):
+    directory = collation['directory']
+    excel_column_header_row = collation['excel_column_header_row']
+    vendor = os.path.basename(directory)
+    os.chdir(directory)
+    files_with_errors = []
+    collated_df = pd.DataFrame(columns=['Date','Timestamp'])
+    collated_df = collated_df.set_index(['Date','Timestamp'])
+                    
+    for root,dirs,files in os.walk(directory):
+            for file in files:
+                if file.endswith('collated.xlsx'):
+                    continue
+                
+                if file.endswith('.csv'):
+                    collated_df, files_with_errors = csv_collation(file, collated_df, files_with_errors)
+
+                if file.endswith('.xlsx'):
+                    collated_df, files_with_errors = excel_collation(file, collated_df, files_with_errors, excel_column_header_row)
+
+    collated_df.sort_values(by=['Date','Timestamp'], inplace=True, ascending=True)
+    print(f'These are the files with errors: {files_with_errors}')
+    current_date = get_current_date()
+    collated_df.to_excel(f'{vendor}_{current_date}_collated.xlsx')
+    
 # config = get_config()
 # # e2i_collation(config.collation['directory'])
 # one_for_all_collation(config.collation['directory'], config.collation['vendor'], config.collation['excel_column_header_row'])
