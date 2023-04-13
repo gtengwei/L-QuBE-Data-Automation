@@ -309,6 +309,12 @@ def csv_collation(file, collated_df, files_with_errors):
 
 def excel_collation(file, collated_df, files_with_errors, excel_column_header_row):
     try:
+        date_and_time_format = ''
+        date_and_time_column_name_list = ['Date and Time', 'date and time', 'DATE AND TIME',
+                                        'Date & Time',  'date & time', 'DATE & TIME',
+                                        'Date_Time', 'date_time', 'DATE_TIME',
+                                        'Date Time', 'date time', 'DATE TIME'
+                                        ]
         df = pd.read_excel(file, sheet_name=0)
         df = df.reset_index(drop=True)
         df.columns = df.iloc[int(excel_column_header_row)-2]
@@ -322,21 +328,28 @@ def excel_collation(file, collated_df, files_with_errors, excel_column_header_ro
         except:
             df = df.rename(columns={'Time': 'Timestamp'})
 
-        df['date and time'] = df['date and time'].str.split(' ')
-
-        for i in range(len(df['date and time'])):
+        for date_time in date_and_time_column_name_list:
             try:
-                df['Date'] = df['date and time'][0][0]
-                df['Timestamp'][i] = df['date and time'][i][1][1:6]
+                df[date_time] = df[date_time].str.split(' ')
+                date_and_time_format = date_time
+                break
+            except:
+                pass
+        # df['date and time'] = df['date and time'].str.split(' ')
+
+        for i in range(len(df[date_and_time_format])):
+            try:
+                df['Date'] = df[date_and_time_format][0][0]
+                df['Timestamp'][i] = df[date_and_time_format][i][1][1:6]
                 
             except:
                 pass
             
-        df.drop(columns=['date and time'], axis=1, inplace=True)
+        df.drop(columns=[date_and_time_format], axis=1, inplace=True)
         # Need these columns to keep original column order
         cols = collated_df.columns.append(df.columns).unique()
         cols = cols.drop(['Date','Timestamp'])
-        
+
         # NEED TO DROP EMPTY COLUMN NAMES AND CELLS to prevent error
         df = df.loc[:, df.columns.notna()]
         df = df[df['Timestamp'].notna()]
