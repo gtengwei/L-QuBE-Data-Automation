@@ -263,12 +263,16 @@ def csv_collation(file, collated_df, files_with_errors):
             df['Timestamp'][i] = hour + minute
 
         #TODO: FINALLY FIXED
+        # Need these columns to keep original column order
+        cols = collated_df.columns.append(df.columns).unique()
+        cols = cols.drop(['Date','Timestamp'])
+
         # NEED TO DROP EMPTY COLUMN NAMES AND CELLS to prevent error
         df = df.loc[:, df.columns.notna()]
         df = df[df['Timestamp'].notna()]
         df = insert_empty_slot_1(df)
         df = df.set_index(['Date','Timestamp'])
-        collated_df = collated_df.combine_first(df)
+        collated_df = collated_df.combine_first(df).reindex(columns=cols)
         return collated_df, files_with_errors
     except:
         try:
@@ -287,13 +291,16 @@ def csv_collation(file, collated_df, files_with_errors):
                 df['Timestamp'][i] = hour + minute
                 # print(df['Timestamp'])
 
-            
+            # Need these columns to keep original column order
+            cols = collated_df.columns.append(df.columns).unique()
+            cols = cols.drop(['Date','Timestamp'])
+
+            # NEED TO DROP EMPTY COLUMN NAMES AND CELLS to prevent error
             df = df.loc[:, df.columns.notna()]
             df = df[df['Timestamp'].notna()]
             df = insert_empty_slot_1(df)
-            # print(collated_df.columns)
             df = df.set_index(['Date','Timestamp'])
-            collated_df = collated_df.combine_first(df)
+            collated_df = collated_df.combine_first(df).reindex(columns=cols)
             return collated_df, files_with_errors
         except Exception as e:
             print(e)
@@ -326,13 +333,16 @@ def excel_collation(file, collated_df, files_with_errors, excel_column_header_ro
                 pass
             
         df.drop(columns=['date and time'], axis=1, inplace=True)
+        # Need these columns to keep original column order
+        cols = collated_df.columns.append(df.columns).unique()
+        cols = cols.drop(['Date','Timestamp'])
         
         # NEED TO DROP EMPTY COLUMN NAMES AND CELLS to prevent error
         df = df.loc[:, df.columns.notna()]
         df = df[df['Timestamp'].notna()]
         df = insert_empty_slot_1(df)
         df = df.set_index(['Date','Timestamp'])
-        collated_df = collated_df.combine_first(df)
+        collated_df = collated_df.combine_first(df).reindex(columns=cols)
         collated_df = collated_df.rename_axis(None, axis=1)
         return collated_df, files_with_errors
     except Exception as e:
