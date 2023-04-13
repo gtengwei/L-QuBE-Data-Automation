@@ -609,8 +609,8 @@ def excel_collation(file, collated_df, files_with_errors, excel_column_header_ro
     try:
         df = pd.read_excel(file, sheet_name=0)
         df = df.reset_index(drop=True)
-        df.columns = df.iloc[excel_column_header_row-2]
-        df = df.drop(df.index[:excel_column_header_row-1])
+        df.columns = df.iloc[int(excel_column_header_row)-2]
+        df = df.drop(df.index[:int(excel_column_header_row)-1])
         df = df.reset_index()
         df = df.dropna(how='all')
         df.drop(columns=['index'], axis=1, inplace=True)
@@ -655,7 +655,7 @@ def combined_collation(collation):
                     
     for root,dirs,files in os.walk(directory):
             for file in files:
-                if file.endswith('collated.xlsx'):
+                if file.endswith('collated.xlsx') or file.endswith('collated.csv'):
                     continue
                 
                 if file.endswith('.csv'):
@@ -668,15 +668,13 @@ def combined_collation(collation):
     print(f'These are the files with errors: {files_with_errors}')
     current_date = get_current_date()
     collated_df.to_excel(f'{vendor}_{current_date}_collated.xlsx')
-    
+    # collated_df.to_csv(f'{vendor}_{current_date}_collated.csv')
+
 # config = get_config()
-# # e2i_collation(config.collation['directory'])
-# one_for_all_collation(config.collation['directory'], config.collation['vendor'], config.collation['excel_column_header_row'])
+# combined_collation(config.collation)
 
 # issues with excel file: date and time column, and format of date and time(2022-08-26 :23:59:00 PM)
 # e2i: 01:50 chiller 41 has duplicate timestamp
 # e2i: chiller 217 has no column header
 # e2i: mixture of files within
 # e2i: MSB has no column header
-
-KAL_redo_collation()
