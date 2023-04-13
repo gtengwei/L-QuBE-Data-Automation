@@ -245,23 +245,28 @@ def csv_collation(file, collated_df, files_with_errors):
         for i in range(len(result)):
             result[i] = result[i].replace('\n','')
             # result = result.split(',')
+            # print(result[i])
 
         temp = result[1:]
-
+        # print(temp[0])
         for i in range(len(temp)):
             temp[i] = temp[i].split(',')
         df = pd.DataFrame(temp[1:],columns=temp[0])
+        # print(df.head())
         try:
             df.columns.get_loc('Timestamp')
         except:
             df = df.rename(columns={'Time': 'Timestamp'})
-        
+        try:
+            df['Date'] = pd.to_datetime(df['Date'], format='%d/%m/%y')
+        except:
+            df['Date'] = pd.to_datetime(df['Date'], format='%d/%m/%Y')
         for i in range(len(df)):
             temp = df['Timestamp'][i].split(':')
             hour = str('%02d' % int(temp[0])) + ':'
             minute = str('%02d' % int(temp[1]))
             df['Timestamp'][i] = hour + minute
-
+        # print(df.head())
         #TODO: FINALLY FIXED
         # Need these columns to keep original column order
         cols = collated_df.columns.append(df.columns).unique()
@@ -270,20 +275,57 @@ def csv_collation(file, collated_df, files_with_errors):
         # NEED TO DROP EMPTY COLUMN NAMES AND CELLS to prevent error
         df = df.loc[:, df.columns.notna()]
         df = df[df['Timestamp'].notna()]
+        # print(df.head())
         df = insert_empty_slot_1(df)
+        # print(df.head())
         df = df.set_index(['Date','Timestamp'])
+        # print(df.head())
         collated_df = collated_df.combine_first(df).reindex(columns=cols)
         return collated_df, files_with_errors
     except:
         try:
-            df = pd.read_csv(file, index_col=False)
+            df = pd.read_csv(file)
+            df = df.reset_index(drop=True)
+            # f = open(file, 'r')
+            # result = []
+            # for l in f.readlines():
+            #     vals = [l for l in l.split('#') if l]
+            #     index = vals[0]
+            #     # print(index)
+            #     result.append(index)
+            # ...
+            # # fill dataframe
+            # f.close()
+            # # print(result)
+            # for i in range(len(result)):
+            #     result[i] = result[i].replace('\n','')
+            #     # result = result.split(',')
+
+            # cols = result[0].split(',')
+            # temp = result[1:]
+            # # print(temp[0])
+            # for i in range(len(temp)):
+            #     temp[i] = temp[i].split(',')
+            # df = pd.DataFrame(temp[1:],columns=cols)
+            # # print(df.head())
             try:
                 df.columns.get_loc('Timestamp')
             except:
                 df = df.rename(columns={'Time': 'Timestamp'})
-            
+            try:
+                df['Date'] = pd.to_datetime(df['Date'], format='%d/%m/%y')
+            except:
+                df['Date'] = pd.to_datetime(df['Date'], format='%d/%m/%Y')
+            # print(df.Date)
+            # for i in range(len(df)):
+            #     temp = df['Date'][i].split('/')
+            #     day = str('%02d' % int(temp[0])) + '/'
+            #     month = str('%02d' % int(temp[1])) + '/'
+            #     year = str('%04d' % int(temp[2]))
+            #     df['Date'][i] = day + month + year
+            # print(df.Date)
             df['Timestamp'] = df['Timestamp'].astype(str)
-            print(df['Timestamp'])
+            # print(df['Timestamp'])
             for i in range(len(df)):
                 temp = df['Timestamp'][i].split(':')
                 hour = str('%02d' % int(temp[0])) + ':'
@@ -299,7 +341,9 @@ def csv_collation(file, collated_df, files_with_errors):
             df = df.loc[:, df.columns.notna()]
             df = df[df['Timestamp'].notna()]
             df = insert_empty_slot_1(df)
+            # print(df.Date)
             df = df.set_index(['Date','Timestamp'])
+            # print(df.head())
             collated_df = collated_df.combine_first(df).reindex(columns=cols)
             return collated_df, files_with_errors
         except Exception as e:
@@ -376,6 +420,10 @@ def combined_collation(collation):
     os.chdir(directory)
     files_with_errors = []
     collated_df = pd.DataFrame(columns=['Date','Timestamp'])
+    try:
+        collated_df['Date'] = pd.to_datetime(collated_df['Date'], format='%d/%m/%y')
+    except:
+        collated_df['Date'] = pd.to_datetime(collated_df['Date'], format='%d/%m/%Y')
     collated_df = collated_df.set_index(['Date','Timestamp'])
                     
     for root,dirs,files in os.walk(directory):
@@ -389,12 +437,24 @@ def combined_collation(collation):
                 if file.endswith('.xlsx'):
                     collated_df, files_with_errors = excel_collation(file, collated_df, files_with_errors, excel_column_header_row)
 
-    collated_df.sort_values(by=['Date','Timestamp'], inplace=True, ascending=True)
+    # print(sorted(collated_df.index.get_level_values('Date')))
+    collated_df.reset_index(inplace=True)
+    # print(collated_df.head())
+    collated_df = collated_df.sort_values(by=['Date','Timestamp'], ascending=True)
+    collated_df['Date'] = collated_df['Date'].dt.strftime('%d/%m/%Y')
+    # collated_df = collated_df.sort_index(axis=1, ascending=True)
     print(f'These are the files with errors: {files_with_errors}')
     current_date = get_current_date()
-    collated_df.to_excel(f'{vendor}_{current_date}_collated.xlsx')
+    collated_df.to_excel(f'{vendor}_{current_date}_collated.xlsx', index=False)
     # collated_df.to_csv(f'{vendor}_{current_date}_collated.csv')
-
+    writer = pd.ExcelWriter(f'{vendor}_{current_date}_collated.xlsx',
+                        engine='xlsxwriter',
+                        date_format='d/m/yyyy')
+    collated_df.to_excel(writer, sheet_name='Sheet1', index=False)
+    worksheet = writer.sheets['Sheet1']
+    worksheet.set_column('A:B', 15)
+    writer.save()
+    
 config = get_config()
 combined_collation(config.collation)
 
@@ -403,3 +463,4 @@ combined_collation(config.collation)
 # e2i: chiller 217 has no column header
 # e2i: mixture of files within
 # e2i: MSB has no column header
+# e2i: date format changes when there is no slot name
