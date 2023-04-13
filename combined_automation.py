@@ -494,7 +494,8 @@ def e2i_finally_fixed():
                     minute = str('%02d' % int(temp[1]))
                     df['Timestamp'][i] = hour + minute
 
-                #TODO: FINALLY FIXED  
+                #TODO: FINALLY FIXED
+                df = df[df['Timestamp'].notna()]
                 df = insert_empty_slot_1(df)
                 df = df.set_index(['Date','Timestamp'])
                 collated_df = collated_df.combine_first(df)
@@ -544,6 +545,7 @@ def KAL_redo_collation():
                         df.drop(columns=['date and time'], axis=1, inplace=True)
                         # NEED TO DROP EMPTY COLUMN NAMES to prevent error
                         df = df.loc[:, df.columns.notna()]
+                        df = df[df['Timestamp'].notna()]
                         df = insert_empty_slot_1(df)
                         df = df.set_index(['Date','Timestamp'])
                         collated_df = collated_df.combine_first(df)
