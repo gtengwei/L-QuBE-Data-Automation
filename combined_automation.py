@@ -307,6 +307,12 @@ def one_for_all_collation(user_directory, vendor, excel_column_header_row):
             
             if file.endswith('.xlsx'):
                 try:
+                    date_and_time = ''
+                    date_and_time_column_name_list = ['Date and Time', 'date and time', 'DATE AND TIME',
+                                                      'Date & Time',  'date & time', 'DATE & TIME',
+                                                      'Date_Time', 'date_time', 'DATE_TIME',
+                                                      'Date Time', 'date time', 'DATE TIME'
+                                                       ]
                     df = pd.read_excel(file, sheet_name=0)
                     # print(df.head(6))
                     df = df.reset_index(drop=True)
@@ -321,15 +327,22 @@ def one_for_all_collation(user_directory, vendor, excel_column_header_row):
                     except:
                         df = df.rename(columns={'Time': 'Timestamp'})
                     
-                    df['date and time'] = df['date and time'].str.split(' ')
+                    for date_time in date_and_time_column_name_list:
+                        try:
+                            df[date_time] = df[date_time].str.split(' ')
+                            date_and_time = date_time
+                            break
+                        except:
+                            pass
+                    # df['date and time'] = df['date and time'].str.split(' ')
                     # df["Date"] = ""
                     # df["Timestamp"] = ""
                     # df['Date'] = df['date and time'][0][0]
 
-                    for i in range(len(df['date and time'])):
+                    for i in range(len(df[date_and_time])):
                         try:
-                            df['Date'] = df['date and time'][0][0]
-                            df['Timestamp'][i] = df['date and time'][i][1][1:6]
+                            df['Date'] = df[date_and_time][0][0]
+                            df['Timestamp'][i] = df[date_and_time][i][1][1:6]
                         except:
                             pass
                     print(df['Date'].head())
@@ -339,7 +352,7 @@ def one_for_all_collation(user_directory, vendor, excel_column_header_row):
 
                     cols_to_move = ['Date','Timestamp']
                     df = df[ cols_to_move + [ col for col in df.columns if col not in cols_to_move ] ]
-                    df.drop(columns=['date and time'], axis=1, inplace=True)
+                    df.drop(columns=[date_and_time], axis=1, inplace=True)
                     df['Timestamp'].replace('', np.nan, inplace=True)
                     df.dropna(subset=['Timestamp'], inplace=True)
                     df = insert_empty_slot_1(df)
@@ -487,6 +500,63 @@ def e2i_finally_fixed():
                 
     collated_df.sort_values(by=['Date','Timestamp'], inplace=True)
     collated_df.to_csv('collated.csv')
+
+def KAL_redo_collation():
+    import pandas as pd
+    import os
+    directory = "C:\\Users\\tengwei.goh\\Desktop\\Sample Data\\KAL_test"
+    os.chdir(directory)
+    files_with_errors = []
+    collated_df = pd.DataFrame(columns=['Date','Timestamp'])
+    collated_df = collated_df.set_index(['Date','Timestamp'])
+                    
+    for root,dirs,files in os.walk(directory):
+            for file in files:
+                if file.endswith('collated.xlsx'):
+                    continue
+                    
+                if file.endswith('.xlsx'):
+                    try:
+                        df = pd.read_excel(file, sheet_name=0)
+                        df = df.reset_index(drop=True)
+                        df.columns = df.iloc[7-2]
+                        df = df.drop(df.index[:7-1])
+                        df = df.reset_index()
+                        df = df.dropna(how='all')
+                        df.drop(columns=['index'], axis=1, inplace=True)
+                        print(file)
+                        try:
+                            df.columns.get_loc('Timestamp')
+                        except:
+                            df = df.rename(columns={'Time': 'Timestamp'})
+
+                        df['date and time'] = df['date and time'].str.split(' ')
+
+                        for i in range(len(df['date and time'])):
+                            try:
+                                df['Date'] = df['date and time'][0][0]
+                                df['Timestamp'][i] = df['date and time'][i][1][1:6]
+                                
+                            except:
+                                pass
+                            
+                        df.drop(columns=['date and time'], axis=1, inplace=True)
+                        # NEED TO DROP EMPTY COLUMN NAMES to prevent error
+                        df = df.loc[:, df.columns.notna()]
+                        df = df.set_index(['Date','Timestamp'])
+                        collated_df = collated_df.combine_first(df)
+                        collated_df = collated_df.rename_axis(None, axis=1)
+                    except Exception as e:
+                        print(e)
+                        files_with_errors.append(file)
+                        continue
+
+                    
+    collated_df.sort_values(by=['Date','Timestamp'], inplace=True, ascending=True)
+    print(f'These are the files with errors: {files_with_errors}')
+    # current_date = get_current_date()
+    collated_df.to_excel('collated.xlsx')
+    
 config = get_config()
 # e2i_collation(config.collation['directory'])
 one_for_all_collation(config.collation['directory'], config.collation['vendor'], config.collation['excel_column_header_row'])
