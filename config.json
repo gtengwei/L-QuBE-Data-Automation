@@ -20,7 +20,7 @@
         
         },
         "collation" : {
-            "directory" : "C:\\Users\\tengwei.goh\\Desktop\\Sample Data\\Yishun_test",
+            "directory" : "C:\\Users\\tengwei.goh\\Desktop\\Sample Data\\KAL_test",
             "excel_column_header_row" : "7"
         },
         "hour": "15",

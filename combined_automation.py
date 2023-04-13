@@ -317,6 +317,12 @@ def excel_collation(file, collated_df, files_with_errors, excel_column_header_ro
                                         ]
         df = pd.read_excel(file, sheet_name=0)
         df = df.reset_index(drop=True)
+        # Able to locate column names IF previous rows are all empty
+        # df.dropna(inplace = True, axis=0, thresh=5)
+        # df.columns = df.iloc[0]
+        # df = df.drop(df.index[0])
+        # print(df.head())
+
         df.columns = df.iloc[int(excel_column_header_row)-2]
         df = df.drop(df.index[:int(excel_column_header_row)-1])
         df = df.reset_index()
