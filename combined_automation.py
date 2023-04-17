@@ -289,8 +289,23 @@ def csv_collation(file, collated_df, files_with_errors):
         return collated_df, files_with_errors
     except:
         try:
-            df = pd.read_csv(file)
-            df = df.reset_index(drop=True)
+            file_lines = []
+            # Open the file in read mode and read the lines
+            with open(file, 'r') as f:
+                for line in f:
+                    file_lines.append(line.strip())
+
+            # Split the lines into words, remove empty strings caused by additional columns and add to list
+            for i in range(len(file_lines)):
+                file_lines[i] = file_lines[i].split(',')
+                file_lines[i] = [i for i in file_lines[i] if i != '']
+
+            # Read the cleaned list into a Pandas DataFrame
+            df = pd.DataFrame(file_lines[1:],columns=file_lines[0])
+            print(df.head())
+            # df = pd.read_csv(file)
+            # print(df.columns)
+            # df = df.reset_index(drop=True)
             # f = open(file, 'r')
             # result = []
             # for l in f.readlines():
@@ -317,6 +332,11 @@ def csv_collation(file, collated_df, files_with_errors):
                 df.columns.get_loc('Timestamp')
             except:
                 df = df.rename(columns={'Time': 'Timestamp'})
+
+            df = df.replace(r'^\s*$', np.nan, regex=True)
+            df = df[df['Timestamp'].notna()]
+            df = df.reset_index(drop=True)   
+                     
             try:
                 df['Date'] = pd.to_datetime(df['Date'], format='%d/%m/%y')
             except:
