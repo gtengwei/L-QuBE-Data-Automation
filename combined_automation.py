@@ -252,15 +252,20 @@ def csv_collation(file, collated_df, files_with_errors):
         for i in range(len(temp)):
             temp[i] = temp[i].split(',')
         df = pd.DataFrame(temp[1:],columns=temp[0])
-        # print(df.head())
         try:
             df.columns.get_loc('Timestamp')
         except:
             df = df.rename(columns={'Time': 'Timestamp'})
+
+        df = df.replace(r'^\s*$', np.nan, regex=True)
+        df = df[df['Timestamp'].notna()]
+        df = df.reset_index(drop=True)
+
         try:
             df['Date'] = pd.to_datetime(df['Date'], format='%d/%m/%y')
         except:
             df['Date'] = pd.to_datetime(df['Date'], format='%d/%m/%Y')
+        
         for i in range(len(df)):
             temp = df['Timestamp'][i].split(':')
             hour = str('%02d' % int(temp[0])) + ':'
