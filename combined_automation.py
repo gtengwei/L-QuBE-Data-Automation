@@ -334,6 +334,7 @@ def csv_collation(file, collated_df, files_with_errors):
                 df = df.rename(columns={'Time': 'Timestamp'})
 
             df = df.replace(r'^\s*$', np.nan, regex=True)
+            df = df.replace('None', np.nan, regex=True)
             df = df[df['Timestamp'].notna()]
             df = df.reset_index(drop=True)   
                      
