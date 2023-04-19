@@ -445,7 +445,7 @@ def csv_collation(file, collated_df, files_with_errors):
     #         files_with_errors.append(file)
     #         return collated_df, files_with_errors
 
-def excel_collation(file, collated_df, files_with_errors, excel_column_header_row):
+def excel_collation(file, collated_df, files_with_errors):
     try:
         date_and_time_format = ''
         date_and_time_column_name_list = ['Date and Time', 'date and time', 'DATE AND TIME',
@@ -456,13 +456,13 @@ def excel_collation(file, collated_df, files_with_errors, excel_column_header_ro
         df = pd.read_excel(file, sheet_name=0)
         df = df.reset_index(drop=True)
         # Able to locate column names IF previous rows are all empty
-        # df.dropna(inplace = True, axis=0, thresh=5)
-        # df.columns = df.iloc[0]
-        # df = df.drop(df.index[0])
+        df.dropna(inplace = True, axis=0, thresh=5)
+        df.columns = df.iloc[0]
+        df = df.drop(df.index[0])
         # print(df.head())
 
-        df.columns = df.iloc[int(excel_column_header_row)-2]
-        df = df.drop(df.index[:int(excel_column_header_row)-1])
+        # df.columns = df.iloc[int(excel_column_header_row)-2]
+        # df = df.drop(df.index[:int(excel_column_header_row)-1])
         df = df.reset_index()
         df = df.dropna(how='all')
         df.drop(columns=['index'], axis=1, inplace=True)
@@ -488,7 +488,11 @@ def excel_collation(file, collated_df, files_with_errors, excel_column_header_ro
                 
             except:
                 pass
-            
+        try:
+            df['Date'] = pd.to_datetime(df['Date'], format='%Y-%m-%d')
+        except:
+            df['Date'] = pd.to_datetime(df['Date'], format='%y-%m-%d')
+
         df.drop(columns=[date_and_time_format], axis=1, inplace=True)
         # Need these columns to keep original column order
         cols = collated_df.columns.append(df.columns).unique()
@@ -509,7 +513,6 @@ def excel_collation(file, collated_df, files_with_errors, excel_column_header_ro
     
 def combined_collation(collation):
     directory = collation['directory']
-    excel_column_header_row = collation['excel_column_header_row']
     vendor = os.path.basename(directory)
     os.chdir(directory)
     files_with_errors = []
@@ -529,11 +532,11 @@ def combined_collation(collation):
                     collated_df, files_with_errors = csv_collation(file, collated_df, files_with_errors)
 
                 if file.endswith('.xlsx'):
-                    collated_df, files_with_errors = excel_collation(file, collated_df, files_with_errors, excel_column_header_row)
+                    collated_df, files_with_errors = excel_collation(file, collated_df, files_with_errors)
 
     # print(sorted(collated_df.index.get_level_values('Date')))
     collated_df.reset_index(inplace=True)
-    # print(collated_df.head())
+    print(type(collated_df.Date))
     collated_df = collated_df.sort_values(by=['Date','Timestamp'], ascending=True)
     collated_df['Date'] = collated_df['Date'].dt.strftime('%d/%m/%Y')
     # collated_df = collated_df.sort_index(axis=1, ascending=True)
