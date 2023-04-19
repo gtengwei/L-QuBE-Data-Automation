@@ -486,16 +486,19 @@ def excel_collation(file, collated_df, files_with_errors, date_format_list):
                 break
             except:
                 pass
-        # df['date and time'] = df['date and time'].str.split(' ')
 
         for i in range(len(df[date_and_time_format])):
             try:
                 df['Date'] = df[date_and_time_format][0][0]
-                df['Timestamp'][i] = df[date_and_time_format][i][1][1:6]
-                
+                temp = df[date_and_time_format][i][1].split(':')
+                # Ensure that there are no empty strings in the list that will cause error
+                temp = [i for i in temp if i != '']
+                hour = str('%02d' % int(temp[0])) + ':'
+                minute = str('%02d' % int(temp[1]))
+                df['Timestamp'][i] = hour + minute
             except:
                 pass
-            
+
         for date_format in date_format_list:
             try:
                 df['Date'] = pd.to_datetime(df['Date'], format=date_format)
