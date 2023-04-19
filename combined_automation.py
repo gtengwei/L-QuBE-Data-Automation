@@ -457,6 +457,8 @@ def excel_collation(file, collated_df, files_with_errors):
         df = df.reset_index(drop=True)
         # Able to locate column names IF previous rows are all empty
         df.dropna(inplace = True, axis=0, thresh=5)
+        df = df.replace(r'^\s*$', np.nan, regex=True)
+        df = df.replace('None', np.nan, regex=True)
         df.columns = df.iloc[0]
         df = df.drop(df.index[0])
         # print(df.head())
