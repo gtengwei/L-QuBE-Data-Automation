@@ -20,7 +20,7 @@
         
         },
         "collation" : {
-            "directory" : "C:\\Users\\tengwei.goh\\Desktop\\Sample Data\\test\\Yishun_test\\missing data",
+            "directory" : "C:\\Users\\tengwei.goh\\Desktop\\Sample Data\\test\\e2i_test\\normal",
             "excel_column_header_row" : "7"
         },
         "hour": "15",

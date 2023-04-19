@@ -232,47 +232,56 @@ def KAL_redo_collation():
 
 def csv_collation(file, collated_df, files_with_errors):
     try:
-        f = open(file, 'r')
-        result = []
-        for l in f.readlines():
-            vals = [l for l in l.split('#') if l]
-            index = vals[0]
-            result.append(index)
-        ...
-        # fill dataframe
-        f.close()
+        file_lines = []
+        # Open the file in read mode and read the lines
+        with open(file, 'r') as f:
+            for line in f:
+                file_lines.append(line.strip())
 
-        for i in range(len(result)):
-            result[i] = result[i].replace('\n','')
-            # result = result.split(',')
-            # print(result[i])
+        # Split the lines into words, remove empty strings caused by additional columns and add to list
+        for i in range(len(file_lines)):
+            file_lines[i] = file_lines[i].split(',')
+            file_lines[i] = [i for i in file_lines[i] if i != '']
 
-        temp = result[1:]
-        # print(temp[0])
-        for i in range(len(temp)):
-            temp[i] = temp[i].split(',')
-        df = pd.DataFrame(temp[1:],columns=temp[0])
+        if len(file_lines[0]) < 2:
+            df = pd.DataFrame(file_lines[2:],columns=file_lines[1])
+        else:
+            df = pd.DataFrame(file_lines[1:],columns=file_lines[0])
+        # Read the cleaned list into a Pandas DataFrame
+        # df = pd.DataFrame(file_lines[1:],columns=file_lines[0])
+        # print(df.head())
+        
         try:
             df.columns.get_loc('Timestamp')
         except:
             df = df.rename(columns={'Time': 'Timestamp'})
 
         df = df.replace(r'^\s*$', np.nan, regex=True)
+        df = df.replace('None', np.nan, regex=True)
         df = df[df['Timestamp'].notna()]
-        df = df.reset_index(drop=True)
-
+        df = df.reset_index(drop=True)   
+                    
         try:
             df['Date'] = pd.to_datetime(df['Date'], format='%d/%m/%y')
         except:
             df['Date'] = pd.to_datetime(df['Date'], format='%d/%m/%Y')
-        
+        # print(df.Date)
+        # for i in range(len(df)):
+        #     temp = df['Date'][i].split('/')
+        #     day = str('%02d' % int(temp[0])) + '/'
+        #     month = str('%02d' % int(temp[1])) + '/'
+        #     year = str('%04d' % int(temp[2]))
+        #     df['Date'][i] = day + month + year
+        # print(df.Date)
+        df['Timestamp'] = df['Timestamp'].astype(str)
+        # print(df['Timestamp'])
         for i in range(len(df)):
             temp = df['Timestamp'][i].split(':')
             hour = str('%02d' % int(temp[0])) + ':'
             minute = str('%02d' % int(temp[1]))
             df['Timestamp'][i] = hour + minute
-        # print(df.head())
-        #TODO: FINALLY FIXED
+            # print(df['Timestamp'])
+
         # Need these columns to keep original column order
         cols = collated_df.columns.append(df.columns).unique()
         cols = cols.drop(['Date','Timestamp'])
@@ -280,102 +289,161 @@ def csv_collation(file, collated_df, files_with_errors):
         # NEED TO DROP EMPTY COLUMN NAMES AND CELLS to prevent error
         df = df.loc[:, df.columns.notna()]
         df = df[df['Timestamp'].notna()]
-        # print(df.head())
         df = insert_empty_slot_1(df)
-        # print(df.head())
+        # print(df.Date)
         df = df.set_index(['Date','Timestamp'])
         # print(df.head())
         collated_df = collated_df.combine_first(df).reindex(columns=cols)
         return collated_df, files_with_errors
-    except:
-        try:
-            file_lines = []
-            # Open the file in read mode and read the lines
-            with open(file, 'r') as f:
-                for line in f:
-                    file_lines.append(line.strip())
+    except Exception as e:
+        print(e)
+        files_with_errors.append(file)
+        return collated_df, files_with_errors
+    # try:
+    #     f = open(file, 'r')
+    #     result = []
+    #     for l in f.readlines():
+    #         vals = [l for l in l.split('#') if l]
+    #         index = vals[0]
+    #         result.append(index)
+    #     ...
+    #     # fill dataframe
+    #     f.close()
 
-            # Split the lines into words, remove empty strings caused by additional columns and add to list
-            for i in range(len(file_lines)):
-                file_lines[i] = file_lines[i].split(',')
-                file_lines[i] = [i for i in file_lines[i] if i != '']
+    #     for i in range(len(result)):
+    #         result[i] = result[i].replace('\n','')
+    #         # result = result.split(',')
+    #         # print(result[i])
 
-            # Read the cleaned list into a Pandas DataFrame
-            df = pd.DataFrame(file_lines[1:],columns=file_lines[0])
-            print(df.head())
-            # df = pd.read_csv(file)
-            # print(df.columns)
-            # df = df.reset_index(drop=True)
-            # f = open(file, 'r')
-            # result = []
-            # for l in f.readlines():
-            #     vals = [l for l in l.split('#') if l]
-            #     index = vals[0]
-            #     # print(index)
-            #     result.append(index)
-            # ...
-            # # fill dataframe
-            # f.close()
-            # # print(result)
-            # for i in range(len(result)):
-            #     result[i] = result[i].replace('\n','')
-            #     # result = result.split(',')
+    #     temp = result[1:]
+    #     # print(temp[0])
+    #     for i in range(len(temp)):
+    #         temp[i] = temp[i].split(',')
+    #     df = pd.DataFrame(temp[1:],columns=temp[0])
+    #     try:
+    #         df.columns.get_loc('Timestamp')
+    #     except:
+    #         df = df.rename(columns={'Time': 'Timestamp'})
 
-            # cols = result[0].split(',')
-            # temp = result[1:]
-            # # print(temp[0])
-            # for i in range(len(temp)):
-            #     temp[i] = temp[i].split(',')
-            # df = pd.DataFrame(temp[1:],columns=cols)
-            # # print(df.head())
-            try:
-                df.columns.get_loc('Timestamp')
-            except:
-                df = df.rename(columns={'Time': 'Timestamp'})
+    #     df = df.replace(r'^\s*$', np.nan, regex=True)
+    #     df = df[df['Timestamp'].notna()]
+    #     df = df.reset_index(drop=True)
 
-            df = df.replace(r'^\s*$', np.nan, regex=True)
-            df = df.replace('None', np.nan, regex=True)
-            df = df[df['Timestamp'].notna()]
-            df = df.reset_index(drop=True)   
+    #     try:
+    #         df['Date'] = pd.to_datetime(df['Date'], format='%d/%m/%y')
+    #     except:
+    #         df['Date'] = pd.to_datetime(df['Date'], format='%d/%m/%Y')
+        
+    #     for i in range(len(df)):
+    #         temp = df['Timestamp'][i].split(':')
+    #         hour = str('%02d' % int(temp[0])) + ':'
+    #         minute = str('%02d' % int(temp[1]))
+    #         df['Timestamp'][i] = hour + minute
+    #     # print(df.head())
+    #     #TODO: FINALLY FIXED
+    #     # Need these columns to keep original column order
+    #     cols = collated_df.columns.append(df.columns).unique()
+    #     cols = cols.drop(['Date','Timestamp'])
+
+    #     # NEED TO DROP EMPTY COLUMN NAMES AND CELLS to prevent error
+    #     df = df.loc[:, df.columns.notna()]
+    #     df = df[df['Timestamp'].notna()]
+    #     # print(df.head())
+    #     df = insert_empty_slot_1(df)
+    #     # print(df.head())
+    #     df = df.set_index(['Date','Timestamp'])
+    #     # print(df.head())
+    #     collated_df = collated_df.combine_first(df).reindex(columns=cols)
+    #     return collated_df, files_with_errors
+    # except:
+    #     try:
+    #         file_lines = []
+    #         # Open the file in read mode and read the lines
+    #         with open(file, 'r') as f:
+    #             for line in f:
+    #                 file_lines.append(line.strip())
+
+    #         # Split the lines into words, remove empty strings caused by additional columns and add to list
+    #         for i in range(len(file_lines)):
+    #             file_lines[i] = file_lines[i].split(',')
+    #             file_lines[i] = [i for i in file_lines[i] if i != '']
+
+    #         # Read the cleaned list into a Pandas DataFrame
+    #         df = pd.DataFrame(file_lines[1:],columns=file_lines[0])
+    #         print(df.head())
+    #         # df = pd.read_csv(file)
+    #         # print(df.columns)
+    #         # df = df.reset_index(drop=True)
+    #         # f = open(file, 'r')
+    #         # result = []
+    #         # for l in f.readlines():
+    #         #     vals = [l for l in l.split('#') if l]
+    #         #     index = vals[0]
+    #         #     # print(index)
+    #         #     result.append(index)
+    #         # ...
+    #         # # fill dataframe
+    #         # f.close()
+    #         # # print(result)
+    #         # for i in range(len(result)):
+    #         #     result[i] = result[i].replace('\n','')
+    #         #     # result = result.split(',')
+
+    #         # cols = result[0].split(',')
+    #         # temp = result[1:]
+    #         # # print(temp[0])
+    #         # for i in range(len(temp)):
+    #         #     temp[i] = temp[i].split(',')
+    #         # df = pd.DataFrame(temp[1:],columns=cols)
+    #         # # print(df.head())
+    #         try:
+    #             df.columns.get_loc('Timestamp')
+    #         except:
+    #             df = df.rename(columns={'Time': 'Timestamp'})
+
+    #         df = df.replace(r'^\s*$', np.nan, regex=True)
+    #         df = df.replace('None', np.nan, regex=True)
+    #         df = df[df['Timestamp'].notna()]
+    #         df = df.reset_index(drop=True)   
                      
-            try:
-                df['Date'] = pd.to_datetime(df['Date'], format='%d/%m/%y')
-            except:
-                df['Date'] = pd.to_datetime(df['Date'], format='%d/%m/%Y')
-            # print(df.Date)
-            # for i in range(len(df)):
-            #     temp = df['Date'][i].split('/')
-            #     day = str('%02d' % int(temp[0])) + '/'
-            #     month = str('%02d' % int(temp[1])) + '/'
-            #     year = str('%04d' % int(temp[2]))
-            #     df['Date'][i] = day + month + year
-            # print(df.Date)
-            df['Timestamp'] = df['Timestamp'].astype(str)
-            # print(df['Timestamp'])
-            for i in range(len(df)):
-                temp = df['Timestamp'][i].split(':')
-                hour = str('%02d' % int(temp[0])) + ':'
-                minute = str('%02d' % int(temp[1]))
-                df['Timestamp'][i] = hour + minute
-                # print(df['Timestamp'])
+    #         try:
+    #             df['Date'] = pd.to_datetime(df['Date'], format='%d/%m/%y')
+    #         except:
+    #             df['Date'] = pd.to_datetime(df['Date'], format='%d/%m/%Y')
+    #         # print(df.Date)
+    #         # for i in range(len(df)):
+    #         #     temp = df['Date'][i].split('/')
+    #         #     day = str('%02d' % int(temp[0])) + '/'
+    #         #     month = str('%02d' % int(temp[1])) + '/'
+    #         #     year = str('%04d' % int(temp[2]))
+    #         #     df['Date'][i] = day + month + year
+    #         # print(df.Date)
+    #         df['Timestamp'] = df['Timestamp'].astype(str)
+    #         # print(df['Timestamp'])
+    #         for i in range(len(df)):
+    #             temp = df['Timestamp'][i].split(':')
+    #             hour = str('%02d' % int(temp[0])) + ':'
+    #             minute = str('%02d' % int(temp[1]))
+    #             df['Timestamp'][i] = hour + minute
+    #             # print(df['Timestamp'])
 
-            # Need these columns to keep original column order
-            cols = collated_df.columns.append(df.columns).unique()
-            cols = cols.drop(['Date','Timestamp'])
+    #         # Need these columns to keep original column order
+    #         cols = collated_df.columns.append(df.columns).unique()
+    #         cols = cols.drop(['Date','Timestamp'])
 
-            # NEED TO DROP EMPTY COLUMN NAMES AND CELLS to prevent error
-            df = df.loc[:, df.columns.notna()]
-            df = df[df['Timestamp'].notna()]
-            df = insert_empty_slot_1(df)
-            # print(df.Date)
-            df = df.set_index(['Date','Timestamp'])
-            # print(df.head())
-            collated_df = collated_df.combine_first(df).reindex(columns=cols)
-            return collated_df, files_with_errors
-        except Exception as e:
-            print(e)
-            files_with_errors.append(file)
-            return collated_df, files_with_errors
+    #         # NEED TO DROP EMPTY COLUMN NAMES AND CELLS to prevent error
+    #         df = df.loc[:, df.columns.notna()]
+    #         df = df[df['Timestamp'].notna()]
+    #         df = insert_empty_slot_1(df)
+    #         # print(df.Date)
+    #         df = df.set_index(['Date','Timestamp'])
+    #         # print(df.head())
+    #         collated_df = collated_df.combine_first(df).reindex(columns=cols)
+    #         return collated_df, files_with_errors
+    #     except Exception as e:
+    #         print(e)
+    #         files_with_errors.append(file)
+    #         return collated_df, files_with_errors
 
 def excel_collation(file, collated_df, files_with_errors, excel_column_header_row):
     try:
