@@ -33,7 +33,7 @@ def yishun_collation(yishun_directory):
                     temp_df['Timestamp'][i] = hour + minute
                     # print(df['Timestamp'])
                 print(temp_df)
-                df = insert_empty_slot_1(df)
+                df = insert_empty_slot(df)
                 collated_df = pd.concat([collated_df, df], axis=0)
     current_date = get_current_date()
     collated_df.to_excel(f'{current_date}_collated.xlsx', index=False)
@@ -165,7 +165,7 @@ def e2i_finally_fixed():
 
                 #TODO: FINALLY FIXED
                 df = df[df['Timestamp'].notna()]
-                df = insert_empty_slot_1(df)
+                df = insert_empty_slot(df)
                 df = df.set_index(['Date','Timestamp'])
                 collated_df = collated_df.combine_first(df)
                 
@@ -215,7 +215,7 @@ def KAL_redo_collation():
                         # NEED TO DROP EMPTY COLUMN NAMES to prevent error
                         df = df.loc[:, df.columns.notna()]
                         df = df[df['Timestamp'].notna()]
-                        df = insert_empty_slot_1(df)
+                        df = insert_empty_slot(df)
                         df = df.set_index(['Date','Timestamp'])
                         collated_df = collated_df.combine_first(df)
                         collated_df = collated_df.rename_axis(None, axis=1)
@@ -299,7 +299,7 @@ def csv_collation(file, collated_df, files_with_errors, files_with_duplicate_tim
         # NEED TO DROP EMPTY COLUMN NAMES AND CELLS to prevent error
         df = df.loc[:, df.columns.notna()]
         df = df[df['Timestamp'].notna()]
-        df = insert_empty_slot_1(df)
+        df = insert_empty_slot(df)
         # print(df.Date)
         df = df.set_index(['Date','Timestamp'])
         # print(df.head())
@@ -360,7 +360,7 @@ def csv_collation(file, collated_df, files_with_errors, files_with_duplicate_tim
     #     df = df.loc[:, df.columns.notna()]
     #     df = df[df['Timestamp'].notna()]
     #     # print(df.head())
-    #     df = insert_empty_slot_1(df)
+    #     df = insert_empty_slot(df)
     #     # print(df.head())
     #     df = df.set_index(['Date','Timestamp'])
     #     # print(df.head())
@@ -445,7 +445,7 @@ def csv_collation(file, collated_df, files_with_errors, files_with_duplicate_tim
     #         # NEED TO DROP EMPTY COLUMN NAMES AND CELLS to prevent error
     #         df = df.loc[:, df.columns.notna()]
     #         df = df[df['Timestamp'].notna()]
-    #         df = insert_empty_slot_1(df)
+    #         df = insert_empty_slot(df)
     #         # print(df.Date)
     #         df = df.set_index(['Date','Timestamp'])
     #         # print(df.head())
@@ -527,7 +527,7 @@ def excel_collation(file, collated_df, files_with_errors, files_with_duplicate_t
         # NEED TO DROP EMPTY COLUMN NAMES AND CELLS to prevent error
         df = df.loc[:, df.columns.notna()]
         df = df[df['Timestamp'].notna()]
-        df = insert_empty_slot_1(df)
+        df = insert_empty_slot(df)
         df = df.set_index(['Date','Timestamp'])
         collated_df = collated_df.combine_first(df).reindex(columns=cols)
         collated_df = collated_df.rename_axis(None, axis=1)

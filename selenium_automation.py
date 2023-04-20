@@ -26,13 +26,14 @@ def initialise_driver(ip, password, device_num):
     options.add_argument("--no-sandbox")
     options.add_argument("--disable-dev-shm-usage")
     
+    # To prevent python terminal from opening
     chrome_service = ChromeService(ChromeDriverManager().install())
     chrome_service.creation_flags = CREATE_NO_WINDOW
-    # ip = input("Enter IP address: ")
     #initialise driver with curated options
     driver = webdriver.Chrome(ChromeDriverManager().install(), service=chrome_service, options=options)
     # driver.get("http://192.168.253.20")
     
+    # Initialise driver with ip given. If ip is invalid, this means that there is an issue with the IP address
     try:
         driver.get("http://" + ip)
         run_to_trend_export_page(driver, password, device_num)
@@ -65,12 +66,12 @@ def run_to_trend_export_page(driver, password, device_num):
     password_textbox.send_keys(u'\ue007')
     print('entered and submitted password')
     # password_submit_button = driver.find_element(By.CLASS_NAME, "gwt-Button")
-    # password_submit_button.click()
-    #driver.get("http://192.168.253.20/client/index.html")
 
     time.sleep(2)
     # system = driver.find_element('id', "elem_63")
-    # system.click()
+
+    # After submitting the password, 
+    # if we are unable to find the system button, it means that the password is incorrect
     try:
         system = driver.find_element('xpath', "//span[text()='system']")
         system.click()
@@ -83,7 +84,6 @@ def run_to_trend_export_page(driver, password, device_num):
 
     time.sleep(1)
     # trend_export = driver.find_element('id', "elem_115")
-    # trend_export.click()
     trend_export = driver.find_element('xpath', "//span[text()='Trend-Export']")
     trend_export.click()
     print('clicked trend export button')
@@ -112,12 +112,14 @@ def automate_time(config):
 
 # Find and download all the csv files
 def download_csv(driver, device, option, device_num):
+    # Find all of the csv download buttons
     files = driver.find_elements('xpath', "//*[@id[contains(.,'csvlink')]]")
     print(len(files))
 
     # Find all the checkboxes to toggle appearance of csv files
     checkboxes = driver.find_elements('xpath', "//*[@id[contains(.,'checkbox')]]")
 
+    # If the user wants to download all files' data for the whole duration
     if option == 'all':
         # Iterate through all the checkboxes and click them to download the csv files
         for i in range(len(checkboxes)):
@@ -126,6 +128,7 @@ def download_csv(driver, device, option, device_num):
             files[i+1].click()
             print('downloaded csv ' + str(i+1))
     
+    # If the user wants to download all files' data for the past day
     elif option == 'daily':
         period_button = driver.find_element('id', "periodselection")
         period_button.click()
@@ -143,10 +146,13 @@ def download_csv(driver, device, option, device_num):
             daily_button.click()
             print('downloaded csv ' + str(i+1))
 
+    # If the user wants to choose and download selected files' data for the whole duration
+    # Not yet implemented allowing user to choose time period
     elif option == 'choose':
         slots = find_all_slots(driver)
         choose_slot(driver, slots)
     
+    # If the user wants to download all configured files' data for the past day
     elif option == 'daily_selected':
         period_button = driver.find_element('id', "periodselection")
         period_button.click()
@@ -168,7 +174,6 @@ def download_csv(driver, device, option, device_num):
                 checkbox.click()
 
                 # csv = driver.find_element('id', "csvlink" + slot_num)
-                # csv.click()
                 daily_csvlink = driver.find_element('id', "csvlink")
                 daily_button = daily_csvlink.find_element('xpath', "//img[@alt='csvicon']")
                 daily_button.click()
@@ -176,9 +181,10 @@ def download_csv(driver, device, option, device_num):
             except:
                 os.chdir(main_directory)
                 file = open('error_log.txt','a')
-                file.write(f'Configuration Error: {device_num}\'s slot: {slot} is not valid/spelled incorrectly. \n')
+                file.write(f'Configuration Error: {device_num}\'s slot: \'{slot}\' is not valid/spelled incorrectly. \n')
                 file.close()
     
+    # If the user wants to download all files' data for today
     elif option == 'today':
         daily_csvlink = driver.find_element('id', "csvlink")
         daily_button = daily_csvlink.find_element('xpath', "//img[@alt='csvicon']")
@@ -187,6 +193,7 @@ def download_csv(driver, device, option, device_num):
             checkboxes[i].click()
             daily_button.click()
             print('downloaded csv ' + str(i+1))
+
 def choose_slot(driver, slots):
     # part 2: add slot number to choose
     print('This is the list of slot names: ')
