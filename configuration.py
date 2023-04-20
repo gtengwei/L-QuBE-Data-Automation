@@ -17,6 +17,7 @@ def get_json():
         return config
 
 def get_config():
+    open('error_log.txt', 'w').close()
     try:
         json_config = get_json()
         user_config = json_config['config']
@@ -25,7 +26,9 @@ def get_config():
                                user_config['hour'], user_config['minute'])
         return config
     except Exception as e:
-        print(e)
+        file = open('error_log.log','a')
+        file.write(f'JSON Formatting Error: {str(e)} \n')
+        file.close()
         return None
 
 # config = get_config()

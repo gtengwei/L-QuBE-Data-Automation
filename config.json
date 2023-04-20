@@ -6,7 +6,9 @@
             "device_1" : {
                 "ip" : "192.168.170.103",
                 "password" : "0007",
-                "slots" : {      
+                "slots" : { 
+                    "1" : "HDR_CDW_FL",
+                    "2" : "HDR2_CDW_FL"     
                 } 
             },
             "device_2" : {
@@ -23,6 +25,6 @@
             "directory" : "C:\\Users\\tengwei.goh\\Desktop\\Sample Data\\test\\e2i_test\\normal"
         },
         "hour": "15",
-        "minute": "48"
+        "minute": "00"
     }
 }

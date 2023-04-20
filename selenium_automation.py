@@ -12,7 +12,7 @@ from apscheduler.triggers.cron import CronTrigger
 from apscheduler.executors.debug import DebugExecutor
 import pytz
 
-def initialise_driver(ip, password):
+def initialise_driver(ip, password, device_num):
     # Must wait for 'Run' LED light to start blinking before running the program
     directory = os.getcwd()
     chrome_prefs = {"download.default_directory": directory} # (windows)
@@ -32,18 +32,23 @@ def initialise_driver(ip, password):
     #initialise driver with curated options
     driver = webdriver.Chrome(ChromeDriverManager().install(), service=chrome_service, options=options)
     # driver.get("http://192.168.253.20")
-    while True:
-        try:
-            driver.get("http://" + ip)
-            run_to_trend_export_page(driver, password)
-            return driver
-        except:
-            print("Invalid IP address, please check your ip in config.json and try again")
-            break
+    
+    try:
+        driver.get("http://" + ip)
+        run_to_trend_export_page(driver, password, device_num)
+        return driver
+    except:
+        os.chdir(main_directory)
+        file = open('error_log.txt','a')
+        file.write(f'Configuration Error: {device_num}\'s IP address {ip} is not valid/incorrect. \n')
+        file.close()
+        
+    
+        
     
 
 
-def run_to_trend_export_page(driver, password):
+def run_to_trend_export_page(driver, password, device_num):
     
     driver.implicitly_wait(10)
     # password_button = driver.find_element('id',"elem_4")
@@ -66,9 +71,15 @@ def run_to_trend_export_page(driver, password):
     time.sleep(2)
     # system = driver.find_element('id', "elem_63")
     # system.click()
-    system = driver.find_element('xpath', "//span[text()='system']")
-    system.click()
-    print('clicked system button')
+    try:
+        system = driver.find_element('xpath', "//span[text()='system']")
+        system.click()
+        print('clicked system button')
+    except:
+        os.chdir(main_directory)
+        file = open('error_log.txt','a')
+        file.write(f'Configuration Error: {device_num}\'s password {password} is not valid/incorrect. \n')
+        file.close()
 
     time.sleep(1)
     # trend_export = driver.find_element('id', "elem_115")
@@ -100,7 +111,7 @@ def automate_time(config):
         time.sleep(5)
 
 # Find and download all the csv files
-def download_csv(driver, device, option):
+def download_csv(driver, device, option, device_num):
     files = driver.find_elements('xpath', "//*[@id[contains(.,'csvlink')]]")
     print(len(files))
 
@@ -146,21 +157,27 @@ def download_csv(driver, device, option):
         print('chose yesterday')
 
         for _, slot in device['slots'].items():
-            slot_name = driver.find_element('xpath', "//*[.='" + slot + "']").get_attribute("id")
-            print(slot_name)
-            time.sleep(0.5)
-            slot_num = slot_name[7:]
-            print(slot_num)
+            try:
+                slot_name = driver.find_element('xpath', "//*[.='" + slot + "']").get_attribute("id")
+                print(slot_name)
+                time.sleep(0.5)
+                slot_num = slot_name[7:]
+                print(slot_num)
 
-            checkbox = driver.find_element('id', "checkbox" + slot_num)
-            checkbox.click()
+                checkbox = driver.find_element('id', "checkbox" + slot_num)
+                checkbox.click()
 
-            # csv = driver.find_element('id', "csvlink" + slot_num)
-            # csv.click()
-            daily_csvlink = driver.find_element('id', "csvlink")
-            daily_button = daily_csvlink.find_element('xpath', "//img[@alt='csvicon']")
-            daily_button.click()
-            print('downloaded csv file')
+                # csv = driver.find_element('id', "csvlink" + slot_num)
+                # csv.click()
+                daily_csvlink = driver.find_element('id', "csvlink")
+                daily_button = daily_csvlink.find_element('xpath', "//img[@alt='csvicon']")
+                daily_button.click()
+                print('downloaded csv file')
+            except:
+                os.chdir(main_directory)
+                file = open('error_log.txt','a')
+                file.write(f'Configuration Error: {device_num}\'s slot: {slot} is not valid/spelled incorrectly. \n')
+                file.close()
     
     elif option == 'today':
         daily_csvlink = driver.find_element('id', "csvlink")
@@ -208,34 +225,38 @@ def find_all_slots(driver):
     return slots
 
 def run_automation(config, option):
-    if option != 'choose':
-        for _, device in config.devices.items():
-            for key, item in device.items():
-                if key == 'ip':
-                    ip = item
-                    print(ip)
-                    if option == 'daily_selected':
-                        if len(device['slots']) == 0:
-                            print('No slots selected')
-                            continue
-                    directory = create_new_directory(ip, config.directory, option)
-                    driver = initialise_driver(ip, device['password'])
-                    driver.implicitly_wait(10)
+        if option != 'choose':
+            for device_num, device in config.devices.items():
+                for key, item in device.items():
+                    if key == 'ip':
+                        ip = item
+                        print(ip)
+                        if option == 'daily_selected':
+                            if len(device['slots']) == 0:
+                                print('No slots selected')
+                                continue
+                        try:
+                            directory = create_new_directory(ip, config.directory, option)
+                            driver = initialise_driver(ip, device['password'], device_num)
+                            driver.implicitly_wait(10)
 
-                    download_csv(driver, device, option)
-                    collate_dataframes(option, directory)
-                    driver.close()
-    else:
-        device = config.devices[config.device_choice]
-        ip = device['ip']
-        directory = create_new_directory(ip, config.directory, option)
-        driver = initialise_driver(ip, device['password'])
-        # run_to_trend_export_page(driver)
-        driver.implicitly_wait(10)
+                            download_csv(driver, device, option, device_num)
+                            collate_dataframes(option, directory)
+                            driver.close()
+                        except:
+                            pass
+        else:
+            device = config.devices[config.device_choice]
+            ip = device['ip']
+            directory = create_new_directory(ip, config.directory, option)
+            driver = initialise_driver(ip, device['password'])
+            # run_to_trend_export_page(driver)
+            driver.implicitly_wait(10)
 
-        download_csv(driver, device, option)
-        collate_dataframes(option, directory)
-        driver.close()
+            download_csv(driver, device, option)
+            collate_dataframes(option, directory)
+            driver.close()
+    
 
 # driver = initialise_driver()
 # run_to_trend_export_page(driver)
