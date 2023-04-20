@@ -4,6 +4,7 @@ import time
 from selenium.webdriver.common.by import By
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.chrome.service import Service as ChromeService # Similar thing for firefox also!
+from webdriver_manager.chrome import ChromeDriverManager
 from subprocess import CREATE_NO_WINDOW # This flag will only be available in windows
 import os
 from apscheduler.schedulers.background import BackgroundScheduler
@@ -25,11 +26,11 @@ def initialise_driver(ip, password):
     options.add_argument("--no-sandbox")
     options.add_argument("--disable-dev-shm-usage")
     
-    chrome_service = ChromeService('chromedriver')
+    chrome_service = ChromeService(ChromeDriverManager().install())
     chrome_service.creation_flags = CREATE_NO_WINDOW
     # ip = input("Enter IP address: ")
     #initialise driver with curated options
-    driver = webdriver.Chrome(service=chrome_service, options=options)
+    driver = webdriver.Chrome(ChromeDriverManager().install(), service=chrome_service, options=options)
     # driver.get("http://192.168.253.20")
     while True:
         try:
@@ -241,3 +242,10 @@ def run_automation(config, option):
 # choose_slot(driver)
 # collate_dataframes()
 # driver.close()
+
+#download google chrome (chrome.exe)
+#pip3 install webdriver-manager
+# from webdriver_manager.chrome import ChromeDriverManager
+# service = ChromeService(ChromeDriverManager().install())
+# driver = webdriver.Chrome(ChromeDriverManager().install(), service=chrome_service, options=options)
+# pip3 install openpyxl
