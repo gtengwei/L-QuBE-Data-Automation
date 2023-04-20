@@ -516,7 +516,6 @@ def excel_collation(file, collated_df, files_with_errors, files_with_duplicate_t
 
         duplicate_df = df[df.duplicated(subset=['Timestamp'])]
         duplicate_timestamp = duplicate_df['Timestamp'].tolist()
-        
         df.drop(columns=[date_and_time_format], axis=1, inplace=True)
         # Need these columns to keep original column order
         cols = collated_df.columns.append(df.columns).unique()
@@ -564,6 +563,9 @@ def combined_collation(collation):
 
                 if file.endswith('.xlsx'):
                     collated_df, files_with_errors = excel_collation(file, collated_df, files_with_errors, files_with_duplicate_timestamp, date_format_list)
+
+                if not files_with_duplicate_timestamp:
+                    continue 
 
                 if files_with_duplicate_timestamp[-1][1] == []:
                     files_with_duplicate_timestamp.pop()
