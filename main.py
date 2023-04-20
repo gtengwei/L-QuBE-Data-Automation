@@ -1,6 +1,5 @@
-from collation import *
-from selenium_automation import *
-from configuration import *
+from selenium_automation import run_automation
+from configuration import get_config
 from threading import Thread
 import warnings
 warnings.filterwarnings("ignore", category=DeprecationWarning) 

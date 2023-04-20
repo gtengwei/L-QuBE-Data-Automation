@@ -1,8 +1,8 @@
 import os
 import pandas as pd
 import numpy as np
-from collation import *
-from configuration import *
+from collation import insert_empty_slot, get_current_date
+from configuration import get_config
 
 
 
