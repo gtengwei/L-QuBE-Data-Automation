@@ -2,7 +2,7 @@ import PySimpleGUI as sg
 import threading
 from configuration import get_config
 from combined_automation import combined_collation
-
+from time import sleep
 # Add a touch of color
 sg.theme('DarkBlue3')   
 
@@ -41,7 +41,7 @@ def popup(message):
 def build():
     # Initial frame to choose option
     option_frame = [
-        [sg.InputCombo(('1. Collate csv/excel files', '2. test'), size=(20, 1), key='-OPTION-')],
+        [sg.InputCombo(('1. Collate csv/excel files', ), size=(20, 1), key='-OPTION-')],
         [sg.Button('Submit Option', key='-SUBMIT_OPTION-')]
     ]
 
@@ -71,14 +71,14 @@ def interface():
             break
         
         if event == '-SUBMIT_OPTION-':
+            popup_win = popup('Please wait while the files are being collated...')
+            window.force_focus()
             # Parallel thread to execute the collation on top of the pop up loading
             threading.Thread(target= combined_collation, args=(config.collation,window, )).start()
-
-
         
-        
-        if event == 'POPUP DONE':
-            window['-OPTION_COL-'].update(visible=True)
+        if event == 'EXECUTION DONE':
+            popup_win.close()
+            popup_win = None
 
 
     window.close()

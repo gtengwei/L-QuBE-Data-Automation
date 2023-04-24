@@ -538,7 +538,7 @@ def excel_collation(file, collated_df, files_with_errors, files_with_duplicate_t
         files_with_errors.append(file)
         return collated_df, files_with_errors
     
-def combined_collation(collation):
+def combined_collation(collation, window):
     directory = collation['directory']
     vendor = os.path.basename(directory)
     os.chdir(directory)
@@ -593,11 +593,11 @@ def combined_collation(collation):
     worksheet = writer.sheets['Sheet1']
     worksheet.set_column('A:B', 15)
     writer.save()
-    # window.write_event_value('EXECUTION DONE', None)
+    window.write_event_value('EXECUTION DONE', None)
 
     
 config = get_config()
-combined_collation(config.collation)
+# combined_collation(config.collation)
 
 # issues with excel file: date and time column, and format of date and time(2022-08-26 :23:59:00 PM)
 # e2i: 01:50 chiller 41 has duplicate timestamp
