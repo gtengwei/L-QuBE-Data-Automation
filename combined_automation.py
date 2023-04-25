@@ -543,8 +543,10 @@ def combined_collation(collation, window):
     vendor = os.path.basename(directory)
     os.chdir(directory)
 
+    count = 0
     files_with_errors = []
     files_with_duplicate_timestamp = []
+
     date_format_list = ['%d/%m/%Y', '%d/%m/%y', 
                         '%d-%m-%Y', '%d-%m-%y', 
                         '%d.%m.%Y', '%d.%m.%y', 
@@ -556,10 +558,21 @@ def combined_collation(collation, window):
     collated_df['Date'] = pd.to_datetime(collated_df['Date'], format='%d/%m/%Y')
     collated_df = collated_df.set_index(['Date','Timestamp'])
                     
-    for root,dirs,files in os.walk(directory):
+    for root,dirs,files in os.walk(directory):            
             for file in files:
                 if file.endswith('collated.xlsx') or file.endswith('collated.csv'):
-                    continue
+                    files.pop(files.index(file))
+            percentage_of_one_file = int(100/len(files))
+            for file in files:
+                count += 1
+                progress = count * percentage_of_one_file
+                window['-PROGRESS_BAR-'].update_bar(progress)
+                if progress == 100:
+                    window['-PROGRESS_TEXT-'].update('Saving collated file...')
+                else:
+                    window['-PROGRESS_TEXT-'].update(str(progress) + '% completed')
+                # if file.endswith('collated.xlsx') or file.endswith('collated.csv'):
+                #     continue
                 
                 if file.endswith('.csv'):
                     collated_df, files_with_errors = csv_collation(file, collated_df, files_with_errors, files_with_duplicate_timestamp, date_format_list)
@@ -574,7 +587,6 @@ def combined_collation(collation, window):
                     files_with_duplicate_timestamp.pop()
     # print(sorted(collated_df.index.get_level_values('Date')))
     collated_df.reset_index(inplace=True)
-    print(type(collated_df.Date))
     collated_df = collated_df.sort_values(by=['Date','Timestamp'], ascending=True)
     collated_df['Date'] = collated_df['Date'].dt.strftime('%d/%m/%Y')
     # collated_df = collated_df.sort_index(axis=1, ascending=True)
