@@ -45,6 +45,17 @@ def build():
         [sg.Button('Submit Option', key='-SUBMIT_OPTION-')]
     ]
 
+    error_files_frame = [
+        [sg.Multiline([], size=(WIDTH, HEIGHT), key='-ERROR_FILES_LIST-', expand_x=True, font=('Helvetica', 10))]
+    ]
+
+    duplicate_timestamp_frame = [
+        [sg.Multiline([], size=(WIDTH, HEIGHT), key='-DUPLICATE_TIMESTAMP_LIST-', expand_x=True, font=('Helvetica', 10))]
+    ]
+
+    back_button = [
+        [sg.Button('Back', key='-BACK-')]
+    ]
     progress_bar = [
         [sg.Text('', key='-PROGRESS_TEXT-', justification='center', size=(20, 1), expand_x=True)],
          [sg.ProgressBar(100, orientation='h', size=(40, 20), key='-PROGRESS_BAR-')]    
@@ -53,8 +64,11 @@ def build():
     # Layout to combine all frames
     layout = [
     [
-     [sg.Frame('Choose your option', option_frame, size=(WIDTH,HEIGHT), visible=True, key='-OPTION_COL-')],
-     [sg.Frame('Progress Bar', progress_bar, size=(WIDTH,100), visible=False, key='-PROGRESS_COL-')]
+    sg.Frame('Progress Bar', progress_bar, size=(WIDTH,100), visible=False, key='-PROGRESS_COL-'),
+     [sg.Frame('Choose your option', option_frame, size=(WIDTH,HEIGHT), visible=True, key='-OPTION_COL-'),
+     sg.Frame('Error Files', error_files_frame, size=(WIDTH,HEIGHT), visible=False, key='-ERROR_FILES_COL-'),
+     sg.Frame('Duplicate Timestamps', duplicate_timestamp_frame, size=(WIDTH,HEIGHT), visible=False, key='-DUPLICATE_TIMESTAMP_COL-')],
+    [sg.Frame('', back_button, size=(60,40), visible=False, key='-BACK_COL-')]
     
      ]
     ]
@@ -86,6 +100,18 @@ def interface():
             popup_win.close()
             popup_win = None
             window['-PROGRESS_COL-'].update(visible=False)
+            window['-OPTION_COL-'].update(visible=False)
+            window['-ERROR_FILES_COL-'].update(visible=True)
+            window['-DUPLICATE_TIMESTAMP_COL-'].update(visible=True)
+            window['-BACK_COL-'].update(visible=True)
+        
+        if event == '-BACK-':
+            window['-OPTION_COL-'].update(visible=True)
+            window['-ERROR_FILES_COL-'].update(visible=False)
+            window['-DUPLICATE_TIMESTAMP_COL-'].update(visible=False)
+            window['-BACK_COL-'].update(visible=False)
+            window['-ERROR_FILES_LIST-'].update('')
+            window['-DUPLICATE_TIMESTAMP_LIST-'].update('')
 
 
     window.close()
