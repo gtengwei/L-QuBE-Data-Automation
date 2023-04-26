@@ -567,7 +567,8 @@ def combined_collation(collation, window):
                 count += 1
                 progress = count * percentage_of_one_file
                 window['-PROGRESS_BAR-'].update_bar(progress)
-                if progress == 100:
+                if count == len(files):
+                    window['-PROGRESS_BAR-'].update_bar(100)
                     window['-PROGRESS_TEXT-'].update('Saving collated file...')
                 else:
                     window['-PROGRESS_TEXT-'].update(str(progress) + '% completed')
