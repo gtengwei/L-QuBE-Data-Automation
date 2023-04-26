@@ -559,7 +559,7 @@ def combined_collation(collation, window):
     collated_df = collated_df.set_index(['Date','Timestamp'])
                     
     for root,dirs,files in os.walk(directory):            
-            for file in files:
+            for file in files[:]:
                 if file.endswith('collated.xlsx') or file.endswith('collated.csv'):
                     files.pop(files.index(file))
             percentage_of_one_file = int(100/len(files))
