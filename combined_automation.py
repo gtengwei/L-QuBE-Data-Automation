@@ -240,8 +240,9 @@ def csv_collation(file, collated_df, files_with_errors, files_with_duplicate_tim
 
         # Split the lines into words, remove empty strings caused by additional columns and add to list
         for i in range(len(file_lines)):
-            file_lines[i] = file_lines[i].split(',')
-            file_lines[i] = [i for i in file_lines[i] if i != '']
+            file_lines[i] = file_lines[i].strip(',').split(',')
+            # print(file_lines[i])
+            # file_lines[i] = [i for i in file_lines[i] if i != '']
 
         if len(file_lines[0]) < 2:
             df = pd.DataFrame(file_lines[2:],columns=file_lines[1])
@@ -300,7 +301,6 @@ def csv_collation(file, collated_df, files_with_errors, files_with_duplicate_tim
         df = df.loc[:, df.columns.notna()]
         df = df[df['Timestamp'].notna()]
         df = insert_empty_slot(df)
-        # print(df.Date)
         df = df.set_index(['Date','Timestamp'])
         # print(df.head())
         collated_df = collated_df.combine_first(df).reindex(columns=cols)
@@ -608,7 +608,6 @@ def combined_collation(collation, window):
     writer.save()
     window.write_event_value('EXECUTION DONE', None)
 
-    
 config = get_config()
 # combined_collation(config.collation)
 
