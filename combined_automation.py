@@ -710,6 +710,10 @@ def combined_collation(collation):
                 if files_with_duplicate_timestamp[-1][1] == []:
                     files_with_duplicate_timestamp.pop()
     print(missing_minutes_dict)
+    # print(empty_cells_timestamp_dict)
+    for key, value in empty_cells_timestamp_dict.copy().items():
+        if len(value) > 1388:
+            del empty_cells_timestamp_dict[key]
     print(empty_cells_timestamp_dict)
     collated_df.reset_index(inplace=True)
     collated_df = collated_df.sort_values(by=['Date','Timestamp'], ascending=True)
