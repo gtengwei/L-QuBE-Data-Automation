@@ -288,16 +288,21 @@ def csv_collation(file, collated_df, files_with_errors, files_with_duplicate_tim
             df['Timestamp'][i] = hour + minute
             # print(df['Timestamp'])
 
-        duplicate_df = df[df.duplicated(subset=['Timestamp'])]
-        duplicate_timestamp = duplicate_df['Timestamp'].tolist()
-        duplicate_timestamp = ['{} '.format(timestamp) for timestamp in duplicate_timestamp]
+        
         # print(duplicate_timestamp)
         # Need these columns to keep original column order
         cols = collated_df.columns.append(df.columns).unique()
         cols = cols.drop(['Date','Timestamp'])
 
-        # Locate and inform user about missing value in cells
+        # Convert Date datetime to str before proceeding
         df['Date'] = df['Date'].dt.strftime('%d/%m/%Y')
+
+        # Tracking of duplicate timestamp
+        duplicate_df = df[df.duplicated(subset=['Timestamp'])]
+        duplicate_timestamp = duplicate_df['Timestamp'].tolist()
+        duplicate_timestamp = [str(df.Date[0]) +' {} '.format(timestamp) for timestamp in duplicate_timestamp]
+
+        # Locate and inform user about missing value in cells
         empty_cells_location = np.where(pd.isnull(df))
         date_column_index, timestamp_column_index = df.columns.get_loc('Date'), df.columns.get_loc('Timestamp')
         empty_cells_timestamp = [(df.iloc[i,date_column_index], df.iloc[i,timestamp_column_index]) for i,j in zip(*empty_cells_location)]
@@ -530,8 +535,15 @@ def excel_collation(file, collated_df, files_with_errors, files_with_duplicate_t
         cols = collated_df.columns.append(df.columns).unique()
         cols = cols.drop(['Date','Timestamp'])
 
-        # Locate and inform user about missing value in cells
+        # Convert Date datetime to str before proceeding
         df['Date'] = df['Date'].dt.strftime('%d/%m/%Y')
+
+        # Tracking of duplicate timestamp
+        duplicate_df = df[df.duplicated(subset=['Timestamp'])]
+        duplicate_timestamp = duplicate_df['Timestamp'].tolist()
+        duplicate_timestamp = [str(df.Date[0]) +' {} '.format(timestamp) for timestamp in duplicate_timestamp]
+
+        # Locate and inform user about missing value in cells
         empty_cells_location = np.where(pd.isnull(df))
         date_column_index, timestamp_column_index = df.columns.get_loc('Date'), df.columns.get_loc('Timestamp')
         empty_cells_timestamp = [(df.iloc[i,date_column_index], df.iloc[i,timestamp_column_index]) for i,j in zip(*empty_cells_location)]
@@ -611,7 +623,7 @@ def combined_collation(collation, window):
     print('These are the files with duplicate timestamp: ')
     for file, duplicate_timestamp in files_with_duplicate_timestamp:
         temp = ''.join(duplicate_timestamp)
-        print(f'{file}: Timestamp {temp}')
+        print(f'{file}: {temp}')
     current_date = get_current_date()
     collated_df.to_excel(f'{vendor}_{current_date}_collated.xlsx', index=False)
     # collated_df.to_csv(f'{vendor}_{current_date}_collated.csv')
@@ -671,7 +683,7 @@ def combined_collation(collation):
     print('These are the files with duplicate timestamp: ')
     for file, duplicate_timestamp in files_with_duplicate_timestamp:
         temp = ''.join(duplicate_timestamp)
-        print(f'{file}: Timestamp {temp}')
+        print(f'{file}: {temp}')
     current_date = get_current_date()
     collated_df.to_excel(f'{vendor}_{current_date}_collated.xlsx', index=False)
     # collated_df.to_csv(f'{vendor}_{current_date}_collated.csv')
