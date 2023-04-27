@@ -1,4 +1,4 @@
-from collation import collate_dataframes, create_new_directory, main_directory
+from collation import *
 from selenium import webdriver
 import time
 from selenium.webdriver.common.by import By
@@ -93,6 +93,7 @@ def run_to_trend_export_page(driver, password, device_num):
     print('switched to frame')
 
 def automate_time(config):
+    open('error_log.txt', 'w').close()
     SG = pytz.timezone('Asia/Singapore')
     scheduler = BackgroundScheduler()
     scheduler.start()

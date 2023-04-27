@@ -4,7 +4,7 @@
         "device_choice": "device_1",
         "devices" : {
             "device_1" : {
-                "ip" : "192.168.170.103",
+                "ip" : "192.168.170.102",
                 "password" : "0007",
                 "slots" : { 
                     "1" : "HDR_CDW_FL",
@@ -24,7 +24,7 @@
         "collation" : {
             "directory" : "C:\\Users\\tengwei.goh\\Desktop\\Sample Data\\test\\KAL_test\\normal"
         },
-        "hour": "16",
-        "minute": "43"
+        "hour": "15",
+        "minute": "23"
     }
 }
