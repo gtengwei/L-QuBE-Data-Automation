@@ -3,7 +3,7 @@ import pandas as pd
 import numpy as np
 from collation import insert_empty_slot, get_current_date
 from configuration import get_config
-
+from collections import defaultdict
 
 
 def yishun_collation(yishun_directory):
@@ -230,7 +230,7 @@ def KAL_redo_collation():
     # current_date = get_current_date()
     collated_df.to_excel('collated.xlsx')
 
-def csv_collation(file, collated_df, files_with_errors, files_with_duplicate_timestamp, date_format_list):
+def csv_collation(file, collated_df, files_with_errors, files_with_duplicate_timestamp, date_format_list, date_timestamp_dict):
     try:
         file_lines = []
         # Open the file in read mode and read the lines
@@ -306,16 +306,16 @@ def csv_collation(file, collated_df, files_with_errors, files_with_duplicate_tim
         # NEED TO DROP EMPTY COLUMN NAMES AND CELLS to prevent error
         df = df.loc[:, df.columns.notna()]
         df = df[df['Timestamp'].notna()]
-        df = insert_empty_slot(df)
+        df = insert_empty_slot(df, date_timestamp_dict)
         df = df.set_index(['Date','Timestamp'])
         # print(df.head())
         collated_df = collated_df.combine_first(df).reindex(columns=cols)
         files_with_duplicate_timestamp.append((file, duplicate_timestamp))
-        return collated_df, files_with_errors
+        return collated_df
     except Exception as e:
         print(e)
         files_with_errors.append(file)
-        return collated_df, files_with_errors
+        return collated_df
     # try:
     #     f = open(file, 'r')
     #     result = []
@@ -462,7 +462,7 @@ def csv_collation(file, collated_df, files_with_errors, files_with_duplicate_tim
     #         files_with_errors.append(file)
     #         return collated_df, files_with_errors
 
-def excel_collation(file, collated_df, files_with_errors, files_with_duplicate_timestamp, date_format_list):
+def excel_collation(file, collated_df, files_with_errors, files_with_duplicate_timestamp, date_format_list, date_timestamp_dict):
     try:
         date_and_time_format = ''
         date_and_time_column_name_list = ['Date and Time', 'date and time', 'DATE AND TIME',
@@ -540,16 +540,16 @@ def excel_collation(file, collated_df, files_with_errors, files_with_duplicate_t
         # NEED TO DROP EMPTY COLUMN NAMES AND CELLS to prevent error
         df = df.loc[:, df.columns.notna()]
         df = df[df['Timestamp'].notna()]
-        df = insert_empty_slot(df)
+        df = insert_empty_slot(df, date_timestamp_dict)
         df = df.set_index(['Date','Timestamp'])
         collated_df = collated_df.combine_first(df).reindex(columns=cols)
         collated_df = collated_df.rename_axis(None, axis=1)
         files_with_duplicate_timestamp.append((file, duplicate_timestamp))
-        return collated_df, files_with_errors 
+        return collated_df 
     except Exception as e:
         print(e)
         files_with_errors.append(file)
-        return collated_df, files_with_errors
+        return collated_df
     
 def combined_collation(collation, window):
     directory = collation['directory']
@@ -559,6 +559,7 @@ def combined_collation(collation, window):
     count = 0
     files_with_errors = []
     files_with_duplicate_timestamp = []
+    date_timestamp_dict = defaultdict(list)
 
     date_format_list = ['%d/%m/%Y', '%d/%m/%y', 
                         '%d-%m-%Y', '%d-%m-%y', 
@@ -591,17 +592,17 @@ def combined_collation(collation, window):
                 #     continue
                 
                 if file.endswith('.csv'):
-                    collated_df, files_with_errors = csv_collation(file, collated_df, files_with_errors, files_with_duplicate_timestamp, date_format_list)
+                    collated_df, date_timestamp_dict, files_with_errors = csv_collation(file, collated_df, files_with_errors, files_with_duplicate_timestamp, date_format_list, date_timestamp_dict)
 
                 if file.endswith('.xlsx'):
-                    collated_df, files_with_errors = excel_collation(file, collated_df, files_with_errors, files_with_duplicate_timestamp, date_format_list)
+                    collated_df, date_timestamp_dict, files_with_errors = excel_collation(file, collated_df, files_with_errors, files_with_duplicate_timestamp, date_format_list, date_timestamp_dict)
 
                 if not files_with_duplicate_timestamp:
                     continue 
                 
                 if files_with_duplicate_timestamp[-1][1] == []:
                     files_with_duplicate_timestamp.pop()
-    # print(sorted(collated_df.index.get_level_values('Date')))
+    print(date_timestamp_dict)
     collated_df.reset_index(inplace=True)
     collated_df = collated_df.sort_values(by=['Date','Timestamp'], ascending=True)
     # collated_df['Date'] = collated_df['Date'].dt.strftime('%d/%m/%Y')
@@ -631,6 +632,7 @@ def combined_collation(collation):
     count = 0
     files_with_errors = []
     files_with_duplicate_timestamp = []
+    date_timestamp_dict = defaultdict(list)
 
     date_format_list = ['%d/%m/%Y', '%d/%m/%y', 
                         '%d-%m-%Y', '%d-%m-%y', 
@@ -650,17 +652,17 @@ def combined_collation(collation):
 
             for file in files:
                 if file.endswith('.csv'):
-                    collated_df, files_with_errors = csv_collation(file, collated_df, files_with_errors, files_with_duplicate_timestamp, date_format_list)
+                    collated_df = csv_collation(file, collated_df, files_with_errors, files_with_duplicate_timestamp, date_format_list, date_timestamp_dict)
 
                 if file.endswith('.xlsx'):
-                    collated_df, files_with_errors = excel_collation(file, collated_df, files_with_errors, files_with_duplicate_timestamp, date_format_list)
+                    collated_df = excel_collation(file, collated_df, files_with_errors, files_with_duplicate_timestamp, date_format_list, date_timestamp_dict)
 
                 if not files_with_duplicate_timestamp:
                     continue 
                 
                 if files_with_duplicate_timestamp[-1][1] == []:
                     files_with_duplicate_timestamp.pop()
-    # print(sorted(collated_df.index.get_level_values('Date')))
+    print(date_timestamp_dict)
     collated_df.reset_index(inplace=True)
     collated_df = collated_df.sort_values(by=['Date','Timestamp'], ascending=True)
     # collated_df['Date'] = collated_df['Date'].dt.strftime('%d/%m/%Y')

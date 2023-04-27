@@ -130,9 +130,8 @@ def create_new_directory(ip, user_directory, option):
     os.chdir(new_directory)
     return change_directory
 
-def insert_empty_slot(df):
+def insert_empty_slot(df, date_timestamp_dict):
     # df = pd.read_csv('2023-01-30.csv')
-
     hour_minute_list = [[i,j] for i in range(0,24) for j in range(0,60)]
     for i in range(len(hour_minute_list)):
         hour_minute_list[i] = ['%02d' % hour_minute_list[i][0], '%02d' % hour_minute_list[i][1]]
@@ -149,7 +148,7 @@ def insert_empty_slot(df):
         empty_row[0] = df['Date'][0]
         empty_row[1] = hour_minute_list[i]
         df.loc[len(df)] = empty_row
-
+        date_timestamp_dict[empty_row[0]].append(hour_minute_list[i])
     df = df.sort_values(by=['Timestamp'], ascending=True)
     # df.to_csv('test.csv', index=False)
     return df
