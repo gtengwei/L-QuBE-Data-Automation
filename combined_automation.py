@@ -256,7 +256,6 @@ def csv_collation(file, collated_df, files_with_errors, files_with_duplicate_tim
             df.columns.get_loc('Timestamp')
         except:
             df = df.rename(columns={'Time': 'Timestamp'})
-
         df = df.replace(r'^\s*$', np.nan, regex=True)
         df = df.replace('None', np.nan, regex=True)
         df = df[df['Timestamp'].notna()]
@@ -297,6 +296,13 @@ def csv_collation(file, collated_df, files_with_errors, files_with_duplicate_tim
         cols = collated_df.columns.append(df.columns).unique()
         cols = cols.drop(['Date','Timestamp'])
 
+        # Locate and inform user about missing value in cells
+        df['Date'] = df['Date'].dt.strftime('%d/%m/%Y')
+        empty_cells_location = np.where(pd.isnull(df))
+        date_column_index, timestamp_column_index = df.columns.get_loc('Date'), df.columns.get_loc('Timestamp')
+        empty_cells_timestamp = [(df.iloc[i,date_column_index], df.iloc[i,timestamp_column_index]) for i,j in zip(*empty_cells_location)]
+        # print(empty_cells_timestamp)
+        
         # NEED TO DROP EMPTY COLUMN NAMES AND CELLS to prevent error
         df = df.loc[:, df.columns.notna()]
         df = df[df['Timestamp'].notna()]
@@ -524,6 +530,13 @@ def excel_collation(file, collated_df, files_with_errors, files_with_duplicate_t
         cols = collated_df.columns.append(df.columns).unique()
         cols = cols.drop(['Date','Timestamp'])
 
+        # Locate and inform user about missing value in cells
+        df['Date'] = df['Date'].dt.strftime('%d/%m/%Y')
+        empty_cells_location = np.where(pd.isnull(df))
+        date_column_index, timestamp_column_index = df.columns.get_loc('Date'), df.columns.get_loc('Timestamp')
+        empty_cells_timestamp = [(df.iloc[i,date_column_index], df.iloc[i,timestamp_column_index]) for i,j in zip(*empty_cells_location)]
+        # print(empty_cells_timestamp)
+
         # NEED TO DROP EMPTY COLUMN NAMES AND CELLS to prevent error
         df = df.loc[:, df.columns.notna()]
         df = df[df['Timestamp'].notna()]
@@ -562,7 +575,9 @@ def combined_collation(collation, window):
             for file in files[:]:
                 if file.endswith('collated.xlsx') or file.endswith('collated.csv'):
                     files.pop(files.index(file))
+
             percentage_of_one_file = int(100/len(files))
+
             for file in files:
                 count += 1
                 progress = count * percentage_of_one_file
@@ -589,7 +604,7 @@ def combined_collation(collation, window):
     # print(sorted(collated_df.index.get_level_values('Date')))
     collated_df.reset_index(inplace=True)
     collated_df = collated_df.sort_values(by=['Date','Timestamp'], ascending=True)
-    collated_df['Date'] = collated_df['Date'].dt.strftime('%d/%m/%Y')
+    # collated_df['Date'] = collated_df['Date'].dt.strftime('%d/%m/%Y')
     # collated_df = collated_df.sort_index(axis=1, ascending=True)
     print(f'These are the files with errors: {files_with_errors}')
     print('These are the files with duplicate timestamp: ')
