@@ -608,8 +608,66 @@ def combined_collation(collation, window):
     writer.save()
     window.write_event_value('EXECUTION DONE', None)
 
+def combined_collation(collation):
+    directory = collation['directory']
+    vendor = os.path.basename(directory)
+    os.chdir(directory)
+
+    count = 0
+    files_with_errors = []
+    files_with_duplicate_timestamp = []
+
+    date_format_list = ['%d/%m/%Y', '%d/%m/%y', 
+                        '%d-%m-%Y', '%d-%m-%y', 
+                        '%d.%m.%Y', '%d.%m.%y', 
+                        '%d %m %Y', '%d %m %y',
+                        '%d%m%Y', '%d%m%y',
+                        '%Y-%m-%d', '%y-%m-%d',
+                        '%Y/%m/%d', '%y/%m/%d']
+    collated_df = pd.DataFrame(columns=['Date','Timestamp'])
+    collated_df['Date'] = pd.to_datetime(collated_df['Date'], format='%d/%m/%Y')
+    collated_df = collated_df.set_index(['Date','Timestamp'])
+                    
+    for root,dirs,files in os.walk(directory):            
+            for file in files[:]:
+                if file.endswith('collated.xlsx') or file.endswith('collated.csv'):
+                    files.pop(files.index(file))
+
+            for file in files:
+                if file.endswith('.csv'):
+                    collated_df, files_with_errors = csv_collation(file, collated_df, files_with_errors, files_with_duplicate_timestamp, date_format_list)
+
+                if file.endswith('.xlsx'):
+                    collated_df, files_with_errors = excel_collation(file, collated_df, files_with_errors, files_with_duplicate_timestamp, date_format_list)
+
+                if not files_with_duplicate_timestamp:
+                    continue 
+                
+                if files_with_duplicate_timestamp[-1][1] == []:
+                    files_with_duplicate_timestamp.pop()
+    # print(sorted(collated_df.index.get_level_values('Date')))
+    collated_df.reset_index(inplace=True)
+    collated_df = collated_df.sort_values(by=['Date','Timestamp'], ascending=True)
+    # collated_df['Date'] = collated_df['Date'].dt.strftime('%d/%m/%Y')
+    # collated_df = collated_df.sort_index(axis=1, ascending=True)
+    print(f'These are the files with errors: {files_with_errors}')
+    print('These are the files with duplicate timestamp: ')
+    for file, duplicate_timestamp in files_with_duplicate_timestamp:
+        temp = ''.join(duplicate_timestamp)
+        print(f'{file}: Timestamp {temp}')
+    current_date = get_current_date()
+    collated_df.to_excel(f'{vendor}_{current_date}_collated.xlsx', index=False)
+    # collated_df.to_csv(f'{vendor}_{current_date}_collated.csv')
+    writer = pd.ExcelWriter(f'{vendor}_{current_date}_collated.xlsx',
+                        engine='xlsxwriter',
+                        date_format='d/m/yyyy')
+    collated_df.to_excel(writer, sheet_name='Sheet1', index=False)
+    worksheet = writer.sheets['Sheet1']
+    worksheet.set_column('A:B', 15)
+    writer.save()
+
 config = get_config()
-# combined_collation(config.collation)
+combined_collation(config.collation)
 
 # issues with excel file: date and time column, and format of date and time(2022-08-26 :23:59:00 PM)
 # e2i: 01:50 chiller 41 has duplicate timestamp
