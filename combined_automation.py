@@ -305,7 +305,7 @@ def csv_collation(file, collated_df, files_with_errors, files_with_duplicate_tim
         # Locate and inform user about missing value in cells
         empty_cells_location = np.where(pd.isnull(df))
         timestamp_column_index = df.columns.get_loc('Timestamp')
-        empty_cells_timestamp[date].append([df.iloc[i,timestamp_column_index] for i,j in zip(*empty_cells_location)])
+        empty_cells_timestamp[date].extend([df.iloc[i,timestamp_column_index] for i,j in zip(*empty_cells_location)])
         # print(empty_cells_timestamp)
         
         # NEED TO DROP EMPTY COLUMN NAMES AND CELLS to prevent error
