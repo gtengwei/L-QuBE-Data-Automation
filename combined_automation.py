@@ -256,6 +256,15 @@ def csv_collation(file, collated_df, files_with_errors, files_with_duplicate_tim
             df.columns.get_loc('Timestamp')
         except:
             df = df.rename(columns={'Time': 'Timestamp'})
+
+        df['Timestamp'] = df['Timestamp'].astype(str)
+        for i in range(len(df)):
+            temp = df['Timestamp'][i].split(':')
+            hour = str('%02d' % int(temp[0])) + ':'
+            minute = str('%02d' % int(temp[1]))
+            df['Timestamp'][i] = hour + minute
+
+        # From here onwards, its the same as excel collation 
         df = df.replace(r'^\s*$', np.nan, regex=True)
         df = df.replace('None', np.nan, regex=True)
         df = df[df['Timestamp'].notna()]
@@ -267,29 +276,7 @@ def csv_collation(file, collated_df, files_with_errors, files_with_duplicate_tim
                 break
             except:
                 continue       
-        # try:
-        #     df['Date'] = pd.to_datetime(df['Date'], format='%d/%m/%y')
-        # except:
-        #     df['Date'] = pd.to_datetime(df['Date'], format='%d/%m/%Y')
-        # print(df.Date)
-        # for i in range(len(df)):
-        #     temp = df['Date'][i].split('/')
-        #     day = str('%02d' % int(temp[0])) + '/'
-        #     month = str('%02d' % int(temp[1])) + '/'
-        #     year = str('%04d' % int(temp[2]))
-        #     df['Date'][i] = day + month + year
-        # print(df.Date)
-        df['Timestamp'] = df['Timestamp'].astype(str)
-        # print(df['Timestamp'])
-        for i in range(len(df)):
-            temp = df['Timestamp'][i].split(':')
-            hour = str('%02d' % int(temp[0])) + ':'
-            minute = str('%02d' % int(temp[1]))
-            df['Timestamp'][i] = hour + minute
-            # print(df['Timestamp'])
-
         
-        # print(duplicate_timestamp)
         # Need these columns to keep original column order
         cols = collated_df.columns.append(df.columns).unique()
         cols = cols.drop(['Date','Timestamp'])
@@ -514,23 +501,20 @@ def excel_collation(file, collated_df, files_with_errors, files_with_duplicate_t
                 df['Timestamp'][i] = hour + minute
             except:
                 pass
+        df.drop(columns=[date_and_time_format], axis=1, inplace=True)
 
+        # From here onwards, its the same as csv collation
         for date_format in date_format_list:
             try:
                 df['Date'] = pd.to_datetime(df['Date'], format=date_format)
                 break
             except:
                 continue 
-        # try:
-        #     df['Date'] = pd.to_datetime(df['Date'], format='%Y-%m-%d')
-        # except:
-        #     df['Date'] = pd.to_datetime(df['Date'], format='%y-%m-%d')
-
+        
         duplicate_df = df[df.duplicated(subset=['Timestamp'])]
         duplicate_timestamp = duplicate_df['Timestamp'].tolist()
         duplicate_timestamp = ['{} '.format(timestamp) for timestamp in duplicate_timestamp]
 
-        df.drop(columns=[date_and_time_format], axis=1, inplace=True)
         # Need these columns to keep original column order
         cols = collated_df.columns.append(df.columns).unique()
         cols = cols.drop(['Date','Timestamp'])
