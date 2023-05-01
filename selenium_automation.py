@@ -27,10 +27,10 @@ def initialise_driver(ip, password, device_num):
     options.add_argument("--disable-dev-shm-usage")
     
     # To prevent python terminal from opening
-    chrome_service = ChromeService(ChromeDriverManager().install())
+    chrome_service = ChromeService()
     chrome_service.creation_flags = CREATE_NO_WINDOW
     #initialise driver with curated options
-    driver = webdriver.Chrome(ChromeDriverManager().install(), service=chrome_service, options=options)
+    driver = webdriver.Chrome(service=chrome_service, options=options)
     # driver.get("http://192.168.253.20")
     
     # Initialise driver with ip given. If ip is invalid, this means that there is an issue with the IP address
@@ -278,3 +278,5 @@ def run_automation(config, option):
 # service = ChromeService(ChromeDriverManager().install())
 # driver = webdriver.Chrome(ChromeDriverManager().install(), service=chrome_service, options=options)
 # pip3 install openpyxl
+
+# NEED TO INCLUDE CHROMEDRIVER IN PATH, instructions to be done in readme
