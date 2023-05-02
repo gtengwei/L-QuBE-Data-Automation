@@ -11,8 +11,10 @@ sg.set_options(font=('Helvetica', 12))
 sg.set_options(tooltip_font=('Helvetica', 11))
 # Default size for frames, can be changed
 # WIDTH, HEIGHT = sg.Window.get_screen_size()
-WIDTH = 400
+WIDTH = 300
 HEIGHT = 300
+
+MULTILINE_WIDTH = 550
 
 # Blank frame for testing purposes
 def blank_frame():
@@ -46,19 +48,19 @@ def build():
     ]
 
     error_files_frame = [
-        [sg.Multiline(size=(WIDTH, HEIGHT), key='-ERROR_FILES_LIST-', expand_x=True, font=('Helvetica', 10))]
+        [sg.Multiline(size=(MULTILINE_WIDTH, HEIGHT), key='-ERROR_FILES_LIST-', expand_x=True, font=('Helvetica', 10))]
     ]
 
     duplicate_timestamp_frame = [
-        [sg.Multiline(size=(WIDTH, HEIGHT), key='-DUPLICATE_TIMESTAMP_LIST-', expand_x=True, font=('Helvetica', 10))]
+        [sg.Multiline(size=(MULTILINE_WIDTH, HEIGHT), key='-DUPLICATE_TIMESTAMP_LIST-', expand_x=True, font=('Helvetica', 10))]
     ]
 
     missing_minutes_frame = [
-        [sg.Multiline(size=(WIDTH, HEIGHT), key='-MISSING_MINUTES_LIST-', expand_x=True, font=('Helvetica', 10))]
+        [sg.Multiline(size=(MULTILINE_WIDTH, HEIGHT), key='-MISSING_MINUTES_LIST-', expand_x=True, font=('Helvetica', 10))]
     ]
 
     empty_cells_frame = [
-        [sg.Multiline(size=(WIDTH, HEIGHT), key='-EMPTY_CELLS_LIST-', expand_x=True, font=('Helvetica', 10))]
+        [sg.Multiline(size=(MULTILINE_WIDTH, HEIGHT), key='-EMPTY_CELLS_LIST-', expand_x=True, font=('Helvetica', 10))]
     ]
 
     inform_user_frame_1 = [
@@ -106,10 +108,10 @@ def build():
         [
             sg.Frame('Progress Bar', progress_bar, size=(WIDTH,100), visible=False, key='-PROGRESS_COL-'),
             [sg.Frame('Choose your option', option_frame, size=(WIDTH,HEIGHT), visible=True, key='-OPTION_COL-'),
-            sg.Frame('Error Files', inform_user_frame_1, size=(WIDTH,HEIGHT), visible=False, key='-INFORM_USER_COL1-'),
-            sg.Frame('Duplicate Timestamps', inform_user_frame_2, size=(WIDTH,HEIGHT), visible=False, key='-INFORM_USER_COL2-'),
-            sg.Frame('Missing Minutes', inform_user_frame_3, size=(WIDTH,HEIGHT), visible=False, key='-INFORM_USER_COL3-'),
-            sg.Frame('Empty Cells', inform_user_frame_4, size=(WIDTH,HEIGHT), visible=False, key='-INFORM_USER_COL4-')],
+            sg.Frame('Error Files', inform_user_frame_1, size=(MULTILINE_WIDTH,HEIGHT), visible=False, key='-INFORM_USER_COL1-', expand_x=True, expand_y=True),
+            sg.Frame('Duplicate Timestamps', inform_user_frame_2, size=(MULTILINE_WIDTH,HEIGHT), visible=False, key='-INFORM_USER_COL2-', expand_x=True, expand_y=True),
+            sg.Frame('Missing Minutes Added', inform_user_frame_3, size=(MULTILINE_WIDTH,HEIGHT), visible=False, key='-INFORM_USER_COL3-', expand_x=True, expand_y=True),
+            sg.Frame('Empty Cells', inform_user_frame_4, size=(MULTILINE_WIDTH,HEIGHT), visible=False, key='-INFORM_USER_COL4-', expand_x=True, expand_y=True)],
             sg.Frame('', button_frame, visible=False, key='-BUTTON_COL-', element_justification='right')
         ]
     ]
@@ -122,6 +124,10 @@ def interface():
     config = get_config()
     # Create the window
     window = build()
+    window['-ERROR_FILES_LIST-'].expand(True, True)
+    window['-DUPLICATE_TIMESTAMP_LIST-'].expand(True, True)
+    window['-MISSING_MINUTES_LIST-'].expand(True, True)
+    window['-EMPTY_CELLS_LIST-'].expand(True, True)
     popup_win = None
     layout = 1
     # Display window
