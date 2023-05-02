@@ -53,6 +53,36 @@ def build():
         [sg.Multiline([], size=(WIDTH, HEIGHT), key='-DUPLICATE_TIMESTAMP_LIST-', expand_x=True, font=('Helvetica', 10))]
     ]
 
+    missing_minutes_frame = [
+        [sg.Multiline([], size=(WIDTH, HEIGHT), key='-MISSING_MINUTES_LIST-', expand_x=True, font=('Helvetica', 10))]
+    ]
+
+    empty_cells_frame = [
+        [sg.Multiline([], size=(WIDTH, HEIGHT), key='-EMPTY_CELLS_LIST-', expand_x=True, font=('Helvetica', 10))]
+    ]
+
+    inform_user_frame_1 = [
+        [sg.Frame("", error_files_frame, expand_x=True, expand_y=True)]    
+    ]
+
+    inform_user_frame_2 = [
+        [sg.Frame("", duplicate_timestamp_frame, expand_x=True, expand_y=True)]
+    ]
+
+    inform_user_frame_3 = [
+        [sg.Frame("", missing_minutes_frame, expand_x=True, expand_y=True)]
+    ]
+
+    inform_user_frame_4 = [
+        [sg.Frame("", empty_cells_frame, expand_x=True, expand_y=True)]
+    ]
+
+    button_frame = [
+        [sg.Button('1'), sg.Button('2'),
+        sg.Button('3'), sg.Button('4')]
+    ]
+
+
     back_button = [
         [sg.Button('Back', key='-BACK-')]
     ]
@@ -62,15 +92,26 @@ def build():
         ]
     
     # Layout to combine all frames
-    layout = [
-    [
-    sg.Frame('Progress Bar', progress_bar, size=(WIDTH,100), visible=False, key='-PROGRESS_COL-'),
-     [sg.Frame('Choose your option', option_frame, size=(WIDTH,HEIGHT), visible=True, key='-OPTION_COL-'),
-     sg.Frame('Error Files', error_files_frame, size=(WIDTH,HEIGHT), visible=False, key='-ERROR_FILES_COL-'),
-     sg.Frame('Duplicate Timestamps', duplicate_timestamp_frame, size=(WIDTH,HEIGHT), visible=False, key='-DUPLICATE_TIMESTAMP_COL-')],
-    [sg.Frame('', back_button, size=(60,40), visible=False, key='-BACK_COL-')]
+    # layout = [
+    # [
+    # sg.Frame('Progress Bar', progress_bar, size=(WIDTH,100), visible=False, key='-PROGRESS_COL-'),
+    #  [sg.Frame('Choose your option', option_frame, size=(WIDTH,HEIGHT), visible=True, key='-OPTION_COL-'),
+    #  sg.Frame('Error Files', error_files_frame, size=(WIDTH,HEIGHT), visible=False, key='-ERROR_FILES_COL-'),
+    #  sg.Frame('Duplicate Timestamps', duplicate_timestamp_frame, size=(WIDTH,HEIGHT), visible=False, key='-DUPLICATE_TIMESTAMP_COL-')],
+    # [sg.Frame('', back_button, size=(60,40), visible=False, key='-BACK_COL-')]
     
-     ]
+    #  ]
+    # ]
+    layout = [
+        [
+            sg.Frame('Progress Bar', progress_bar, size=(WIDTH,100), visible=False, key='-PROGRESS_COL-'),
+            [sg.Frame('Choose your option', option_frame, size=(WIDTH,HEIGHT), visible=True, key='-OPTION_COL-'),
+            sg.Frame('Error Files', inform_user_frame_1, size=(WIDTH,HEIGHT), visible=False, key='-INFORM_USER_COL1-'),
+            sg.Frame('Duplicate Timestamps', inform_user_frame_2, size=(WIDTH,HEIGHT), visible=False, key='-INFORM_USER_COL2-'),
+            sg.Frame('Missing Minutes', inform_user_frame_3, size=(WIDTH,HEIGHT), visible=False, key='-INFORM_USER_COL3-'),
+            sg.Frame('Empty Cells', inform_user_frame_4, size=(WIDTH,HEIGHT), visible=False, key='-INFORM_USER_COL4-')],
+            sg.Frame('', button_frame, visible=False, key='-BUTTON_COL-', element_justification='right')
+        ]
     ]
 
     margins = (5, 5)
@@ -82,6 +123,7 @@ def interface():
     # Create the window
     window = build()
     popup_win = None
+    layout = 1
     # Display window
     while True:
         event, values = window.read()
@@ -100,10 +142,16 @@ def interface():
             popup_win.close()
             popup_win = None
             window['-PROGRESS_COL-'].update(visible=False)
-            window['-OPTION_COL-'].update(visible=False)
-            window['-ERROR_FILES_COL-'].update(visible=True)
-            window['-DUPLICATE_TIMESTAMP_COL-'].update(visible=True)
-            window['-BACK_COL-'].update(visible=True)
+            # window['-OPTION_COL-'].update(visible=False)
+            window['-INFORM_USER_COL1-'].update(visible=True)
+            # for i in range(1,5):
+            #     window[f'button_{i}'].update(visible=True)
+            window['-BUTTON_COL-'].update(visible=True)
+        
+        if event in '1234':
+            window[f'-INFORM_USER_COL{layout}-'].update(visible=False)
+            layout = int(event)
+            window[f'-INFORM_USER_COL{layout}-'].update(visible=True)
         
         if event == '-BACK-':
             window['-OPTION_COL-'].update(visible=True)

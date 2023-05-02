@@ -673,11 +673,39 @@ def combined_collation(collation, window):
                 
                 if files_with_duplicate_timestamp[-1][1] == []:
                     files_with_duplicate_timestamp.pop()
-    
+    # print(missing_minutes_dict)
+    # print(empty_cells_timestamp_dict)
+    print(files_with_duplicate_timestamp)
+    for key, value in empty_cells_timestamp_dict.copy().items():
+        if len(value) > 1388:
+            del empty_cells_timestamp_dict[key]
     collated_df.reset_index(inplace=True)
     collated_df = collated_df.sort_values(by=['Date','Timestamp'], ascending=True)
     # collated_df['Date'] = collated_df['Date'].dt.strftime('%d/%m/%Y')
     # collated_df = collated_df.sort_index(axis=1, ascending=True)
+
+    print(f'These are the files with errors: {files_with_errors}')
+    for file in files_with_errors:
+        window['-ERROR_FILES_LIST-'].update(f'{file}\n', append=True)
+
+    print('These are the files with duplicate timestamp: ')
+    for file, duplicate_timestamp in files_with_duplicate_timestamp:
+        temp = ''.join(duplicate_timestamp)
+        print(f'{file}: {temp}')
+        window['-DUPLICATE_TIMESTAMP_LIST-'].update(f'{file}: Timestamp {temp}\n', append=True)
+    
+    print('These are the files with missing minutes: ')
+    for file, missing_minutes in missing_minutes_dict.items():
+        temp = ' '.join(missing_minutes)
+        print(f'{file}: {temp}')
+        window['-MISSING_MINUTES_LIST-'].update(f'{file}: Timestamp {temp}\n', append=True)
+    
+    print('These are the files with empty cells: ')
+    for file, empty_cells_timestamp in empty_cells_timestamp_dict.items():
+        temp = ''.join(empty_cells_timestamp)
+        print(f'{file}: {temp}')
+        window['-EMPTY_CELLS_LIST-'].update(f'{file}: Timestamp {temp}\n', append=True)
+
 
     current_date = get_current_date()
     collated_df.to_excel(f'{vendor}_{current_date}_collated.xlsx', index=False)
