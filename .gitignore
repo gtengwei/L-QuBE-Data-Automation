@@ -1,6 +1,5 @@
 *.csv
 __pycache__/
 *.xlsx
-*.docx
 *.exe
 *.txt
