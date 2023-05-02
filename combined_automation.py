@@ -608,13 +608,13 @@ def csv_excel_df_manipulation(file, collated_df, df, files_with_duplicate_timest
     duplicate_timestamp = duplicate_df['Timestamp'].tolist()
     # duplicate_timestamp = [str(date) +' {} '.format(timestamp) for timestamp in duplicate_timestamp]
     if duplicate_timestamp:
-        files_with_duplicate_timestamp_dict[file, date].extend([' {} '.format(timestamp) for timestamp in duplicate_timestamp])
+        files_with_duplicate_timestamp_dict[file, date].extend(['{} '.format(timestamp) for timestamp in duplicate_timestamp])
 
     # Locate and inform user about missing value in cells
     empty_cells_location = np.where(pd.isnull(df))
     timestamp_column_index = df.columns.get_loc('Timestamp')
     if empty_cells_location[0].size != 0:
-        empty_cells_timestamp_dict[file, date].extend([df.iloc[i,timestamp_column_index] for i,j in zip(*empty_cells_location)])
+        empty_cells_timestamp_dict[file, date].extend(['{} '. format(df.iloc[i,timestamp_column_index]) for i,j in zip(*empty_cells_location)])
     # print(empty_cells_timestamp)
     
     
