@@ -8,7 +8,7 @@ from collections import defaultdict
 def get_current_date():
     return dt.datetime.now().strftime("%Y-%m-%d")
 
-def insert_empty_slot(df, missing_minutes_dict):
+def insert_empty_slot(df, missing_minutes_dict, file):
     # df = pd.read_csv('2023-01-30.csv')
     hour_minute_list = [[i,j] for i in range(0,24) for j in range(0,60)]
     for i in range(len(hour_minute_list)):
@@ -26,7 +26,7 @@ def insert_empty_slot(df, missing_minutes_dict):
         empty_row[0] = df['Date'][0]
         empty_row[1] = hour_minute_list[i]
         df.loc[len(df)] = empty_row
-        missing_minutes_dict[empty_row[0]].append(hour_minute_list[i])
+        missing_minutes_dict[file, empty_row[0]].append(hour_minute_list[i])
     df = df.sort_values(by=['Timestamp'], ascending=True)
     # df.to_csv('test.csv', index=False)
     return df
@@ -255,7 +255,7 @@ def KAL_redo_collation():
     # current_date = get_current_date()
     collated_df.to_excel('collated.xlsx')
 
-def csv_collation(file, collated_df, files_with_errors, files_with_duplicate_timestamp, date_format_list, missing_minutes_dict, empty_cells_timestamp_dict):
+def csv_collation(file, collated_df, files_with_errors, files_with_duplicate_timestamp_dict, date_format_list, missing_minutes_dict, empty_cells_timestamp_dict):
     try:
         file_lines = []
         # Open the file in read mode and read the lines
@@ -290,7 +290,7 @@ def csv_collation(file, collated_df, files_with_errors, files_with_duplicate_tim
             df['Timestamp'][i] = hour + minute
 
         # From here onwards, its the same as excel collation 
-        return csv_excel_df_manipulation(file, collated_df, df, files_with_duplicate_timestamp, date_format_list, missing_minutes_dict, empty_cells_timestamp_dict)
+        return csv_excel_df_manipulation(file, collated_df, df, files_with_duplicate_timestamp_dict, date_format_list, missing_minutes_dict, empty_cells_timestamp_dict)
         df = df.replace(r'^\s*$', np.nan, regex=True)
         df = df.replace('None', np.nan, regex=True)
         df = df[df['Timestamp'].notna()]
@@ -331,7 +331,7 @@ def csv_collation(file, collated_df, files_with_errors, files_with_duplicate_tim
         df = df.set_index(['Date','Timestamp'])
         # print(df.head())
         collated_df = collated_df.combine_first(df).reindex(columns=cols)
-        files_with_duplicate_timestamp.append((file, duplicate_timestamp))
+        files_with_duplicate_timestamp_dict.append((file, duplicate_timestamp))
         return collated_df
     except Exception as e:
         print(e)
@@ -483,7 +483,7 @@ def csv_collation(file, collated_df, files_with_errors, files_with_duplicate_tim
     #         files_with_errors.append(file)
     #         return collated_df, files_with_errors
 
-def excel_collation(file, collated_df, files_with_errors, files_with_duplicate_timestamp, date_format_list, missing_minutes_dict, empty_cells_timestamp_dict):
+def excel_collation(file, collated_df, files_with_errors, files_with_duplicate_timestamp_dict, date_format_list, missing_minutes_dict, empty_cells_timestamp_dict):
     try:
         date_and_time_format = ''
         date_and_time_column_name_list = ['Date and Time', 'date and time', 'DATE AND TIME',
@@ -533,7 +533,7 @@ def excel_collation(file, collated_df, files_with_errors, files_with_duplicate_t
         df.drop(columns=[date_and_time_format], axis=1, inplace=True)
 
         # From here onwards, its the same as csv collation
-        return csv_excel_df_manipulation(file, collated_df, df, files_with_duplicate_timestamp, date_format_list, missing_minutes_dict, empty_cells_timestamp_dict)
+        return csv_excel_df_manipulation(file, collated_df, df, files_with_duplicate_timestamp_dict, date_format_list, missing_minutes_dict, empty_cells_timestamp_dict)
         for date_format in date_format_list:
             try:
                 df['Date'] = pd.to_datetime(df['Date'], format=date_format)
@@ -571,14 +571,14 @@ def excel_collation(file, collated_df, files_with_errors, files_with_duplicate_t
         df = df.set_index(['Date','Timestamp'])
         collated_df = collated_df.combine_first(df).reindex(columns=cols)
         collated_df = collated_df.rename_axis(None, axis=1)
-        files_with_duplicate_timestamp.append((file, duplicate_timestamp))
+        files_with_duplicate_timestamp_dict.append((file, duplicate_timestamp))
         return collated_df 
     except Exception as e:
         print(e)
         files_with_errors.append(file)
         return collated_df
 
-def csv_excel_df_manipulation(file, collated_df, df, files_with_duplicate_timestamp, date_format_list, missing_minutes_dict, empty_cells_timestamp_dict):
+def csv_excel_df_manipulation(file, collated_df, df, files_with_duplicate_timestamp_dict, date_format_list, missing_minutes_dict, empty_cells_timestamp_dict):
     df = df.replace(r'^\s*$', np.nan, regex=True)
     df = df.replace('None', np.nan, regex=True)
     df = df[df['Timestamp'].notna()]
@@ -606,19 +606,22 @@ def csv_excel_df_manipulation(file, collated_df, df, files_with_duplicate_timest
     # Tracking of duplicate timestamp
     duplicate_df = df[df.duplicated(subset=['Timestamp'])]
     duplicate_timestamp = duplicate_df['Timestamp'].tolist()
-    duplicate_timestamp = [str(date) +' {} '.format(timestamp) for timestamp in duplicate_timestamp]
+    # duplicate_timestamp = [str(date) +' {} '.format(timestamp) for timestamp in duplicate_timestamp]
+    if duplicate_timestamp:
+        files_with_duplicate_timestamp_dict[file, date].extend([' {} '.format(timestamp) for timestamp in duplicate_timestamp])
 
     # Locate and inform user about missing value in cells
     empty_cells_location = np.where(pd.isnull(df))
     timestamp_column_index = df.columns.get_loc('Timestamp')
-    empty_cells_timestamp_dict[date].extend([df.iloc[i,timestamp_column_index] for i,j in zip(*empty_cells_location)])
+    if empty_cells_location[0].size != 0:
+        empty_cells_timestamp_dict[file, date].extend([df.iloc[i,timestamp_column_index] for i,j in zip(*empty_cells_location)])
     # print(empty_cells_timestamp)
     
     
-    df = insert_empty_slot(df, missing_minutes_dict)
+    df = insert_empty_slot(df, missing_minutes_dict, file)
     df = df.set_index(['Date','Timestamp'])
     collated_df = collated_df.combine_first(df).reindex(columns=cols)
-    files_with_duplicate_timestamp.append((file, duplicate_timestamp))
+    # files_with_duplicate_timestamp_dict.append((file, duplicate_timestamp))
     return collated_df
 
 def combined_collation(collation, window):
@@ -628,7 +631,7 @@ def combined_collation(collation, window):
 
     count = 0
     files_with_errors = []
-    files_with_duplicate_timestamp = []
+    files_with_duplicate_timestamp_dict = defaultdict(list)
     missing_minutes_dict = defaultdict(list)
     empty_cells_timestamp_dict = defaultdict(list)
 
@@ -663,19 +666,15 @@ def combined_collation(collation, window):
                 #     continue
                 
                 if file.endswith('.csv'):
-                    collated_df = csv_collation(file, collated_df, files_with_errors, files_with_duplicate_timestamp, date_format_list, missing_minutes_dict, empty_cells_timestamp_dict)
+                    collated_df = csv_collation(file, collated_df, files_with_errors, files_with_duplicate_timestamp_dict, date_format_list, missing_minutes_dict, empty_cells_timestamp_dict)
 
                 if file.endswith('.xlsx'):
-                    collated_df = excel_collation(file, collated_df, files_with_errors, files_with_duplicate_timestamp, date_format_list, missing_minutes_dict, empty_cells_timestamp_dict)
-
-                if not files_with_duplicate_timestamp:
-                    continue 
+                    collated_df = excel_collation(file, collated_df, files_with_errors, files_with_duplicate_timestamp_dict, date_format_list, missing_minutes_dict, empty_cells_timestamp_dict)
+         
                 
-                if files_with_duplicate_timestamp[-1][1] == []:
-                    files_with_duplicate_timestamp.pop()
     # print(missing_minutes_dict)
     # print(empty_cells_timestamp_dict)
-    print(files_with_duplicate_timestamp)
+    print(files_with_duplicate_timestamp_dict)
     for key, value in empty_cells_timestamp_dict.copy().items():
         if len(value) > 1388:
             del empty_cells_timestamp_dict[key]
@@ -689,7 +688,7 @@ def combined_collation(collation, window):
         window['-ERROR_FILES_LIST-'].update(f'{file}\n', append=True)
 
     print('These are the files with duplicate timestamp: ')
-    for file, duplicate_timestamp in files_with_duplicate_timestamp:
+    for file, duplicate_timestamp in files_with_duplicate_timestamp_dict.items():
         temp = ''.join(duplicate_timestamp)
         print(f'{file}: {temp}')
         window['-DUPLICATE_TIMESTAMP_LIST-'].update(f'{file}: Timestamp {temp}\n', append=True)
@@ -726,7 +725,7 @@ def combined_collation_test(collation):
 
     count = 0
     files_with_errors = []
-    files_with_duplicate_timestamp = []
+    files_with_duplicate_timestamp_dict = []
     missing_minutes_dict = defaultdict(list)
     empty_cells_timestamp_dict = defaultdict(list)
 
@@ -748,16 +747,16 @@ def combined_collation_test(collation):
 
             for file in files:
                 if file.endswith('.csv'):
-                    collated_df = csv_collation(file, collated_df, files_with_errors, files_with_duplicate_timestamp, date_format_list, missing_minutes_dict, empty_cells_timestamp_dict)
+                    collated_df = csv_collation(file, collated_df, files_with_errors, files_with_duplicate_timestamp_dict, date_format_list, missing_minutes_dict, empty_cells_timestamp_dict)
 
                 if file.endswith('.xlsx'):
-                    collated_df = excel_collation(file, collated_df, files_with_errors, files_with_duplicate_timestamp, date_format_list, missing_minutes_dict, empty_cells_timestamp_dict)
+                    collated_df = excel_collation(file, collated_df, files_with_errors, files_with_duplicate_timestamp_dict, date_format_list, missing_minutes_dict, empty_cells_timestamp_dict)
 
-                if not files_with_duplicate_timestamp:
+                if not files_with_duplicate_timestamp_dict:
                     continue 
                 
-                if files_with_duplicate_timestamp[-1][1] == []:
-                    files_with_duplicate_timestamp.pop()
+                if files_with_duplicate_timestamp_dict[-1][1] == []:
+                    files_with_duplicate_timestamp_dict.pop()
     print(missing_minutes_dict)
     # print(empty_cells_timestamp_dict)
     for key, value in empty_cells_timestamp_dict.copy().items():
@@ -770,7 +769,7 @@ def combined_collation_test(collation):
     # collated_df = collated_df.sort_index(axis=1, ascending=True)
     print(f'These are the files with errors: {files_with_errors}')
     print('These are the files with duplicate timestamp: ')
-    for file, duplicate_timestamp in files_with_duplicate_timestamp:
+    for file, duplicate_timestamp in files_with_duplicate_timestamp_dict:
         temp = ''.join(duplicate_timestamp)
         print(f'{file}: {temp}')
     current_date = get_current_date()
