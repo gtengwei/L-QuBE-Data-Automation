@@ -46,19 +46,19 @@ def build():
     ]
 
     error_files_frame = [
-        [sg.Multiline([], size=(WIDTH, HEIGHT), key='-ERROR_FILES_LIST-', expand_x=True, font=('Helvetica', 10))]
+        [sg.Multiline(size=(WIDTH, HEIGHT), key='-ERROR_FILES_LIST-', expand_x=True, font=('Helvetica', 10))]
     ]
 
     duplicate_timestamp_frame = [
-        [sg.Multiline([], size=(WIDTH, HEIGHT), key='-DUPLICATE_TIMESTAMP_LIST-', expand_x=True, font=('Helvetica', 10))]
+        [sg.Multiline(size=(WIDTH, HEIGHT), key='-DUPLICATE_TIMESTAMP_LIST-', expand_x=True, font=('Helvetica', 10))]
     ]
 
     missing_minutes_frame = [
-        [sg.Multiline([], size=(WIDTH, HEIGHT), key='-MISSING_MINUTES_LIST-', expand_x=True, font=('Helvetica', 10))]
+        [sg.Multiline(size=(WIDTH, HEIGHT), key='-MISSING_MINUTES_LIST-', expand_x=True, font=('Helvetica', 10))]
     ]
 
     empty_cells_frame = [
-        [sg.Multiline([], size=(WIDTH, HEIGHT), key='-EMPTY_CELLS_LIST-', expand_x=True, font=('Helvetica', 10))]
+        [sg.Multiline(size=(WIDTH, HEIGHT), key='-EMPTY_CELLS_LIST-', expand_x=True, font=('Helvetica', 10))]
     ]
 
     inform_user_frame_1 = [
