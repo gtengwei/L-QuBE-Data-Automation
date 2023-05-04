@@ -268,7 +268,7 @@ def csv_collation(file, collated_df, files_with_errors, files_with_duplicate_tim
             file_lines[i] = file_lines[i].strip(',').split(',')
             # print(file_lines[i])
             # file_lines[i] = [i for i in file_lines[i] if i != '']
-
+            
         if len(file_lines[0]) < 2:
             df = pd.DataFrame(file_lines[2:],columns=file_lines[1])
         else:
@@ -335,7 +335,8 @@ def csv_collation(file, collated_df, files_with_errors, files_with_duplicate_tim
         return collated_df
     except Exception as e:
         print(e)
-        files_with_errors.append(file)
+        
+        files_with_errors.append((file, e, 'There is no column header in the CSV file.'))
         return collated_df
     # try:
     #     f = open(file, 'r')
@@ -575,7 +576,8 @@ def excel_collation(file, collated_df, files_with_errors, files_with_duplicate_t
         return collated_df 
     except Exception as e:
         print(e)
-        files_with_errors.append(file)
+        
+        files_with_errors.append((file, e, 'There is no column header in the CSV file.'))
         return collated_df
 
 def csv_excel_df_manipulation(file, collated_df, df, files_with_duplicate_timestamp_dict, date_format_list, missing_minutes_dict, empty_cells_timestamp_dict):
