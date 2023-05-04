@@ -268,7 +268,10 @@ def csv_collation(file, collated_df, files_with_errors, files_with_duplicate_tim
             file_lines[i] = file_lines[i].strip(',').split(',')
             # print(file_lines[i])
             # file_lines[i] = [i for i in file_lines[i] if i != '']
-            
+        for i in range(2):
+            for j in range(len(file_lines[i])):
+                if file_lines[i][j] == '':
+                    file_lines[i][j] = np.nan
         if len(file_lines[0]) < 2:
             df = pd.DataFrame(file_lines[2:],columns=file_lines[1])
         else:
