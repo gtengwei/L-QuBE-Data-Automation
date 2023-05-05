@@ -702,7 +702,7 @@ def combined_collation(path, window):
     for file, duplicate_timestamp in files_with_duplicate_timestamp_dict.items():
         temp = ''.join(duplicate_timestamp)
         print(f'{file}: {temp}')
-        window['-DUPLICATE_TIMESTAMP_LIST-'].update(f'{file}: Timestamp {temp}\n', append=True)
+        window['-DUPLICATE_TIMESTAMPS_LIST-'].update(f'{file}: Timestamp {temp}\n', append=True)
     
     print('These are the files with missing minutes: ')
     for file, missing_minutes in missing_minutes_dict.items():

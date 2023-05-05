@@ -41,8 +41,8 @@ def popup(message):
 # Build the GUI
 def build():
     # Initial frame to choose option
-    option_frame = [
-        [sg.Text('Folder'), sg.In(size=(25,1), enable_events=True ,key='-FOLDER-'), sg.FolderBrowse()], 
+    folder_frame = [
+        [sg.In(size=(35,1), enable_events=True ,key='-FOLDER-'), sg.FolderBrowse()], 
         # [sg.Text('Option'), sg.InputCombo(('1. Collate csv/excel files', ), size=(20, 1), key='-OPTION-')],
         [sg.Button('Collate Files', key='-COLLATE_FILES-')]
     ]
@@ -52,7 +52,7 @@ def build():
     ]
 
     duplicate_timestamp_frame = [
-        [sg.Multiline(size=(MULTILINE_WIDTH, HEIGHT), key='-DUPLICATE_TIMESTAMP_LIST-', expand_x=True, font=('Helvetica', 10))]
+        [sg.Multiline(size=(MULTILINE_WIDTH, HEIGHT), key='-DUPLICATE_TIMESTAMPS_LIST-', expand_x=True, font=('Helvetica', 10))]
     ]
 
     missing_minutes_frame = [
@@ -80,8 +80,9 @@ def build():
     ]
 
     button_frame = [
-        [sg.Button('1'), sg.Button('2'),
-        sg.Button('3'), sg.Button('4')]
+        [sg.Button('Error Files', key='1'), sg.Button('Duplicate Timestamp', key='2'), 
+         sg.Button('Missing Minutes', key='3'), sg.Button('Empty Cells', key='4')
+        ]
     ]
 
 
@@ -108,7 +109,7 @@ def build():
     layout = [
         [
             sg.Frame('Progress Bar', progress_bar, size=(WIDTH,100), visible=False, key='-PROGRESS_COL-'),
-            [sg.Frame('Choose your option', option_frame, size=(WIDTH,HEIGHT), visible=True, key='-OPTION_COL-'),
+            [sg.Frame('Choose your folder', folder_frame, size=(WIDTH,HEIGHT), visible=True, key='-OPTION_COL-'),
             sg.Frame('Error Files', inform_user_frame_1, size=(MULTILINE_WIDTH,HEIGHT), visible=False, key='-INFORM_USER_COL1-', expand_x=True, expand_y=True),
             sg.Frame('Duplicate Timestamps', inform_user_frame_2, size=(MULTILINE_WIDTH,HEIGHT), visible=False, key='-INFORM_USER_COL2-', expand_x=True, expand_y=True),
             sg.Frame('Missing Minutes Added', inform_user_frame_3, size=(MULTILINE_WIDTH,HEIGHT), visible=False, key='-INFORM_USER_COL3-', expand_x=True, expand_y=True),
@@ -126,7 +127,7 @@ def interface():
     # Create the window
     window = build()
     window['-ERROR_FILES_LIST-'].expand(True, True)
-    window['-DUPLICATE_TIMESTAMP_LIST-'].expand(True, True)
+    window['-DUPLICATE_TIMESTAMPS_LIST-'].expand(True, True)
     window['-MISSING_MINUTES_LIST-'].expand(True, True)
     window['-EMPTY_CELLS_LIST-'].expand(True, True)
     popup_win = None
