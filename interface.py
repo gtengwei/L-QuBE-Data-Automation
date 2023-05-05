@@ -44,8 +44,8 @@ def build():
     # Initial frame to choose option
     option_frame = [
         [sg.Text('Folder'), sg.In(size=(25,1), enable_events=True ,key='-FOLDER-'), sg.FolderBrowse()], 
-        [sg.Text('Option'), sg.InputCombo(('1. Collate csv/excel files', ), size=(20, 1), key='-OPTION-')],
-        [sg.Button('Submit Option', key='-SUBMIT_OPTION-')]
+        # [sg.Text('Option'), sg.InputCombo(('1. Collate csv/excel files', ), size=(20, 1), key='-OPTION-')],
+        [sg.Button('Collate Files', key='-COLLATE_FILES-')]
     ]
 
     error_files_frame = [
@@ -144,7 +144,7 @@ def interface():
             folder = values['-FOLDER-']
             print(folder)
 
-        if event == '-SUBMIT_OPTION-':
+        if event == '-COLLATE_FILES-':
             if folder == '':
                 sg.popup('Please select a folder')
             else:
