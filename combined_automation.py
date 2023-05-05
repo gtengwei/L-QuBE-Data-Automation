@@ -285,6 +285,11 @@ def csv_collation(file, collated_df, files_with_errors, files_with_duplicate_tim
         except:
             df = df.rename(columns={'Time': 'Timestamp'})
 
+        df = df.replace(r'^\s*$', np.nan, regex=True)
+        df = df.replace('None', np.nan, regex=True)
+        df = df[df['Timestamp'].notna()]
+        df = df.reset_index(drop=True)  
+        
         df['Timestamp'] = df['Timestamp'].astype(str)
         for i in range(len(df)):
             temp = df['Timestamp'][i].split(':')
