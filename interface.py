@@ -11,7 +11,7 @@ sg.set_options(font=('Helvetica', 12))
 sg.set_options(tooltip_font=('Helvetica', 11))
 # Default size for frames, can be changed
 # WIDTH, HEIGHT = sg.Window.get_screen_size()
-WIDTH = 300
+WIDTH = 400
 HEIGHT = 300
 
 MULTILINE_WIDTH = 550
@@ -43,7 +43,8 @@ def popup(message):
 def build():
     # Initial frame to choose option
     option_frame = [
-        [sg.InputCombo(('1. Collate csv/excel files', ), size=(20, 1), key='-OPTION-')],
+        [sg.Text('Folder'), sg.In(size=(25,1), enable_events=True ,key='-FOLDER-'), sg.FolderBrowse()], 
+        [sg.Text('Option'), sg.InputCombo(('1. Collate csv/excel files', ), size=(20, 1), key='-OPTION-')],
         [sg.Button('Submit Option', key='-SUBMIT_OPTION-')]
     ]
 
@@ -88,6 +89,7 @@ def build():
     back_button = [
         [sg.Button('Back', key='-BACK-')]
     ]
+
     progress_bar = [
         [sg.Text('', key='-PROGRESS_TEXT-', justification='center', size=(20, 1), expand_x=True)],
          [sg.ProgressBar(100, orientation='h', size=(40, 20), key='-PROGRESS_BAR-')]    
@@ -121,7 +123,7 @@ def build():
 
 # Main function to run the GUI
 def interface():
-    config = get_config()
+    # config = get_config()
     # Create the window
     window = build()
     window['-ERROR_FILES_LIST-'].expand(True, True)
@@ -130,6 +132,7 @@ def interface():
     window['-EMPTY_CELLS_LIST-'].expand(True, True)
     popup_win = None
     layout = 1
+    folder = ''
     # Display window
     while True:
         event, values = window.read()
@@ -137,12 +140,19 @@ def interface():
         if event == sg.WIN_CLOSED or event == 'Exit':
             break
         
+        if event == '-FOLDER-':
+            folder = values['-FOLDER-']
+            print(folder)
+
         if event == '-SUBMIT_OPTION-':
-            popup_win = popup('Please wait while the files are being collated...')
-            window.force_focus()
-            window['-PROGRESS_COL-'].update(visible=True)
-            # Parallel thread to execute the collation on top of the pop up loading
-            threading.Thread(target= combined_collation, args=(config.collation,window, )).start()
+            if folder == '':
+                sg.popup('Please select a folder')
+            else:
+                popup_win = popup('Please wait while the files are being collated...')
+                window.force_focus()
+                window['-PROGRESS_COL-'].update(visible=True)
+                # Parallel thread to execute the collation on top of the pop up loading
+                threading.Thread(target= combined_collation, args=(folder, window, )).start()
         
         if event == 'EXECUTION DONE':
             popup_win.close()
