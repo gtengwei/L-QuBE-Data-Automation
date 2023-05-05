@@ -289,7 +289,7 @@ def csv_collation(file, collated_df, files_with_errors, files_with_duplicate_tim
         df = df.replace('None', np.nan, regex=True)
         df = df[df['Timestamp'].notna()]
         df = df.reset_index(drop=True)  
-        
+
         df['Timestamp'] = df['Timestamp'].astype(str)
         for i in range(len(df)):
             temp = df['Timestamp'][i].split(':')
@@ -634,8 +634,9 @@ def csv_excel_df_manipulation(file, collated_df, df, files_with_duplicate_timest
     # files_with_duplicate_timestamp_dict.append((file, duplicate_timestamp))
     return collated_df
 
-def combined_collation(collation, window):
-    directory = collation['directory']
+def combined_collation(path, window):
+    # directory = collation['directory']
+    directory = path
     vendor = os.path.basename(directory)
     os.chdir(directory)
 

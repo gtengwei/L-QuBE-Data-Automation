@@ -1,6 +1,5 @@
 import PySimpleGUI as sg
 import threading
-from configuration import get_config
 from combined_automation import combined_collation
 from time import sleep
 # Add a touch of color
