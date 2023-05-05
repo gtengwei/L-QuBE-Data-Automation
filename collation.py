@@ -166,10 +166,11 @@ def collate_dataframes(option, change_directory):
                     clean_df = clean_dataframe(file, option)
                     collated_df = merge_dataframes(collated_df,clean_df)
 
-    collated_df = collated_df.sort_values(by=['Date','Timestamp'], ascending=True)
+    collated_df = collated_df.sort_values(by=['Date','Timestamp'], ascending=[True,True])
 
     # Insert empty slots for missing minutes
-    filled_collated_df = insert_empty_slot(collated_df)
+    if option != 'all':
+        filled_collated_df = insert_empty_slot(collated_df)
 
     # Name files based on option
     if option == 'all':

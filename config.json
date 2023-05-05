@@ -4,7 +4,7 @@
         "device_choice": "device_1",
         "devices" : {
             "device_1" : {
-                "ip" : "192.168.170.102",
+                "ip" : "192.168.170.103",
                 "password" : "0007",
                 "slots" : { 
                     "1" : "HDR_CDW_FL",
@@ -22,7 +22,7 @@
         
         },
         "collation" : {
-            "directory" : "C:\\Users\\tengwei.goh\\Desktop\\Sample Data\\test\\e2i_test\\missing slot name and missing data"
+            "directory" : "C:\\Users\\tengwei.goh\\Desktop\\Sample Data\\test\\e2i_test\\all 4 display"
         },
         "hour": "15",
         "minute": "23"
