@@ -727,7 +727,10 @@ def combined_collation(path, window):
     worksheet = writer.sheets['Sheet1']
     worksheet.set_column('A:B', 15)
     writer.save()
-    window.write_event_value('EXECUTION DONE', None)
+    if not files_with_errors and not files_with_duplicate_timestamp_dict and not missing_minutes_dict and not empty_cells_timestamp_dict:
+        window.write_event_value('COLLATION SUCCESSFUL', None)
+    else:
+        window.write_event_value('EXECUTION DONE', None)
 
 def combined_collation_test(collation):
     directory = collation['directory']

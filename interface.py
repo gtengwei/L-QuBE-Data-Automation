@@ -164,6 +164,12 @@ def interface():
             #     window[f'button_{i}'].update(visible=True)
             window['-BUTTON_COL-'].update(visible=True)
         
+        if event == 'COLLATION SUCCESSFUL':
+            popup_win.close()
+            popup_win = None
+            window['-PROGRESS_COL-'].update(visible=False)
+            sg.popup('Collation Successful! No errors found.')
+
         if event in '1234':
             window[f'-INFORM_USER_COL{layout}-'].update(visible=False)
             layout = int(event)
