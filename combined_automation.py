@@ -695,26 +695,38 @@ def combined_collation(path, window):
     # collated_df = collated_df.sort_index(axis=1, ascending=True)
 
     print(f'These are the files with errors: {files_with_errors}')
+    if files_with_errors:
+        window['-SUMMARY_LIST-'].update('These are the files with errors: \n', append=True)
     for file in files_with_errors:
         window['-ERROR_FILES_LIST-'].update(f'{file}\n', append=True)
+        window['-SUMMARY_LIST-'].update(f'{file}\n', append=True)
 
     print('These are the files with duplicate timestamp: ')
+    if files_with_duplicate_timestamp_dict:
+        window['-SUMMARY_LIST-'].update('\nThese are the files with duplicate timestamp detected: \n', append=True)
     for file, duplicate_timestamp in files_with_duplicate_timestamp_dict.items():
         temp = ''.join(duplicate_timestamp)
         print(f'{file}: {temp}')
         window['-DUPLICATE_TIMESTAMPS_LIST-'].update(f'{file}: Timestamp {temp}\n', append=True)
+        window['-SUMMARY_LIST-'].update(f'{file}: Timestamp {temp}\n', append=True)
     
     print('These are the files with missing minutes: ')
+    if missing_minutes_dict:
+        window['-SUMMARY_LIST-'].update('\nThese are the files with missing minutes added: \n', append=True)
     for file, missing_minutes in missing_minutes_dict.items():
         temp = ' '.join(missing_minutes)
         print(f'{file}: {temp}')
         window['-MISSING_MINUTES_LIST-'].update(f'{file}: Timestamp {temp}\n', append=True)
+        window['-SUMMARY_LIST-'].update(f'{file}: Timestamp {temp}\n', append=True)
     
     print('These are the files with empty cells: ')
+    if empty_cells_timestamp_dict:
+        window['-SUMMARY_LIST-'].update('\nThese are the files with empty cells detected: \n', append=True)
     for file, empty_cells_timestamp in empty_cells_timestamp_dict.items():
         temp = ''.join(empty_cells_timestamp)
         print(f'{file}: {temp}')
         window['-EMPTY_CELLS_LIST-'].update(f'{file}: Timestamp {temp}\n', append=True)
+        window['-SUMMARY_LIST-'].update(f'{file}: Timestamp {temp}\n', append=True)
 
 
     current_date = get_current_date()

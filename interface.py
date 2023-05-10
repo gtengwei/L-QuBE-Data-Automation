@@ -46,7 +46,9 @@ def build():
         # [sg.Text('Option'), sg.InputCombo(('1. Collate csv/excel files', ), size=(20, 1), key='-OPTION-')],
         [sg.Button('Collate Files', key='-COLLATE_FILES-')]
     ]
-
+    summary_frame = [
+        [sg.Multiline(size=(MULTILINE_WIDTH, HEIGHT), key='-SUMMARY_LIST-', expand_x=True, font=('Helvetica', 10))]
+    ]
     error_files_frame = [
         [sg.Multiline(size=(MULTILINE_WIDTH, HEIGHT), key='-ERROR_FILES_LIST-', expand_x=True, font=('Helvetica', 10))]
     ]
@@ -64,24 +66,29 @@ def build():
     ]
 
     inform_user_frame_1 = [
-        [sg.Frame("", error_files_frame, expand_x=True, expand_y=True)]    
+        [sg.Frame("", summary_frame, expand_x=True, expand_y=True)]
     ]
 
     inform_user_frame_2 = [
-        [sg.Frame("", duplicate_timestamp_frame, expand_x=True, expand_y=True)]
+        [sg.Frame("", error_files_frame, expand_x=True, expand_y=True)]    
     ]
 
     inform_user_frame_3 = [
-        [sg.Frame("", missing_minutes_frame, expand_x=True, expand_y=True)]
+        [sg.Frame("", duplicate_timestamp_frame, expand_x=True, expand_y=True)]
     ]
 
     inform_user_frame_4 = [
+        [sg.Frame("", missing_minutes_frame, expand_x=True, expand_y=True)]
+    ]
+
+    inform_user_frame_5 = [
         [sg.Frame("", empty_cells_frame, expand_x=True, expand_y=True)]
     ]
 
     button_frame = [
-        [sg.Button('Error Files', key='1'), sg.Button('Duplicate Timestamp', key='2'), 
-         sg.Button('Missing Minutes', key='3'), sg.Button('Empty Cells', key='4')
+        [sg.Button('Summary', key='1'),
+         sg.Button('Error Files', key='2'), sg.Button('Duplicate Timestamp', key='3'), 
+         sg.Button('Missing Minutes', key='4'), sg.Button('Empty Cells', key='5')
         ]
     ]
 
@@ -110,10 +117,11 @@ def build():
         [
             sg.Frame('Progress Bar', progress_bar, size=(WIDTH,100), visible=False, key='-PROGRESS_COL-'),
             [sg.Frame('Choose your folder', folder_frame, size=(WIDTH,HEIGHT), visible=True, key='-OPTION_COL-'),
-            sg.Frame('Error Files', inform_user_frame_1, size=(MULTILINE_WIDTH,HEIGHT), visible=False, key='-INFORM_USER_COL1-', expand_x=True, expand_y=True),
-            sg.Frame('Duplicate Timestamps', inform_user_frame_2, size=(MULTILINE_WIDTH,HEIGHT), visible=False, key='-INFORM_USER_COL2-', expand_x=True, expand_y=True),
-            sg.Frame('Missing Minutes Added', inform_user_frame_3, size=(MULTILINE_WIDTH,HEIGHT), visible=False, key='-INFORM_USER_COL3-', expand_x=True, expand_y=True),
-            sg.Frame('Empty Cells', inform_user_frame_4, size=(MULTILINE_WIDTH,HEIGHT), visible=False, key='-INFORM_USER_COL4-', expand_x=True, expand_y=True)],
+            sg.Frame('Summary', inform_user_frame_1, size=(MULTILINE_WIDTH,HEIGHT), visible=False, key='-INFORM_USER_COL1-', expand_x=True, expand_y=True),
+            sg.Frame('Error Files', inform_user_frame_2, size=(MULTILINE_WIDTH,HEIGHT), visible=False, key='-INFORM_USER_COL2-', expand_x=True, expand_y=True),
+            sg.Frame('Duplicate Timestamps Detected', inform_user_frame_3, size=(MULTILINE_WIDTH,HEIGHT), visible=False, key='-INFORM_USER_COL3-', expand_x=True, expand_y=True),
+            sg.Frame('Missing Minutes Added', inform_user_frame_4, size=(MULTILINE_WIDTH,HEIGHT), visible=False, key='-INFORM_USER_COL4-', expand_x=True, expand_y=True),
+            sg.Frame('Empty Cells Detected', inform_user_frame_5, size=(MULTILINE_WIDTH,HEIGHT), visible=False, key='-INFORM_USER_COL5-', expand_x=True, expand_y=True)],
             sg.Frame('', button_frame, visible=False, key='-BUTTON_COL-', element_justification='right')
         ]
     ]
@@ -170,7 +178,7 @@ def interface():
             window['-PROGRESS_COL-'].update(visible=False)
             sg.popup('Collation Successful! No errors found.')
 
-        if event in '1234':
+        if event in '12345':
             window[f'-INFORM_USER_COL{layout}-'].update(visible=False)
             layout = int(event)
             window[f'-INFORM_USER_COL{layout}-'].update(visible=True)
