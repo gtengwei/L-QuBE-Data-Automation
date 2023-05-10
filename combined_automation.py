@@ -643,9 +643,11 @@ def csv_excel_df_manipulation(file, collated_df, df, files_with_duplicate_timest
 
     # Locate and inform user about missing value in cells
     empty_cells_location = np.where(pd.isnull(df))
+    unique_empty_cells_location = np.unique(empty_cells_location[0])
+    print(unique_empty_cells_location)
     timestamp_column_index = df.columns.get_loc('Timestamp')
     if empty_cells_location[0].size != 0:
-        empty_cells_timestamp_dict[file, date].extend(['{} '. format(df.iloc[i,timestamp_column_index]) for i,j in zip(*empty_cells_location)])
+        empty_cells_timestamp_dict[file, date].extend(['{} '. format(df.iloc[i,timestamp_column_index]) for i in unique_empty_cells_location])
     # print(empty_cells_timestamp)
     
     
@@ -705,11 +707,19 @@ def combined_collation(path, window):
          
                 
     # print(missing_minutes_dict)
-    # print(empty_cells_timestamp_dict)
-    print(files_with_duplicate_timestamp_dict)
+    # Due to the presence of empty column (BIN RANGE), the number of empty cells will be 1440
+    # Hence, we should not take into account these empty cells
+    print(empty_cells_timestamp_dict)
     for key, value in empty_cells_timestamp_dict.copy().items():
         if len(value) > 1388:
             del empty_cells_timestamp_dict[key]
+
+    # Collated file has 1440 minutes of duplicate timestamp
+    # Hence, we should not take into account these minutes
+    # print(files_with_duplicate_timestamp_dict)
+    for key, value in files_with_duplicate_timestamp_dict.copy().items():
+        if len(value) > 1400:
+            del files_with_duplicate_timestamp_dict[key]
     collated_df.reset_index(inplace=True)
     collated_df = collated_df.sort_values(by=['Date','Timestamp'], ascending=True)
     # collated_df['Date'] = collated_df['Date'].dt.strftime('%d/%m/%Y')
