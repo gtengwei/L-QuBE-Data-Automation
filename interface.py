@@ -2,6 +2,7 @@ import PySimpleGUI as sg
 import threading
 from combined_automation import combined_collation
 from time import sleep
+import os
 # Add a touch of color
 sg.theme('DarkBlue3')   
 
@@ -41,9 +42,14 @@ def popup(message):
 # Build the GUI
 def build():
     # Initial frame to choose option
+    file_multiline = [
+        [sg.Multiline(size=(MULTILINE_WIDTH, 5), key='-FILES_LIST-', expand_x=True, font=('Helvetica', 10))],  
+    ]
+
     folder_frame = [
         [sg.In(size=(35,1), enable_events=True ,key='-FOLDER-'), sg.FolderBrowse()], 
         # [sg.Text('Option'), sg.InputCombo(('1. Collate csv/excel files', ), size=(20, 1), key='-OPTION-')],
+        [sg.Frame('List of Files', file_multiline)],
         [sg.Button('Collate Files', key='-COLLATE_FILES-')]
     ]
     summary_frame = [
@@ -151,6 +157,9 @@ def interface():
         if event == '-FOLDER-':
             folder = values['-FOLDER-']
             print(folder)
+            file_name = os.listdir(folder)
+            for file in file_name:
+                window['-FILES_LIST-'].update(file + '\n', append=True)
 
         if event == '-COLLATE_FILES-':
             if folder == '':
