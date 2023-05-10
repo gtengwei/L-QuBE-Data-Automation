@@ -493,7 +493,7 @@ def csv_collation(file, collated_df, files_with_errors, files_with_duplicate_tim
     #         return collated_df, files_with_errors
 
 def excel_collation(file, collated_df, files_with_errors, files_with_duplicate_timestamp_dict, date_format_list, missing_minutes_dict, empty_cells_timestamp_dict):
-    try:
+    try: 
         date_and_time_format = ''
         date_and_time_column_name_list = ['Date and Time', 'date and time', 'DATE AND TIME',
                                         'Date & Time',  'date & time', 'DATE & TIME',
@@ -505,14 +505,19 @@ def excel_collation(file, collated_df, files_with_errors, files_with_duplicate_t
         # print(df.head())
         df = df.replace(r'^\s*$', np.nan, regex=True)
         df = df.replace('None', np.nan, regex=True)
-        for index, row in df.iterrows():
-            if not pd.isnull(row).all():
-                break
+        number_of_columns = len(df.columns)
+        for i, row in df.iterrows():
+            print(row.isnull().sum())
+            if row.isnull().sum() > number_of_columns-5:
+                df.drop(i,inplace=True)
             else:
-                df.drop(index,inplace=True)
-        print(df.head())
+                break
+        # df.iloc[np.argwhere(df.isnull().sum(1)<=5).ravel()[0]:]
+        # print(np.argwhere(df.isnull().sum(0)<=5))
+        # print(df.iloc[(df.isnull().sum(1)>5).index])
+        # print(df.head())
         # Able to locate column names IF previous rows are all empty
-        df.dropna(inplace=True, axis=0, thresh=5)
+        
         
         df.columns = df.iloc[0]
         df = df.drop(df.index[0])
