@@ -502,10 +502,18 @@ def excel_collation(file, collated_df, files_with_errors, files_with_duplicate_t
                                         ]
         df = pd.read_excel(file, sheet_name=0, header=None)
         df = df.reset_index(drop=True)
-        # Able to locate column names IF previous rows are all empty
-        df.dropna(inplace = True, axis=0, thresh=5)
+        # print(df.head())
         df = df.replace(r'^\s*$', np.nan, regex=True)
         df = df.replace('None', np.nan, regex=True)
+        for index, row in df.iterrows():
+            if not pd.isnull(row).all():
+                break
+            else:
+                df.drop(index,inplace=True)
+        print(df.head())
+        # Able to locate column names IF previous rows are all empty
+        df.dropna(inplace=True, axis=0, thresh=5)
+        
         df.columns = df.iloc[0]
         df = df.drop(df.index[0])
         # df.columns = df.iloc[int(excel_column_header_row)-2]
@@ -739,7 +747,7 @@ def combined_collation(path, window):
 
     current_date = get_current_date()
     collated_df.to_excel(f'{vendor}_{current_date}_collated.xlsx', index=False)
-    # collated_df.to_csv(f'{vendor}_{current_date}_collated.csv')
+    # collated_df.to_csv(f'{vendor}_{current_date}_collated.csv', index=False)
     writer = pd.ExcelWriter(f'{vendor}_{current_date}_collated.xlsx',
                         engine='xlsxwriter',
                         date_format='d/m/yyyy')
