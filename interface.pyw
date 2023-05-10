@@ -133,7 +133,7 @@ def build():
     ]
 
     margins = (5, 5)
-    return sg.Window('L-QuBE Automated Data Collation', layout, margins = margins, finalize=True, resizable=True)
+    return sg.Window('L-QuBE Automated CSV/Excel Data Collation', layout, margins = margins, finalize=True, resizable=True)
 
 # Main function to run the GUI
 def interface():
@@ -157,6 +157,7 @@ def interface():
         if event == '-FOLDER-':
             folder = values['-FOLDER-']
             print(folder)
+            window['-FILES_LIST-'].update('')
             file_name = os.listdir(folder)
             for file in file_name:
                 window['-FILES_LIST-'].update(file + '\n', append=True)
