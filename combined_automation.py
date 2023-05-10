@@ -500,7 +500,7 @@ def excel_collation(file, collated_df, files_with_errors, files_with_duplicate_t
                                         'Date_Time', 'date_time', 'DATE_TIME',
                                         'Date Time', 'date time', 'DATE TIME'
                                         ]
-        df = pd.read_excel(file, sheet_name=0)
+        df = pd.read_excel(file, sheet_name=0, header=None)
         df = df.reset_index(drop=True)
         # Able to locate column names IF previous rows are all empty
         df.dropna(inplace = True, axis=0, thresh=5)
@@ -508,7 +508,6 @@ def excel_collation(file, collated_df, files_with_errors, files_with_duplicate_t
         df = df.replace('None', np.nan, regex=True)
         df.columns = df.iloc[0]
         df = df.drop(df.index[0])
-
         # df.columns = df.iloc[int(excel_column_header_row)-2]
         # df = df.drop(df.index[:int(excel_column_header_row)-1])
         df = df.reset_index()
@@ -527,20 +526,29 @@ def excel_collation(file, collated_df, files_with_errors, files_with_duplicate_t
                 break
             except:
                 pass
+        if date_and_time_format != '':
+            for i in range(len(df[date_and_time_format])):
+                try:
+                    df['Date'] = df[date_and_time_format][0][0]
+                    temp = df[date_and_time_format][i][1].split(':')
+                    # Ensure that there are no empty strings in the list that will cause error
+                    temp = [i for i in temp if i != '']
+                    hour = str('%02d' % int(temp[0])) + ':'
+                    minute = str('%02d' % int(temp[1]))
+                    df['Timestamp'][i] = hour + minute
+                except:
+                    pass
+            df.drop(columns=[date_and_time_format], axis=1, inplace=True)
 
-        for i in range(len(df[date_and_time_format])):
-            try:
-                df['Date'] = df[date_and_time_format][0][0]
-                temp = df[date_and_time_format][i][1].split(':')
-                # Ensure that there are no empty strings in the list that will cause error
-                temp = [i for i in temp if i != '']
-                hour = str('%02d' % int(temp[0])) + ':'
-                minute = str('%02d' % int(temp[1]))
-                df['Timestamp'][i] = hour + minute
-            except:
-                pass
-        df.drop(columns=[date_and_time_format], axis=1, inplace=True)
-
+        else:
+            for i in range(len(df)):
+                try:
+                    temp = df['Timestamp'][i].split(':')
+                    hour = str('%02d' % int(temp[0])) + ':'
+                    minute = str('%02d' % int(temp[1]))
+                    df['Timestamp'][i] = hour + minute
+                except:
+                    pass
         # From here onwards, its the same as csv collation
         return csv_excel_df_manipulation(file, collated_df, df, files_with_duplicate_timestamp_dict, date_format_list, missing_minutes_dict, empty_cells_timestamp_dict)
         for date_format in date_format_list:
