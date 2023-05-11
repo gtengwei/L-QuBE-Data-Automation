@@ -745,8 +745,8 @@ def combined_collation(path, window):
     for file, duplicate_timestamp in files_with_duplicate_timestamp_dict.items():
         temp = ''.join(duplicate_timestamp)
         print(f'{file}: {temp}')
-        window['-DUPLICATE_TIMESTAMPS_LIST-'].update(f'{file}: Timestamp {temp}\n', append=True)
-        window['-SUMMARY_LIST-'].update(f'{file}: Timestamp {temp}\n', append=True)
+        window['-DUPLICATE_TIMESTAMPS_LIST-'].update(f'{file}: Timestamp {temp}\n\n', append=True)
+        window['-SUMMARY_LIST-'].update(f'{file}: Timestamp {temp}\n\n', append=True)
     
     print('These are the files with missing minutes: ')
     if missing_minutes_dict:
@@ -754,8 +754,8 @@ def combined_collation(path, window):
     for file, missing_minutes in missing_minutes_dict.items():
         temp = ' '.join(missing_minutes)
         print(f'{file}: {temp}')
-        window['-MISSING_MINUTES_LIST-'].update(f'{file}: Timestamp {temp}\n', append=True)
-        window['-SUMMARY_LIST-'].update(f'{file}: Timestamp {temp}\n', append=True)
+        window['-MISSING_MINUTES_LIST-'].update(f'{file}: Timestamp {temp}\n\n', append=True)
+        window['-SUMMARY_LIST-'].update(f'{file}: Timestamp {temp}\n\n', append=True)
     
     print('These are the files with empty cells: ')
     if empty_cells_timestamp_dict:
@@ -763,8 +763,8 @@ def combined_collation(path, window):
     for file, empty_cells_timestamp in empty_cells_timestamp_dict.items():
         temp = ''.join(empty_cells_timestamp)
         print(f'{file}: {temp}')
-        window['-EMPTY_CELLS_LIST-'].update(f'{file}: Timestamp {temp}\n', append=True)
-        window['-SUMMARY_LIST-'].update(f'{file}: Timestamp {temp}\n', append=True)
+        window['-EMPTY_CELLS_LIST-'].update(f'{file}: Timestamp {temp}\n\n', append=True)
+        window['-SUMMARY_LIST-'].update(f'{file}: Timestamp {temp}\n\n', append=True)
 
 
     current_date = get_current_date()
