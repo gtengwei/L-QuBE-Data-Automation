@@ -164,9 +164,17 @@ def interface():
             for file in file_name:
                 window['-FILES_LIST-'].update(file + '\n', append=True)
 
+        if event == 'NO FILES':
+            popup_win.close()
+            popup_win = None
+            window['-PROGRESS_COL-'].update(visible=False)
+            sg.popup(title='Error', custom_text = 'No files found in the selected folder.', button_type=sg.POPUP_BUTTONS_OK, icon='error')
+
         if event == '-COLLATE_FILES-':
             if folder == '':
                 sg.popup('Please select a folder')
+            if event == 'NO FILES':
+                sg.popup('No files found in the selected folder.')
             else:
                 popup_win = popup('Please wait while the files are being collated...')
                 window.force_focus()

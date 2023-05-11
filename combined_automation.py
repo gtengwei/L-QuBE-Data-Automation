@@ -684,7 +684,9 @@ def combined_collation(path, window):
             for file in files[:]:
                 if file.endswith('collated.xlsx') or file.endswith('collated.csv'):
                     files.pop(files.index(file))
-
+            if len(files) == 0:
+                window.write_event_value('NO FILES', None)
+                return
             percentage_of_one_file = int(100/len(files))
 
             for file in files:
