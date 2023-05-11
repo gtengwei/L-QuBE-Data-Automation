@@ -684,6 +684,11 @@ def combined_collation(path, window):
             for file in files[:]:
                 if file.endswith('collated.xlsx') or file.endswith('collated.csv'):
                     files.pop(files.index(file))
+                if file.endswith('.csv') or file.endswith('.xlsx'):
+                    continue
+                else:
+                    files.pop(files.index(file))
+                    
             if len(files) == 0:
                 window.write_event_value('NO FILES', None)
                 return
