@@ -717,9 +717,9 @@ def combined_collation(path, window):
     # Due to the presence of empty column (BIN RANGE), the number of empty cells will be 1440
     # Hence, we should not take into account these empty cells
     print(empty_cells_timestamp_dict)
-    for key, value in empty_cells_timestamp_dict.copy().items():
-        if len(value) > 1388:
-            del empty_cells_timestamp_dict[key]
+    # for key, value in empty_cells_timestamp_dict.copy().items():
+    #     if len(value) > 1388:
+    #         del empty_cells_timestamp_dict[key]
 
     # Collated file has 1440 minutes of duplicate timestamp
     # Hence, we should not take into account these minutes
