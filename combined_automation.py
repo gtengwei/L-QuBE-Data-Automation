@@ -508,7 +508,7 @@ def excel_collation(file, collated_df, files_with_errors, files_with_duplicate_t
         number_of_columns = len(df.columns)
         for i, row in df.iterrows():
             print(row.isnull().sum())
-            if row.isnull().sum() > number_of_columns-5:
+            if row.isnull().sum() >= number_of_columns-5:
                 df.drop(i,inplace=True)
             else:
                 break
@@ -688,7 +688,7 @@ def combined_collation(path, window):
                     continue
                 else:
                     files.pop(files.index(file))
-                    
+
             if len(files) == 0:
                 window.write_event_value('NO FILES', None)
                 return
