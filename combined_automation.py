@@ -628,26 +628,36 @@ def csv_excel_df_manipulation(file, collated_df, df, files_with_duplicate_timest
 
     # Convert Date datetime to str before proceeding
     df['Date'] = df['Date'].dt.strftime('%d/%m/%Y')
-    date = df.Date[0]
+
+    # Will be used to locate duplicate timestamps and empty cells
+    timestamp_column_index = df.columns.get_loc('Timestamp')
+    date_column_index = df.columns.get_loc('Date')
 
     # NEED TO DROP EMPTY COLUMN NAMES AND CELLS to prevent error
     df = df.loc[:, df.columns.notna()]
     df = df[df['Timestamp'].notna()]
 
     # Tracking of duplicate timestamp
-    duplicate_df = df[df.duplicated(subset=['Timestamp'])]
-    duplicate_timestamp = duplicate_df['Timestamp'].tolist()
+    duplicate_df = df[df.duplicated(subset=['Date', 'Timestamp'])]
+    # print(duplicate_df.head())
+    print((duplicate_df[['Date','Timestamp']]).values.tolist())
+    duplicate_date_timestamp = duplicate_df[['Date','Timestamp']].values.tolist()
     # duplicate_timestamp = [str(date) +' {} '.format(timestamp) for timestamp in duplicate_timestamp]
-    if duplicate_timestamp:
-        files_with_duplicate_timestamp_dict[file, date].extend(['{} '.format(timestamp) for timestamp in duplicate_timestamp])
+    if duplicate_date_timestamp:
+        for date_timestamp in duplicate_date_timestamp:
+            date = str(date_timestamp[0])
+            timestamp = str(date_timestamp[1])
+            files_with_duplicate_timestamp_dict[file, date].extend(['{} '.format(timestamp)])
+        # files_with_duplicate_timestamp_dict[file].extend(['{} '.format(timestamp) for timestamp in duplicate_timestamp])
 
     # Locate and inform user about missing value in cells
     empty_cells_location = np.where(pd.isnull(df))
     unique_empty_cells_location = np.unique(empty_cells_location[0])
     print(unique_empty_cells_location)
-    timestamp_column_index = df.columns.get_loc('Timestamp')
     if empty_cells_location[0].size != 0:
-        empty_cells_timestamp_dict[file, date].extend(['{} '. format(df.iloc[i,timestamp_column_index]) for i in unique_empty_cells_location])
+        for index in unique_empty_cells_location:
+            empty_cells_timestamp_dict[file, df.iloc[index, date_column_index]].extend(['{} '. format(df.iloc[index,timestamp_column_index])])
+        # empty_cells_timestamp_dict[file, date].extend(['{} '. format(df.iloc[i,timestamp_column_index]) for i in unique_empty_cells_location])
     # print(empty_cells_timestamp)
     
     
@@ -716,7 +726,7 @@ def combined_collation(path, window):
     # print(missing_minutes_dict)
     # Due to the presence of empty column (BIN RANGE), the number of empty cells will be 1440
     # Hence, we should not take into account these empty cells
-    print(empty_cells_timestamp_dict)
+    # print(empty_cells_timestamp_dict)
     # for key, value in empty_cells_timestamp_dict.copy().items():
     #     if len(value) > 1388:
     #         del empty_cells_timestamp_dict[key]
@@ -724,9 +734,9 @@ def combined_collation(path, window):
     # Collated file has 1440 minutes of duplicate timestamp
     # Hence, we should not take into account these minutes
     # print(files_with_duplicate_timestamp_dict)
-    for key, value in files_with_duplicate_timestamp_dict.copy().items():
-        if len(value) > 1400:
-            del files_with_duplicate_timestamp_dict[key]
+    # for key, value in files_with_duplicate_timestamp_dict.copy().items():
+    #     if len(value) > 1400:
+    #         del files_with_duplicate_timestamp_dict[key]
     collated_df.reset_index(inplace=True)
     collated_df = collated_df.sort_values(by=['Date','Timestamp'], ascending=True)
     # collated_df['Date'] = collated_df['Date'].dt.strftime('%d/%m/%Y')
@@ -740,9 +750,11 @@ def combined_collation(path, window):
         window['-SUMMARY_LIST-'].update(f'{file}\n', append=True)
 
     print('These are the files with duplicate timestamp: ')
+    print(files_with_duplicate_timestamp_dict)
     if files_with_duplicate_timestamp_dict:
         window['-SUMMARY_LIST-'].update('\nThese are the files with duplicate timestamp detected: \n', append=True)
     for file, duplicate_timestamp in files_with_duplicate_timestamp_dict.items():
+        # print(''.join(duplicate_timestamp))
         temp = ''.join(duplicate_timestamp)
         print(f'{file}: {temp}')
         window['-DUPLICATE_TIMESTAMPS_LIST-'].update(f'{file}: Timestamp {temp}\n\n', append=True)
