@@ -168,17 +168,16 @@ def collate_dataframes(option, change_directory):
 
     collated_df = collated_df.sort_values(by=['Date','Timestamp'], ascending=[True,True])
 
-    # Insert empty slots for missing minutes
-    if option != 'all':
-        filled_collated_df = insert_empty_slot(collated_df)
 
     # Name files based on option
     if option == 'all':
         os.chdir(change_directory)
         current_date = get_current_date()
-        filled_collated_df.to_excel(f"AllData_{current_date}_collated.xlsx", index = False)
+        collated_df.to_excel(f"AllData_{current_date}_collated.xlsx", index = False)
     
-    elif option == 'daily':
+    # Insert empty slots for missing minutes
+    filled_collated_df = insert_empty_slot(collated_df)
+    if option == 'daily':
         os.chdir(change_directory)
         yesterday_date = get_yesterday_date()
         filled_collated_df.to_excel(f"Daily_{yesterday_date}_collated.xlsx", index = False)
