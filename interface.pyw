@@ -174,6 +174,14 @@ def interface():
             if folder == '':
                 sg.popup(title='No Folder Selected', custom_text = 'Please select a folder first', button_type=sg.POPUP_BUTTONS_OK, icon='error')
             else:
+                for i in range(1,6):
+                    window[f'-INFORM_USER_COL{i}-'].update(visible=False)
+                window['-SUMMARY_LIST-'].update('')
+                window['-ERROR_FILES_LIST-'].update('')
+                window['-DUPLICATE_TIMESTAMPS_LIST-'].update('')
+                window['-MISSING_MINUTES_LIST-'].update('')
+                window['-EMPTY_CELLS_LIST-'].update('')
+                window['-BUTTON_COL-'].update(visible=False)
                 popup_win = popup('Please wait while the files are being collated...')
                 window.force_focus()
                 window['-PROGRESS_COL-'].update(visible=True)
