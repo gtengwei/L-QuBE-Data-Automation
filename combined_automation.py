@@ -684,8 +684,15 @@ def combined_collation(path, window):
                         '%d.%m.%Y', '%d.%m.%y', 
                         '%d %m %Y', '%d %m %y',
                         '%d%m%Y', '%d%m%y',
+                        '%Y/%m/%d', '%y/%m/%d',
                         '%Y-%m-%d', '%y-%m-%d',
-                        '%Y/%m/%d', '%y/%m/%d']
+                        '%Y.%m.%d', '%y.%m.%d',
+                        '%m/%d/%Y', '%m/%d/%y',
+                        '%m-%d-%Y', '%m-%d-%y',
+                        '%m.%d.%Y', '%m.%d.%y',
+                        '%m %d %Y', '%m %d %y',
+                        '%m%d%Y', '%m%d%y']
+    
     collated_df = pd.DataFrame(columns=['Date','Timestamp'])
     collated_df['Date'] = pd.to_datetime(collated_df['Date'], format='%d/%m/%Y')
     collated_df = collated_df.set_index(['Date','Timestamp'])

@@ -182,6 +182,7 @@ def interface():
                 window['-MISSING_MINUTES_LIST-'].update('')
                 window['-EMPTY_CELLS_LIST-'].update('')
                 window['-BUTTON_COL-'].update(visible=False)
+                
                 popup_win = popup('Please wait while the files are being collated...')
                 window.force_focus()
                 window['-PROGRESS_COL-'].update(visible=True)
