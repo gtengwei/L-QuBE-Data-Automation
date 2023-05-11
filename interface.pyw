@@ -168,7 +168,7 @@ def interface():
             popup_win.close()
             popup_win = None
             window['-PROGRESS_COL-'].update(visible=False)
-            sg.popup(title='No Files Found', custom_text = 'No files found in the selected folder.', button_type=sg.POPUP_BUTTONS_OK, icon='error')
+            sg.popup(title='No Valid Files Found', custom_text = 'No valid files found in the selected folder.', button_type=sg.POPUP_BUTTONS_OK, icon='error')
 
         if event == '-COLLATE_FILES-':
             if folder == '':
