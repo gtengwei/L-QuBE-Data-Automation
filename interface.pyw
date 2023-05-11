@@ -47,10 +47,10 @@ def build():
     ]
 
     folder_frame = [
-        [sg.In(size=(35,1), enable_events=True ,key='-FOLDER-'), sg.FolderBrowse()], 
+        [sg.In(size=(35,1), enable_events=True ,key='-FOLDER-'), sg.FolderBrowse(tooltip='Click to choose folder')], 
         # [sg.Text('Option'), sg.InputCombo(('1. Collate csv/excel files', ), size=(20, 1), key='-OPTION-')],
         [sg.Frame('List of Files', file_multiline)],
-        [sg.Button('Collate Files', key='-COLLATE_FILES-')]
+        [sg.Button('Collate Files', key='-COLLATE_FILES-', tooltip='Click to collate files in the chosen folder')]
     ]
     summary_frame = [
         [sg.Multiline(size=(MULTILINE_WIDTH, HEIGHT), key='-SUMMARY_LIST-', expand_x=True, font=('Helvetica', 10))]
@@ -92,9 +92,11 @@ def build():
     ]
 
     button_frame = [
-        [sg.Button('Summary', key='1'),
-         sg.Button('Error Files', key='2'), sg.Button('Duplicate Timestamp', key='3'), 
-         sg.Button('Missing Minutes', key='4'), sg.Button('Empty Cells', key='5')
+        [sg.Button('Summary', key='1', tooltip='Click to view summary of faults'),
+         sg.Button('Error Files', key='2', tooltip='Click to view the error file(s) which is/are ignored in the collated file'),
+         sg.Button('Duplicate Timestamp', key='3', tooltip='Click to view the duplicate timestamp(s) detected'), 
+         sg.Button('Missing Minutes', key='4', tooltip='Click to view the missing minute(s) added in the collated file'), 
+         sg.Button('Empty Cells', key='5', tooltip='Click to view the empty cell(s) detected')
         ]
     ]
 
