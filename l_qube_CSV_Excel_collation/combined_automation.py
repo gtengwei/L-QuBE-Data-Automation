@@ -4,6 +4,9 @@ import numpy as np
 import datetime as dt
 from collections import defaultdict
 
+DATE = ['Date', 'date', 'DATE']
+TIME = ['Time', 'time', 'TIME']
+
 DATE_FORMAT = ['%d/%m/%Y', '%d/%m/%y', 
                     '%d-%m-%Y', '%d-%m-%y', 
                     '%d.%m.%Y', '%d.%m.%y', 
@@ -302,7 +305,11 @@ def csv_collation(file, collated_df, files_with_errors, files_with_duplicate_tim
         try:
             df.columns.get_loc('Timestamp')
         except:
-            df = df.rename(columns={'Time': 'Timestamp'})
+            for time in TIME:
+                if time in df.columns:
+                    df = df.rename(columns={time: 'Timestamp'})
+                    break 
+            # df = df.rename(columns={'Time': 'Timestamp'})
 
         # df = df.replace(r'^\s*$', np.nan, regex=True)
         # df = df.replace('None', np.nan, regex=True)
@@ -513,7 +520,6 @@ def csv_collation(file, collated_df, files_with_errors, files_with_duplicate_tim
 def excel_collation(file, collated_df, files_with_errors, files_with_duplicate_timestamp_dict, missing_minutes_dict, empty_cells_timestamp_dict):
     try: 
         date_and_time_format = ''
-        
         df = pd.read_excel(file, sheet_name=0, header=None)
         df = df.reset_index(drop=True)
         # print(df.head())
@@ -544,7 +550,21 @@ def excel_collation(file, collated_df, files_with_errors, files_with_duplicate_t
         try:
             df.columns.get_loc('Timestamp')
         except:
-            df = df.rename(columns={'Time': 'Timestamp'})
+            for time in TIME:
+                if time in df.columns:
+                    df = df.rename(columns={time: 'Timestamp'})
+                    break
+            # df = df.rename(columns={'Time': 'Timestamp'})
+            
+        try:
+            # Check if there is a Date column
+            df.columns.get_loc('Date')
+        except:
+            # If there is no Date column, check for date column name in DATE
+            for date in DATE:
+                if date in df.columns:
+                    df = df.rename(columns={date: 'Date'})
+                    break
 
         for date_time in DATE_AND_TIME:
             try:
@@ -637,6 +657,15 @@ def csv_excel_df_manipulation(file, collated_df, df, files_with_duplicate_timest
     df['Timestamp'] = df['Timestamp'].str.split(':')
     df['Timestamp'] = df['Timestamp'].apply(lambda x: str('%02d' % int(x[0])) + ':' + str('%02d' % int(x[1])))
 
+    try:
+        # Check if there is a Date column
+        df.columns.get_loc('Date')
+    except:
+        # If there is no Date column, check for date column name in DATE
+        for date in DATE:
+            if date in df.columns:
+                df = df.rename(columns={date: 'Date'})
+                break
     for date_format in DATE_FORMAT:
         try:
             df['Date'] = pd.to_datetime(df['Date'], format=date_format)
