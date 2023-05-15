@@ -505,7 +505,7 @@ def excel_collation(file, collated_df, files_with_errors, files_with_duplicate_t
         df = df.replace('None', np.nan, regex=True)
         number_of_columns = len(df.columns)
         for i, row in df.iterrows():
-            print(row.isnull().sum())
+            # print(row.isnull().sum())
             if row.isnull().sum() >= number_of_columns-5:
                 df.drop(i,inplace=True)
             else:
@@ -534,34 +534,27 @@ def excel_collation(file, collated_df, files_with_errors, files_with_duplicate_t
             try:
                 df[date_time] = df[date_time].str.split(' ')
                 date_and_time_format = date_time
-                # temp = df[date_time].str.split(' ')
-                # print(temp)
-                # df['Date'] = temp.str[0]
-                # print(df['Date'].head())
-                # timestamp_split = temp.str[1].str.split(':')
-                # for i in zip(timestamp_split):
-                #     df['Timestamp'][i] = [j for j in i if j != '']
-                # # df['Timestamp'] = [i for i in zip(timestamp_split) if i != '']
-                # print(df['Timestamp'].head())
-                # df['Timestamp'] = df['Timestamp'].str[0] + ':' + df['Timestamp'].str[1]
+                # df[date_time] = df[date_time].str.split(' ')
+                # date_and_time_format = date_time
                 break
             except:
                 pass
+        # if date_and_time_format != '':
+        #     for i in range(len(df[date_and_time_format])):
+        #         try:
+        #             df['Date'] = df[date_and_time_format][0][0]
+        #             temp = df[date_and_time_format][i][1].split(':')
+        #             # Ensure that there are no empty strings in the list that will cause error
+        #             temp = [i for i in temp if i != '']
+        #             hour = str('%02d' % int(temp[0])) + ':'
+        #             minute = str('%02d' % int(temp[1]))
+        #             df['Timestamp'][i] = hour + minute
+        #         except:
+        #             pass
+            # df.drop(columns=[date_and_time_format], axis=1, inplace=True)
         if date_and_time_format != '':
-            for i in range(len(df[date_and_time_format])):
-                try:
-                    df['Date'] = df[date_and_time_format][0][0]
-                    temp = df[date_and_time_format][i][1].split(':')
-                    # Ensure that there are no empty strings in the list that will cause error
-                    temp = [i for i in temp if i != '']
-                    hour = str('%02d' % int(temp[0])) + ':'
-                    minute = str('%02d' % int(temp[1]))
-                    df['Timestamp'][i] = hour + minute
-                except:
-                    pass
             df.drop(columns=[date_and_time_format], axis=1, inplace=True)
-
-            
+        print(df.columns)
         # From here onwards, its the same as csv collation
         return csv_excel_df_manipulation(file, collated_df, df, files_with_duplicate_timestamp_dict, date_format_list, missing_minutes_dict, empty_cells_timestamp_dict)
         for date_format in date_format_list:
@@ -770,7 +763,7 @@ def combined_collation(path, window):
     for file, duplicate_timestamp in files_with_duplicate_timestamp_dict.items():
         # print(''.join(duplicate_timestamp))
         temp = ''.join(duplicate_timestamp)
-        print(f'{file}: {temp}')
+        # print(f'{file}: {temp}')
         window['-DUPLICATE_TIMESTAMPS_LIST-'].update(f'{file}: Timestamp {temp}\n\n', append=True)
         window['-SUMMARY_LIST-'].update(f'{file}: Timestamp {temp}\n\n', append=True)
     
@@ -779,7 +772,7 @@ def combined_collation(path, window):
         window['-SUMMARY_LIST-'].update('\nThese are the files with missing minutes added: \n', append=True)
     for file, missing_minutes in missing_minutes_dict.items():
         temp = ' '.join(missing_minutes)
-        print(f'{file}: {temp}')
+        # print(f'{file}: {temp}')
         window['-MISSING_MINUTES_LIST-'].update(f'{file}: Timestamp {temp}\n\n', append=True)
         window['-SUMMARY_LIST-'].update(f'{file}: Timestamp {temp}\n\n', append=True)
     
@@ -788,7 +781,7 @@ def combined_collation(path, window):
         window['-SUMMARY_LIST-'].update('\nThese are the files with empty cells detected: \n', append=True)
     for file, empty_cells_timestamp in empty_cells_timestamp_dict.items():
         temp = ''.join(empty_cells_timestamp)
-        print(f'{file}: {temp}')
+        # print(f'{file}: {temp}')
         window['-EMPTY_CELLS_LIST-'].update(f'{file}: Timestamp {temp}\n\n', append=True)
         window['-SUMMARY_LIST-'].update(f'{file}: Timestamp {temp}\n\n', append=True)
 
