@@ -2,7 +2,6 @@ import os
 import pandas as pd
 import numpy as np
 import datetime as dt
-from configuration import get_config
 from collections import defaultdict
 
 def get_current_date():
