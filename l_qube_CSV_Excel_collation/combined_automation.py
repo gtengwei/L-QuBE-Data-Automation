@@ -284,17 +284,16 @@ def csv_collation(file, collated_df, files_with_errors, files_with_duplicate_tim
         except:
             df = df.rename(columns={'Time': 'Timestamp'})
 
-        df = df.replace(r'^\s*$', np.nan, regex=True)
-        df = df.replace('None', np.nan, regex=True)
-        df = df[df['Timestamp'].notna()]
-        df = df.reset_index(drop=True)  
+        # df = df.replace(r'^\s*$', np.nan, regex=True)
+        # df = df.replace('None', np.nan, regex=True)
+        # df = df[df['Timestamp'].notna()]
+        # df = df.reset_index(drop=True)  
 
-        df['Timestamp'] = df['Timestamp'].astype(str)
-        for i in range(len(df)):
-            temp = df['Timestamp'][i].split(':')
-            hour = str('%02d' % int(temp[0])) + ':'
-            minute = str('%02d' % int(temp[1]))
-            df['Timestamp'][i] = hour + minute
+        # for i in range(len(df)):
+        #     temp = df['Timestamp'][i].split(':')
+        #     hour = str('%02d' % int(temp[0])) + ':'
+        #     minute = str('%02d' % int(temp[1]))
+        #     df['Timestamp'][i] = hour + minute
 
         # From here onwards, its the same as excel collation 
         return csv_excel_df_manipulation(file, collated_df, df, files_with_duplicate_timestamp_dict, date_format_list, missing_minutes_dict, empty_cells_timestamp_dict)
@@ -562,15 +561,7 @@ def excel_collation(file, collated_df, files_with_errors, files_with_duplicate_t
                     pass
             df.drop(columns=[date_and_time_format], axis=1, inplace=True)
 
-        else:
-            for i in range(len(df)):
-                try:
-                    temp = df['Timestamp'][i].split(':')
-                    hour = str('%02d' % int(temp[0])) + ':'
-                    minute = str('%02d' % int(temp[1]))
-                    df['Timestamp'][i] = hour + minute
-                except:
-                    pass
+            
         # From here onwards, its the same as csv collation
         return csv_excel_df_manipulation(file, collated_df, df, files_with_duplicate_timestamp_dict, date_format_list, missing_minutes_dict, empty_cells_timestamp_dict)
         for date_format in date_format_list:
@@ -619,10 +610,17 @@ def excel_collation(file, collated_df, files_with_errors, files_with_duplicate_t
         return collated_df
 
 def csv_excel_df_manipulation(file, collated_df, df, files_with_duplicate_timestamp_dict, date_format_list, missing_minutes_dict, empty_cells_timestamp_dict):
+    
+    # Replace blank/None cells with NaN
     df = df.replace(r'^\s*$', np.nan, regex=True)
     df = df.replace('None', np.nan, regex=True)
     df = df[df['Timestamp'].notna()]
     df = df.reset_index(drop=True)   
+
+    # Optimised code for timestamp manipulation
+    df['Timestamp'] = df['Timestamp'].astype(str)
+    df['Timestamp'] = df['Timestamp'].str.split(':')
+    df['Timestamp'] = df['Timestamp'].apply(lambda x: str('%02d' % int(x[0])) + ':' + str('%02d' % int(x[1])))
 
     for date_format in date_format_list:
         try:
