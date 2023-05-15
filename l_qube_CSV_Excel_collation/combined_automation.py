@@ -536,6 +536,16 @@ def excel_collation(file, collated_df, files_with_errors, files_with_duplicate_t
             try:
                 df[date_time] = df[date_time].str.split(' ')
                 date_and_time_format = date_time
+                # temp = df[date_time].str.split(' ')
+                # print(temp)
+                # df['Date'] = temp.str[0]
+                # print(df['Date'].head())
+                # timestamp_split = temp.str[1].str.split(':')
+                # for i in zip(timestamp_split):
+                #     df['Timestamp'][i] = [j for j in i if j != '']
+                # # df['Timestamp'] = [i for i in zip(timestamp_split) if i != '']
+                # print(df['Timestamp'].head())
+                # df['Timestamp'] = df['Timestamp'].str[0] + ':' + df['Timestamp'].str[1]
                 break
             except:
                 pass
@@ -640,7 +650,7 @@ def csv_excel_df_manipulation(file, collated_df, df, files_with_duplicate_timest
     # Tracking of duplicate timestamp
     duplicate_df = df[df.duplicated(subset=['Date', 'Timestamp'])]
     # print(duplicate_df.head())
-    print((duplicate_df[['Date','Timestamp']]).values.tolist())
+    # print((duplicate_df[['Date','Timestamp']]).values.tolist())
     duplicate_date_timestamp = duplicate_df[['Date','Timestamp']].values.tolist()
     # duplicate_timestamp = [str(date) +' {} '.format(timestamp) for timestamp in duplicate_timestamp]
     if duplicate_date_timestamp:
@@ -653,7 +663,7 @@ def csv_excel_df_manipulation(file, collated_df, df, files_with_duplicate_timest
     # Locate and inform user about missing value in cells
     empty_cells_location = np.where(pd.isnull(df))
     unique_empty_cells_location = np.unique(empty_cells_location[0])
-    print(unique_empty_cells_location)
+    # print(unique_empty_cells_location)
     if empty_cells_location[0].size != 0:
         for index in unique_empty_cells_location:
             empty_cells_timestamp_dict[file, df.iloc[index, date_column_index]].extend(['{} '. format(df.iloc[index,timestamp_column_index])])
