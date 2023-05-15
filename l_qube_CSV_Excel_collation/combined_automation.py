@@ -285,20 +285,20 @@ def csv_collation(file, collated_df, files_with_errors, files_with_duplicate_tim
         # Split the lines into words, remove empty strings caused by additional columns and add to list
         for i in range(len(file_lines)):
             file_lines[i] = file_lines[i].strip(',').split(',')
-            # print(file_lines[i])
-            # file_lines[i] = [i for i in file_lines[i] if i != '']
+            
         for i in range(2):
             for j in range(len(file_lines[i])):
                 if file_lines[i][j] == '':
                     file_lines[i][j] = np.nan
+
+        # Read the cleaned list into a Pandas DataFrame
+        # For csv files with slot name in the first cell
         if len(file_lines[0]) < 2:
             df = pd.DataFrame(file_lines[2:],columns=file_lines[1])
+        # For csv files with no slot name in first cell
         else:
             df = pd.DataFrame(file_lines[1:],columns=file_lines[0])
-        # Read the cleaned list into a Pandas DataFrame
-        # df = pd.DataFrame(file_lines[1:],columns=file_lines[0])
-        # print(df.head())
-        
+
         try:
             df.columns.get_loc('Timestamp')
         except:
