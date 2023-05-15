@@ -533,7 +533,13 @@ def excel_collation(file, collated_df, files_with_errors, files_with_duplicate_t
         for date_time in date_and_time_column_name_list:
             try:
                 df[date_time] = df[date_time].str.split(' ')
+                df['Date'] = df[date_time].str[0]
                 date_and_time_format = date_time
+                
+                timestamp_split = df[date_time].str[1].str.strip(':')
+                timestamp_split = timestamp_split.str.split(':')
+                df['Timestamp'] = timestamp_split.apply(lambda x: str('%02d' % int(x[0])) + ':' + str('%02d' % int(x[1])))
+
                 # df[date_time] = df[date_time].str.split(' ')
                 # date_and_time_format = date_time
                 break
