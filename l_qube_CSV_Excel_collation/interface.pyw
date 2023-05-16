@@ -12,7 +12,7 @@ sg.set_options(tooltip_font=('Helvetica', 11))
 # Default size for frames, can be changed
 # WIDTH, HEIGHT = sg.Window.get_screen_size()
 WIDTH = 400
-HEIGHT = 300
+HEIGHT = 350
 
 MULTILINE_WIDTH = 550
 
@@ -42,14 +42,17 @@ def popup(message):
 # Build the GUI
 def build():
     # Initial frame to choose option
-    file_multiline = [
-        [sg.Multiline(size=(MULTILINE_WIDTH, 5), key='-FILES_LIST-', expand_x=True, font=('Helvetica', 10))],  
+    valid_files_multiline = [
+        [sg.Multiline(size=(MULTILINE_WIDTH, 5), key='-VALID_FILES_LIST-', expand_x=True, font=('Helvetica', 10))],
     ]
-
+    invalid_files_multiline = [
+        [sg.Multiline(size=(MULTILINE_WIDTH, 5), key='-INVALID_FILES_LIST-', expand_x=True, font=('Helvetica', 10))],
+    ]
     folder_frame = [
         [sg.In(size=(35,1), enable_events=True ,key='-FOLDER-'), sg.FolderBrowse(tooltip='Click to choose folder')], 
         # [sg.Text('Option'), sg.InputCombo(('1. Collate csv/excel files', ), size=(20, 1), key='-OPTION-')],
-        [sg.Frame('List of Files', file_multiline)],
+        [sg.Frame('Valid Files', valid_files_multiline)],
+        [sg.Frame('Invalid Files', invalid_files_multiline)],
         [sg.Button('Collate Files', key='-COLLATE_FILES-', tooltip='Click to collate files in the chosen folder')]
     ]
     summary_frame = [
@@ -159,10 +162,16 @@ def interface():
         if event == '-FOLDER-':
             folder = values['-FOLDER-']
             print(folder)
-            window['-FILES_LIST-'].update('')
+            window['-VALID_FILES_LIST-'].update('')
+            window['-INVALID_FILES_LIST-'].update('')
             file_name = os.listdir(folder)
             for file in file_name:
-                window['-FILES_LIST-'].update(file + '\n', append=True)
+                if file.endswith('collated.csv') or file.endswith('collated.xlsx'):
+                    window['-INVALID_FILES_LIST-'].update(file + '\n', append=True)
+                elif file.endswith('.csv') or file.endswith('.xlsx'):
+                    window['-VALID_FILES_LIST-'].update(file + '\n', append=True)
+                else:
+                    window['-INVALID_FILES_LIST-'].update(file + '\n', append=True)
 
         if event == 'NO FILES':
             popup_win.close()
