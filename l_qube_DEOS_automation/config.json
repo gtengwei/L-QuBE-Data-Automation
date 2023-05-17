@@ -1,6 +1,6 @@
 {
     "config": {
-        "directory": "C:\\Users\\tengwei.goh\\Documents\\GitHub\\L-QuBE-Data-Automation",
+        "directory": "C:\\Users\\tengwei.goh\\Documents\\GitHub\\L-QuBE-Data-Automation\\l_qube_DEOS_automation",
         "device_choice": "device_1",
         "devices" : {
             "device_1" : {
