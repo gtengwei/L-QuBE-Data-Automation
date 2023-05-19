@@ -122,17 +122,10 @@ def excel_collation(file, collated_df, files_with_errors, files_with_duplicate_t
                 df.drop(i,inplace=True)
             else:
                 break
-        # df.iloc[np.argwhere(df.isnull().sum(1)<=5).ravel()[0]:]
-        # print(np.argwhere(df.isnull().sum(0)<=5))
-        # print(df.iloc[(df.isnull().sum(1)>5).index])
-        # print(df.head())
-        # Able to locate column names IF previous rows are all empty
         
         
         df.columns = df.iloc[0]
         df = df.drop(df.index[0])
-        # df.columns = df.iloc[int(excel_column_header_row)-2]
-        # df = df.drop(df.index[:int(excel_column_header_row)-1])
         df = df.reset_index()
         df = df.dropna(how='all')
         df.drop(columns=['index'], axis=1, inplace=True)
@@ -144,7 +137,6 @@ def excel_collation(file, collated_df, files_with_errors, files_with_duplicate_t
                 if time in df.columns:
                     df = df.rename(columns={time: 'Timestamp'})
                     break
-            # df = df.rename(columns={'Time': 'Timestamp'})
             
         try:
             # Check if there is a Date column
@@ -165,72 +157,19 @@ def excel_collation(file, collated_df, files_with_errors, files_with_duplicate_t
                 timestamp_split = df[date_time].str[1].str.strip(':')
                 timestamp_split = timestamp_split.str.split(':')
                 df['Timestamp'] = timestamp_split.apply(lambda x: str('%02d' % int(x[0])) + ':' + str('%02d' % int(x[1])))
-
-                # df[date_time] = df[date_time].str.split(' ')
-                # date_and_time_format = date_time
                 break
             except:
                 pass
-        # if date_and_time_format != '':
-        #     for i in range(len(df[date_and_time_format])):
-        #         try:
-        #             df['Date'] = df[date_and_time_format][0][0]
-        #             temp = df[date_and_time_format][i][1].split(':')
-        #             # Ensure that there are no empty strings in the list that will cause error
-        #             temp = [i for i in temp if i != '']
-        #             hour = str('%02d' % int(temp[0])) + ':'
-        #             minute = str('%02d' % int(temp[1]))
-        #             df['Timestamp'][i] = hour + minute
-        #         except:
-        #             pass
-            # df.drop(columns=[date_and_time_format], axis=1, inplace=True)
+        
         if date_and_time_format != '':
             df.drop(columns=[date_and_time_format], axis=1, inplace=True)
         print(df.columns)
+
         # From here onwards, its the same as csv collation
         return csv_excel_df_manipulation(file, collated_df, df, files_with_duplicate_timestamp_dict, missing_minutes_dict, empty_cells_timestamp_dict)
-        for date_format in date_format_list:
-            try:
-                df['Date'] = pd.to_datetime(df['Date'], format=date_format)
-                break
-            except:
-                continue 
         
-
-        # Need these columns to keep original column order
-        cols = collated_df.columns.append(df.columns).unique()
-        cols = cols.drop(['Date','Timestamp'])
-
-        # Convert Date datetime to str before proceeding
-        df['Date'] = df['Date'].dt.strftime('%d/%m/%Y')
-
-        # NEED TO DROP EMPTY COLUMN NAMES AND CELLS to prevent error
-        df = df.loc[:, df.columns.notna()]
-        df = df[df['Timestamp'].notna()]
-
-        # Tracking of duplicate timestamp
-        duplicate_df = df[df.duplicated(subset=['Timestamp'])]
-        print(duplicate_df)
-        duplicate_timestamp = duplicate_df['Timestamp'].tolist()
-        # print(duplicate_timestamp)
-        duplicate_timestamp = [str(df.Date[0]) +' {} '.format(timestamp) for timestamp in duplicate_timestamp]
-
-        # Locate and inform user about missing value in cells
-        empty_cells_location = np.where(pd.isnull(df))
-        date_column_index, timestamp_column_index = df.columns.get_loc('Date'), df.columns.get_loc('Timestamp')
-        empty_cells_timestamp_dict[df.Date[0]].extend([(df.iloc[i,date_column_index], df.iloc[i,timestamp_column_index]) for i,j in zip(*empty_cells_location)])
-        # print(empty_cells_timestamp)
-
-        
-        df = insert_empty_slot(df, missing_minutes_dict)
-        df = df.set_index(['Date','Timestamp'])
-        collated_df = collated_df.combine_first(df).reindex(columns=cols)
-        collated_df = collated_df.rename_axis(None, axis=1)
-        files_with_duplicate_timestamp_dict.append((file, duplicate_timestamp))
-        return collated_df 
     except Exception as e:
         print(e)
-        
         files_with_errors.append((file, e, 'There is no column header in the CSV file.'))
         return collated_df
 
