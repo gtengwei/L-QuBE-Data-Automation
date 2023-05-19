@@ -297,25 +297,8 @@ def combined_collation(path, window):
                 if file.endswith('.xlsx'):
                     collated_df = excel_collation(file, collated_df, files_with_errors, files_with_duplicate_timestamp_dict, missing_minutes_dict, empty_cells_timestamp_dict)
          
-                
-    # print(missing_minutes_dict)
-    # Due to the presence of empty column (BIN RANGE), the number of empty cells will be 1440
-    # Hence, we should not take into account these empty cells
-    # print(empty_cells_timestamp_dict)
-    # for key, value in empty_cells_timestamp_dict.copy().items():
-    #     if len(value) > 1388:
-    #         del empty_cells_timestamp_dict[key]
-
-    # Collated file has 1440 minutes of duplicate timestamp
-    # Hence, we should not take into account these minutes
-    # print(files_with_duplicate_timestamp_dict)
-    # for key, value in files_with_duplicate_timestamp_dict.copy().items():
-    #     if len(value) > 1400:
-    #         del files_with_duplicate_timestamp_dict[key]
     collated_df.reset_index(inplace=True)
     collated_df = collated_df.sort_values(by=['Date','Timestamp'], ascending=True)
-    # collated_df['Date'] = collated_df['Date'].dt.strftime('%d/%m/%Y')
-    # collated_df = collated_df.sort_index(axis=1, ascending=True)
 
     print(f'These are the files with errors: {files_with_errors}')
     if files_with_errors:
