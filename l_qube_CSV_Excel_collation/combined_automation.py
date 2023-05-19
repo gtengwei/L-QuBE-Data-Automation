@@ -51,6 +51,7 @@ def insert_empty_slot(df, missing_minutes_dict, file):
             empty_row[0] = day
             empty_row[1] = temp
             df.loc[len(df)] = empty_row
+            missing_minutes_dict[file, empty_row[0]].append(temp)
     # print(hour_minute_list)
     
     # empty_row = [None for _ in range(len(df.columns))]
