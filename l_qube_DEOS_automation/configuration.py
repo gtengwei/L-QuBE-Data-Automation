@@ -2,11 +2,10 @@ import json
 # C:\\Users\\tengwei.goh\\Documents\\GitHub\\L-QuBE-Data-Automation
 # C:\\Users\\tengwei.goh\\Desktop\\test
 class Configuration:
-    def __init__(self, directory, device_choice, devices, collation, hour, minute):
+    def __init__(self, directory, device_choice, devices, hour, minute):
         self.directory = directory
         self.device_choice = device_choice
         self.devices = devices
-        self.collation = collation
         self.hour = hour
         self.minute = minute
 
@@ -21,7 +20,7 @@ def get_config():
         json_config = get_json()
         user_config = json_config['config']
         config = Configuration(user_config['directory'], user_config['device_choice'],
-                               user_config['devices'], user_config['collation'],
+                               user_config['devices'],
                                user_config['hour'], user_config['minute'])
         return config
     except Exception as e:
@@ -30,8 +29,8 @@ def get_config():
         file.close()
         return None
 
-# config = get_config()
-# print(config.collation['directory'])
+config = get_config()
+print(config.devices)
 # for _, device in config.devices.items():
 #     print(len(device['slots']) == 0)
 
