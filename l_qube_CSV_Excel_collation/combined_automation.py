@@ -298,8 +298,10 @@ def combined_collation(path, window):
                     collated_df = excel_collation(file, collated_df, files_with_errors, files_with_duplicate_timestamp_dict, missing_minutes_dict, empty_cells_timestamp_dict)
          
     collated_df.reset_index(inplace=True)
-    collated_df = collated_df.sort_values(by=['Date','Timestamp'], ascending=True)
-
+    collated_df['Date'] = pd.to_datetime(collated_df['Date'], format='%d/%m/%Y')
+    collated_df = collated_df.sort_values(by=['Date','Timestamp'], ascending=[True,True])
+    collated_df['Date'] = collated_df['Date'].dt.strftime('%d/%m/%Y')
+    
     print(f'These are the files with errors: {files_with_errors}')
     if files_with_errors:
         window['-SUMMARY_LIST-'].update('These are the files with errors: \n', append=True)
