@@ -1,9 +1,11 @@
-from ui_selenium_automation import run_automation
+from ui_selenium_automation import run_automation, choose_slot, collate_dataframes
 from configuration import get_config
 import PySimpleGUI as sg
 import threading
 from time import sleep
 import os
+import concurrent.futures
+
 # Add a touch of color
 sg.theme('DarkBlue3')  
 
@@ -64,7 +66,7 @@ def build():
     ]
 
     select_slots_button = [
-        [sg.Button('Select Slots', key='-SELECT_SLOTS-', tooltip='Click to select slots to collate')]
+        [sg.Button('Select Slots', key='-SLOTS_CHOSEN-', tooltip='Click to select slots to collate')]
     ]
     back_button = [
         [sg.Button('Back', key='-BACK-')]
@@ -131,7 +133,9 @@ def interface():
                     threading.Thread(target= run_automation, args=(config, 'all', window, event, )).start()
                 elif window['-OPTION-'].get() == '2. Choose specific slots to collate':
                     window['-SLOTS_COL-'].update(visible=True)
-                    threading.Thread(target= run_automation, args=(config, 'choose', window, event, )).start()
+                    window['-SELECT_SLOTS_BTN-'].update(visible=True)
+                    # threading.Thread(target= run_automation, args=(config, 'choose', window, event, )).start()
+                    driver, slots, directory = run_automation(config, 'choose', window)
         
         if event == 'EXECUTION DONE':
             popup_win.close()
@@ -147,7 +151,10 @@ def interface():
             popup_win.close()
             popup_win = None
             
-
+        if event == 'SLOTS CHOSEN':
+            choose_slot(driver, slots, window)
+            collate_dataframes('choose', directory)
+            sg.popup(title='Collation Completed', custom_text = 'Collation completed successfully!', button_type=sg.POPUP_BUTTONS_OK, icon='success')
         
         if event == '-BACK-':
             window['-OPTION_COL-'].update(visible=True)

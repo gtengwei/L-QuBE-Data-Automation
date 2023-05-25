@@ -156,7 +156,8 @@ def download_csv(driver, device, option, device_num, window):
     # Not yet implemented allowing user to choose time period
     elif option == 'choose':
         slots = find_all_slots(driver)
-        choose_slot(driver, slots, window)
+        return driver, slots
+        # choose_slot(driver, slots, window)
     
     # If the user wants to download all configured files' data for the past day
     elif option == 'daily_selected':
@@ -275,7 +276,7 @@ def run_automation(config, option, window):
             # run_to_trend_export_page(driver)
             driver.implicitly_wait(10)
 
-            download_csv(driver, device, option, config.device_choice, window)
-            collate_dataframes(option, directory)
-            driver.close()
+            driver, slots = download_csv(driver, device, option, config.device_choice, window)
+            # collate_dataframes(option, directory)
+            return driver, slots, directory
     
