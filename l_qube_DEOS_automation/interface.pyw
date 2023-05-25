@@ -83,7 +83,7 @@ def build():
         sg.Frame('Progress Bar', progress_bar, size=(WIDTH,100), visible=False, key='-PROGRESS_COL-'),
         [sg.Frame('Choose your option', option_frame, size=(WIDTH,HEIGHT), visible=True, key='-OPTION_COL-'),
         sg.Frame('Choose your slots', slots_column_frame, size=(WIDTH,HEIGHT), expand_x=True, expand_y=True, visible=False, key='-SLOTS_COL-')],
-        [sg.Frame('Select Slots', select_slots_button, size=(WIDTH,HEIGHT), visible=False, key='-SELECT_SLOTS_BTN-')]
+        [sg.Frame('Select Slots', select_slots_button, size=(WIDTH, 50),  expand_x=True, element_justification='right', visible=False, key='-SELECT_SLOTS_BTN-')]
     
      ]
     ]
@@ -110,12 +110,12 @@ def interface():
     window = build()
     window['-OPTION-'].expand(expand_x=True, expand_y=False)
     window['-OPTION_COL-'].expand(True, True)
-    # window['-SLOTS_COL-'].expand(True, True)
     popup_win = None
     layout = 1
     # Display window
     while True:
         event, values = window.read()
+        print(event)
         # End program if user closes window or clicks cancel
         if event == sg.WIN_CLOSED or event == 'Exit':
             break
@@ -125,34 +125,35 @@ def interface():
                 sg.popup(title='No Option Selected', custom_text = 'Please select an option first', button_type=sg.POPUP_BUTTONS_OK, icon='error')
             else:
                 config = get_config()
-                popup_win = popup('Please wait for the UI to load...')
-                window.force_focus()
+                # popup_win = popup('Please wait for the UI to load...')
+                # window.force_focus()
                 # window['-PROGRESS_COL-'].update(visible=True)
                 # Parallel thread to execute the collation on top of the pop up loading
                 if window['-OPTION-'].get() == '1. Collate all data':
-                    threading.Thread(target= run_automation, args=(config, 'all', window, event, )).start()
+                    threading.Thread(target= run_automation, args=(config, 'all', window, )).start()
                 elif window['-OPTION-'].get() == '2. Choose specific slots to collate':
                     window['-SLOTS_COL-'].update(visible=True)
                     window['-SELECT_SLOTS_BTN-'].update(visible=True)
-                    # threading.Thread(target= run_automation, args=(config, 'choose', window, event, )).start()
+                    window['-COLLATE_FILES-'].update(visible=False)
+                    # threading.Thread(target= run_automation, args=(config, 'choose', window, )).start()
                     driver, slots, directory = run_automation(config, 'choose', window)
         
         if event == 'EXECUTION DONE':
-            popup_win.close()
-            popup_win = None
-            window['-PROGRESS_COL-'].update(visible=False)
-            # window['-OPTION_COL-'].update(visible=False)
-            window['-INFORM_USER_COL1-'].update(visible=True)
-            # for i in range(1,5):
-            #     window[f'button_{i}'].update(visible=True)
-            window['-BUTTON_COL-'].update(visible=True)
+            window['-SLOTS_COL-'].update(visible=False)
+            window['-SELECT_SLOTS_BTN-'].update(visible=False)
+            window['-COLLATE_FILES-'].update(visible=True)
         
-        if event == 'CHOOSING SLOTS':
-            popup_win.close()
-            popup_win = None
+        # if event == 'CHOOSING SLOTS':
+        #     popup_win.close()
+        #     popup_win = None
             
-        if event == 'SLOTS CHOSEN':
-            choose_slot(driver, slots, window)
+        if event == '-SLOTS_CHOSEN-':
+            chosen_slots = []
+            for i in range(len(slots)):
+                if window[f'-SLOT{i+1}-'].get() == True:
+                    chosen_slots.append(slots[i])
+            print(chosen_slots)
+            choose_slot(driver, chosen_slots, window)
             collate_dataframes('choose', directory)
             sg.popup(title='Collation Completed', custom_text = 'Collation completed successfully!', button_type=sg.POPUP_BUTTONS_OK, icon='success')
         

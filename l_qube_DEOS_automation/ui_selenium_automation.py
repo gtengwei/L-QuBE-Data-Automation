@@ -156,6 +156,12 @@ def download_csv(driver, device, option, device_num, window):
     # Not yet implemented allowing user to choose time period
     elif option == 'choose':
         slots = find_all_slots(driver)
+        window.write_event_value('CHOOSING SLOTS', None)
+        print('This is the list of slot names: ')
+        for i in range(len(slots)):
+            print(str(i+1) + '. ' + slots[i])
+            window['-SLOT' + str(i+1) + '-'].update(text = slots[i])
+            window['-SLOT' + str(i+1) + '-'].update(visible = True)
         return driver, slots
         # choose_slot(driver, slots, window)
     
@@ -210,40 +216,23 @@ def find_all_slots(driver):
         slots.append(slot_name.text)
     return slots
 
-def choose_slot(driver, slots, window):
+def choose_slot(driver, chosen_slots, window):
     # part 2: add slot number to choose
-    chosen_slots = []
-    window.write_event_value('CHOOSING SLOTS', None)
-    print('This is the list of slot names: ')
-    for i in range(len(slots)):
-        print(str(i+1) + '. ' + slots[i])
-        window['-SLOT' + str(i+1) + '-'].update(text = slots[i])
-        window['-SLOT' + str(i+1) + '-'].update(visible = True)
-        chosen_slots.append(slots[i])
     for slot in chosen_slots:
-        print(slot)
-    while True:
-        try:
-            number = input("Enter slot number(press 'Q' to exit): ")
-            if number == 'Q' or number == 'q':
-                break
-            if slots[int(number)-1] in slots:
-                slot_name = driver.find_element('xpath', "//*[.='" + slots[int(number)-1] + "']").get_attribute("id")
-                print(slot_name)
-                # time.sleep(1)
-                slot_num = slot_name[7:]
-                print(slot_num)
+        slot_name = driver.find_element('xpath', "//*[.='" + slot + "']").get_attribute("id")
+        print(slot_name)
+        # time.sleep(1)
+        slot_num = slot_name[7:]
+        print(slot_num)
 
-                checkbox = driver.find_element('id', "checkbox" + slot_num)
-                checkbox.click()
+        checkbox = driver.find_element('id', "checkbox" + slot_num)
+        checkbox.click()
 
-                csv = driver.find_element('id', "csvlink" + slot_num)
-                csv.click()
-                print('downloaded csv file')
-                # time.sleep(1)
-        except:
-            print('Slot number not found. Please try again.')
-
+        csv = driver.find_element('id', "csvlink" + slot_num)
+        csv.click()
+        print('downloaded csv file')
+        # time.sleep(1)
+    window.write_event_value('EXECUTION DONE', None)
 
 
 
