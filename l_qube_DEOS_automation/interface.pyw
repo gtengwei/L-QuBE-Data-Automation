@@ -1,4 +1,4 @@
-from selenium_automation import run_automation
+from ui_selenium_automation import run_automation
 from configuration import get_config
 import PySimpleGUI as sg
 import threading
@@ -48,8 +48,24 @@ def build():
         [sg.Button('Collate Files', key='-COLLATE_FILES-', tooltip='Click to collate files in the chosen folder')]
     ]
 
+    slots_frame = [[sg.Text('Choose the slots to collate')]]
+    for i in range(1, 251):
+        if i % 4 == 1:
+            slots_frame += [
+                [sg.Checkbox('Slot {}'.format(i), key='-SLOT{}-'.format(i), enable_events=True, visible=False),
+                sg.Checkbox('Slot {}'.format(i+1), key='-SLOT{}-'.format(i+1), enable_events=True, visible=False),
+                sg.Checkbox('Slot {}'.format(i+2), key='-SLOT{}-'.format(i+2), enable_events=True, visible=False),
+                sg.Checkbox('Slot {}'.format(i+3), key='-SLOT{}-'.format(i+3), enable_events=True, visible=False),]
 
+            ]
 
+    slots_column_frame = [
+        [sg.Column(slots_frame, size=(WIDTH, HEIGHT), scrollable=True,expand_x=True, expand_y=True, key='-SLOTS_COL_FRAME-')]
+    ]
+
+    select_slots_button = [
+        [sg.Button('Select Slots', key='-SELECT_SLOTS-', tooltip='Click to select slots to collate')]
+    ]
     back_button = [
         [sg.Button('Back', key='-BACK-')]
     ]
@@ -63,7 +79,9 @@ def build():
     layout = [
     [
         sg.Frame('Progress Bar', progress_bar, size=(WIDTH,100), visible=False, key='-PROGRESS_COL-'),
-        [sg.Frame('Choose your option', option_frame, size=(WIDTH,HEIGHT), visible=True, key='-OPTION_COL-'),]
+        [sg.Frame('Choose your option', option_frame, size=(WIDTH,HEIGHT), visible=True, key='-OPTION_COL-'),
+        sg.Frame('Choose your slots', slots_column_frame, size=(WIDTH,HEIGHT), expand_x=True, expand_y=True, visible=False, key='-SLOTS_COL-')],
+        [sg.Frame('Select Slots', select_slots_button, size=(WIDTH,HEIGHT), visible=False, key='-SELECT_SLOTS_BTN-')]
     
      ]
     ]
@@ -90,6 +108,7 @@ def interface():
     window = build()
     window['-OPTION-'].expand(expand_x=True, expand_y=False)
     window['-OPTION_COL-'].expand(True, True)
+    # window['-SLOTS_COL-'].expand(True, True)
     popup_win = None
     layout = 1
     # Display window
@@ -104,14 +123,15 @@ def interface():
                 sg.popup(title='No Option Selected', custom_text = 'Please select an option first', button_type=sg.POPUP_BUTTONS_OK, icon='error')
             else:
                 config = get_config()
-                popup_win = popup('Please wait while the files are being collated...')
+                popup_win = popup('Please wait for the UI to load...')
                 window.force_focus()
-                window['-PROGRESS_COL-'].update(visible=True)
+                # window['-PROGRESS_COL-'].update(visible=True)
                 # Parallel thread to execute the collation on top of the pop up loading
                 if window['-OPTION-'].get() == '1. Collate all data':
-                    threading.Thread(target= run_automation, args=(config, 'all', )).start()
+                    threading.Thread(target= run_automation, args=(config, 'all', window, event, )).start()
                 elif window['-OPTION-'].get() == '2. Choose specific slots to collate':
-                    threading.Thread(target= run_automation, args=(config, 'choose', )).start()
+                    window['-SLOTS_COL-'].update(visible=True)
+                    threading.Thread(target= run_automation, args=(config, 'choose', window, event, )).start()
         
         if event == 'EXECUTION DONE':
             popup_win.close()
@@ -123,11 +143,10 @@ def interface():
             #     window[f'button_{i}'].update(visible=True)
             window['-BUTTON_COL-'].update(visible=True)
         
-        if event == 'COLLATION SUCCESSFUL':
+        if event == 'CHOOSING SLOTS':
             popup_win.close()
             popup_win = None
-            window['-PROGRESS_COL-'].update(visible=False)
-            sg.popup('Collation Successful! No errors found.')
+            
 
         
         if event == '-BACK-':

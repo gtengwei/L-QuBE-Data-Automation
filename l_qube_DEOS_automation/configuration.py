@@ -29,8 +29,8 @@ def get_config():
         file.close()
         return None
 
-config = get_config()
-print(config.devices)
+# config = get_config()
+# print(config.devices)
 # for _, device in config.devices.items():
 #     print(len(device['slots']) == 0)
 
