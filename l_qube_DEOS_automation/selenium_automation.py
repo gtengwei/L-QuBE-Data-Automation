@@ -7,6 +7,7 @@ from subprocess import CREATE_NO_WINDOW # This flag will only be available in wi
 import os
 from apscheduler.schedulers.background import BackgroundScheduler
 from apscheduler.triggers.cron import CronTrigger
+from apscheduler.triggers.interval import IntervalTrigger
 from apscheduler.executors.debug import DebugExecutor
 import pytz
 
@@ -97,17 +98,23 @@ def automate_time(config):
     scheduler.start()
     print('starting scheduler')
 
-    trigger = CronTrigger(
+    cron_trigger = CronTrigger(
         year="*", month="*", day="*", 
         hour=config.hour, minute=config.minute, second="0", timezone=SG
     )
+    # interval_trigger = IntervalTrigger(minutes=3)
+    # trigger = AndTrigger([interval_trigger, cron_trigger])
+
     scheduler.add_executor(DebugExecutor(), 'consecutive')
-    scheduler.add_job(run_automation,args=[config,'daily'], trigger=trigger, id='daily', 
-                      executor='consecutive', max_instances=1)
-    scheduler.add_job(run_automation,args=[config,'daily_selected'], trigger=trigger, id='daily_selected', 
+    scheduler.add_job(run_automation, args=[config,'daily'], trigger=cron_trigger, id='daily', 
                       executor='consecutive', misfire_grace_time=600, max_instances=1)
+    scheduler.add_job(run_automation, args=[config,'daily_selected'], trigger=cron_trigger, id='daily_selected', 
+                      executor='consecutive', misfire_grace_time=600, max_instances=1)
+
     while True:
         time.sleep(5)
+    
+    scheduler.shutdown()
 
 # Find and download all the csv files
 def download_csv(driver, device, option, device_num):
