@@ -109,6 +109,7 @@ def interface():
     # config = get_config()
     # Create the window
     window = build()
+    window.maximize()
     window['-OPTION-'].expand(expand_x=True, expand_y=False)
     window['-OPTION_COL-'].expand(True, True)
     popup_win = None
