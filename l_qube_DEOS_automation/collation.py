@@ -179,6 +179,8 @@ def collate_dataframes(option, change_directory):
     
     # Insert empty slots for missing minutes
     filled_collated_df = insert_empty_slot(collated_df)
+    filled_collated_df = filled_collated_df.sort_values(by=['Date','Timestamp'], ascending=[True,True])
+
     if option == 'daily':
         os.chdir(change_directory)
         yesterday_date = get_yesterday_date()
