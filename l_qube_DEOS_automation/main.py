@@ -12,10 +12,10 @@ def main(config):
     print('')
     print('Welcome to the Trend Export Automation Software')
     print('Choose your option')
-    print('1. Collate all data')
-    print('2. Collate yesterday\'s data')
-    print('3. Choose specific slots to collate')
-    print('4. Collate yesterday\'s selected slots')
+    print('1. Collate yesterday\'s data')
+    print('2. Collate yesterday\'s selected slots')
+    print('3. Collate all data')
+    print('4. Choose specific slots to collate')
     print('5. Collate today\'s data')
     print('6. Exit')
     input_option = input()
@@ -23,16 +23,16 @@ def main(config):
     while True:
         match input_option:
             case '1':
-                run_automation(config, 'all')
-                main(config)
-            case '2':
                 run_automation(config, 'daily')
                 main(config)
+            case '2':
+                run_automation(config, 'daily_selected')
+                main(config)
             case '3':
-                run_automation(config, 'choose')
+                run_automation(config, 'all')
                 main(config)
             case '4':
-                run_automation(config, 'daily_selected')
+                run_automation(config, 'choose')
                 main(config)
             case '5':
                 run_automation(config, 'today')
