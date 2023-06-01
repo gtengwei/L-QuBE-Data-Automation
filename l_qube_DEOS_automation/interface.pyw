@@ -5,6 +5,7 @@ import threading
 from time import sleep
 import os
 import concurrent.futures
+import datetime as dt
 
 # Add a touch of color
 sg.theme('DarkBlue3')  
@@ -44,10 +45,21 @@ def popup(message):
 
 # Build the GUI
 def build():
+    # Frame to choose dates
+    date_frame = [
+        [sg.Text('Choose the date to collate')],
+        [sg.InputText('', size=(20, 1), key='-START_DATE-', disabled=True, tooltip='Start Date', enable_events=True),
+         sg.CalendarButton('Choose Start Date', target='-START_DATE-', key='-CALENDAR-', tooltip='Click to choose date', size=(20, 1), format='%m-%d-%Y %H:%M:%S', )],
+        [sg.InputText('', size=(20, 1), key='-END_DATE-', disabled=True, tooltip='End Date', enable_events=True),
+         sg.CalendarButton('Choose End Date', target='-END_DATE-', key='-CALENDAR-', tooltip='Click to choose date', size=(20, 1), format='%m-%d-%Y %H:%M:%S')],
+        [sg.Button('Select Dates', key='-DATES_CHOSEN-', tooltip='Click to select dates to collate')]
+
+    ]
     # Initial frame to choose option
     option_frame = [
-        [sg.Text('Option'), sg.InputCombo(('1. Collate all data', '2. Choose specific slots to collate' ), size=(27, 2), key='-OPTION-')],
-        [sg.Button('Collate Files', key='-COLLATE_FILES-', tooltip='Click to collate files in the chosen folder')]
+        [sg.Text('Option'), sg.InputCombo(('1. Collate all data', '2. Choose specific slots to collate'), enable_events=True, size=(27, 2), key='-OPTION-')],
+        [sg.Button('Collate Files', key='-COLLATE_FILES-', tooltip='Click to collate files in the chosen folder', visible=False)],
+        [sg.Frame('Choose your Dates', date_frame, size=(WIDTH,HEIGHT), visible=False, key='-DATES_FRAME-', expand_x=True, expand_y=True)],
     ]
 
     slots_frame = [[sg.Text('Choose the slots to collate')]]
@@ -109,18 +121,30 @@ def interface():
     # config = get_config()
     # Create the window
     window = build()
-    window.maximize()
+    # window.maximize()
     # window['-OPTION-'].expand(expand_x=True, expand_y=False)
     window['-OPTION_COL-'].expand(True, True)
     popup_win = None
     layout = 1
+    window['-START_DATE-'].update(value=dt.datetime.now().strftime('%m-%d-%Y' + ' 00:00:00'))
+    window['-END_DATE-'].update(value=dt.datetime.now().strftime('%m-%d-%Y %H:%M:%S'))
     # Display window
     while True:
         event, values = window.read()
         print(event)
+        print(values['-OPTION-'])
+        # print(values['-START_DATE-'])
         # End program if user closes window or clicks cancel
         if event == sg.WIN_CLOSED or event == 'Exit':
             break
+        
+        if values['-OPTION-'] == '1. Collate all data':
+            window['-DATES_FRAME-'].update(visible=False)
+            window['-COLLATE_FILES-' ].update(visible=True)
+
+        if values['-OPTION-'] == '2. Choose specific slots to collate':
+            window['-DATES_FRAME-'].update(visible=True)
+            window['-COLLATE_FILES-' ].update(visible=False)
 
         if event == '-COLLATE_FILES-':
             if window['-OPTION-'] == '':
