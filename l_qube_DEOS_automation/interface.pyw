@@ -131,8 +131,8 @@ def interface():
     # Display window
     while True:
         event, values = window.read()
-        print(event)
-        print(values['-OPTION-'])
+        # print(event)
+        # print(values['-OPTION-'])
         # print(values['-START_DATE-'])
         # End program if user closes window or clicks cancel
         if event == sg.WIN_CLOSED or event == 'Exit':
@@ -146,6 +146,13 @@ def interface():
             window['-DATES_FRAME-'].update(visible=True)
             window['-COLLATE_FILES-' ].update(visible=False)
 
+        if event == '-START_DATE-':
+            date, _ = values['-START_DATE-'].split(' ')
+            window['-START_DATE-'].update(date + ' 00:00:00')
+        
+        if event == '-END_DATE-':
+            date, _ = values['-END_DATE-'].split(' ')
+            window['-END_DATE-'].update(date + ' 23:59:59')
         if event == '-COLLATE_FILES-':
             if window['-OPTION-'] == '':
                 sg.popup(title='No Option Selected', custom_text = 'Please select an option first', button_type=sg.POPUP_BUTTONS_OK, icon='error')
