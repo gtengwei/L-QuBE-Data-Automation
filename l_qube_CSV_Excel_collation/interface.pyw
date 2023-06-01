@@ -7,7 +7,7 @@ import os
 sg.theme('DarkBlue3')   
 
 # Change font and font size
-sg.set_options(font=('Helvetica', 12))
+sg.set_options(font=('Helvetica', 10))
 sg.set_options(tooltip_font=('Helvetica', 11))
 # Default size for frames, can be changed
 # WIDTH, HEIGHT = sg.Window.get_screen_size()
@@ -43,10 +43,10 @@ def popup(message):
 def build():
     # Initial frame to choose option
     valid_files_multiline = [
-        [sg.Multiline(size=(MULTILINE_WIDTH, 5), key='-VALID_FILES_LIST-', expand_x=True, font=('Helvetica', 10))],
+        [sg.Multiline(size=(MULTILINE_WIDTH, 5), key='-VALID_FILES_LIST-', expand_x=True)],
     ]
     invalid_files_multiline = [
-        [sg.Multiline(size=(MULTILINE_WIDTH, 5), key='-INVALID_FILES_LIST-', expand_x=True, font=('Helvetica', 10))],
+        [sg.Multiline(size=(MULTILINE_WIDTH, 5), key='-INVALID_FILES_LIST-', expand_x=True)],
     ]
     folder_frame = [
         [sg.In(size=(35,1), enable_events=True ,key='-FOLDER-'), sg.FolderBrowse(tooltip='Click to choose folder')], 
@@ -56,22 +56,22 @@ def build():
         [sg.Button('Collate Files', key='-COLLATE_FILES-', tooltip='Click to collate files in the chosen folder')]
     ]
     summary_frame = [
-        [sg.Multiline(size=(MULTILINE_WIDTH, HEIGHT), key='-SUMMARY_LIST-', expand_x=True, font=('Helvetica', 10))]
+        [sg.Multiline(size=(MULTILINE_WIDTH, HEIGHT), key='-SUMMARY_LIST-', expand_x=True, font=('Helvetica', 11))]
     ]
     error_files_frame = [
-        [sg.Multiline(size=(MULTILINE_WIDTH, HEIGHT), key='-ERROR_FILES_LIST-', expand_x=True, font=('Helvetica', 10))]
+        [sg.Multiline(size=(MULTILINE_WIDTH, HEIGHT), key='-ERROR_FILES_LIST-', expand_x=True, font=('Helvetica', 11))]
     ]
 
     duplicate_timestamp_frame = [
-        [sg.Multiline(size=(MULTILINE_WIDTH, HEIGHT), key='-DUPLICATE_TIMESTAMPS_LIST-', expand_x=True, font=('Helvetica', 10))]
+        [sg.Multiline(size=(MULTILINE_WIDTH, HEIGHT), key='-DUPLICATE_TIMESTAMPS_LIST-', expand_x=True, font=('Helvetica', 11))]
     ]
 
     missing_minutes_frame = [
-        [sg.Multiline(size=(MULTILINE_WIDTH, HEIGHT), key='-MISSING_MINUTES_LIST-', expand_x=True, font=('Helvetica', 10))]
+        [sg.Multiline(size=(MULTILINE_WIDTH, HEIGHT), key='-MISSING_MINUTES_LIST-', expand_x=True, font=('Helvetica', 11))]
     ]
 
     empty_cells_frame = [
-        [sg.Multiline(size=(MULTILINE_WIDTH, HEIGHT), key='-EMPTY_CELLS_LIST-', expand_x=True, font=('Helvetica', 10))]
+        [sg.Multiline(size=(MULTILINE_WIDTH, HEIGHT), key='-EMPTY_CELLS_LIST-', expand_x=True, font=('Helvetica', 11))]
     ]
 
     inform_user_frame_1 = [
