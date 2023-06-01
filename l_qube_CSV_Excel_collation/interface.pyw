@@ -133,7 +133,7 @@ def build():
             sg.Frame('Duplicate Timestamps Detected', inform_user_frame_3, size=(MULTILINE_WIDTH,HEIGHT), visible=False, key='-INFORM_USER_COL3-', expand_x=True, expand_y=True),
             sg.Frame('Missing Minutes Added', inform_user_frame_4, size=(MULTILINE_WIDTH,HEIGHT), visible=False, key='-INFORM_USER_COL4-', expand_x=True, expand_y=True),
             sg.Frame('Empty Cells Detected', inform_user_frame_5, size=(MULTILINE_WIDTH,HEIGHT), visible=False, key='-INFORM_USER_COL5-', expand_x=True, expand_y=True)],
-            sg.Frame('', button_frame, visible=False, key='-BUTTON_COL-', element_justification='right')
+            sg.Frame('', button_frame, visible=False, key='-BUTTON_COL-', element_justification='left', expand_x=True)
         ]
     ]
 
