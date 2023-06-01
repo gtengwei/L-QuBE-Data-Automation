@@ -110,7 +110,7 @@ def build():
 
     progress_bar = [
         [sg.Text('', key='-PROGRESS_TEXT-', justification='center', size=(20, 1), expand_x=True)],
-         [sg.ProgressBar(100, orientation='h', size=(40, 20), key='-PROGRESS_BAR-')]    
+         [sg.ProgressBar(100, orientation='h', size=(40, 20), key='-PROGRESS_BAR-', expand_x=True)]    
         ]
     
     # Layout to combine all frames
@@ -126,7 +126,7 @@ def build():
     # ]
     layout = [
         [
-            sg.Frame('Progress Bar', progress_bar, size=(WIDTH,100), visible=False, key='-PROGRESS_COL-'),
+            sg.Frame('Progress Bar', progress_bar, size=(WIDTH,100), visible=False, key='-PROGRESS_COL-', expand_x=True),
             [sg.Frame('Choose your folder', folder_frame, size=(WIDTH,HEIGHT), visible=True, key='-OPTION_COL-'),
             sg.Frame('Summary', inform_user_frame_1, size=(MULTILINE_WIDTH,HEIGHT), visible=False, key='-INFORM_USER_COL1-', expand_x=True, expand_y=True),
             sg.Frame('Error Files', inform_user_frame_2, size=(MULTILINE_WIDTH,HEIGHT), visible=False, key='-INFORM_USER_COL2-', expand_x=True, expand_y=True),
@@ -145,6 +145,7 @@ def interface():
     # config = get_config()
     # Create the window
     window = build()
+    window['-OPTION_COL-'].expand(True, True)
     window['-ERROR_FILES_LIST-'].expand(True, True)
     window['-DUPLICATE_TIMESTAMPS_LIST-'].expand(True, True)
     window['-MISSING_MINUTES_LIST-'].expand(True, True)
