@@ -48,9 +48,10 @@ def build():
     invalid_files_multiline = [
         [sg.Multiline(size=(MULTILINE_WIDTH, 5), key='-INVALID_FILES_LIST-', expand_x=True)],
     ]
+
     folder_frame = [
-        [sg.In(size=(35,1), enable_events=True ,key='-FOLDER-'), sg.FolderBrowse(tooltip='Click to choose folder')], 
-        # [sg.Text('Option'), sg.InputCombo(('1. Collate csv/excel files', ), size=(20, 1), key='-OPTION-')],
+        [sg.Text('Path of Folder', size=(10,1)), sg.In(size=(25,1), enable_events=True ,key='-PATH-', expand_x=True), sg.FolderBrowse(tooltip='Click to choose folder')], 
+        [sg.Text('Folder Name: ', size=(10,1)), sg.In(size=(35,1), enable_events=True ,key='-FOLDER-', expand_x=True)], 
         [sg.Frame('Valid Files', valid_files_multiline)],
         [sg.Frame('Invalid Files', invalid_files_multiline)],
         [sg.Button('Collate Files', key='-COLLATE_FILES-', tooltip='Click to collate files in the chosen folder')]
@@ -160,13 +161,15 @@ def interface():
         if event == sg.WIN_CLOSED or event == 'Exit':
             break
         
-        if event == '-FOLDER-':
-            folder = values['-FOLDER-']
-            print(folder)
+        if event == '-PATH-':
+            path = values['-PATH-']
+            print(path)
             window['-VALID_FILES_LIST-'].update('')
             window['-INVALID_FILES_LIST-'].update('')
-            file_name = os.listdir(folder)
-            for file in file_name:
+            files = os.listdir(path)
+            print(os.path.basename(os.path.normpath(path)))
+            window['-FOLDER-'].update(os.path.basename(os.path.normpath(path)))
+            for file in files:
                 if file.endswith('collated.csv') or file.endswith('collated.xlsx'):
                     window['-INVALID_FILES_LIST-'].update(file + '\n', append=True)
                 elif file.endswith('.csv') or file.endswith('.xlsx'):
