@@ -45,7 +45,6 @@ def popup(message):
 def build():
     # Frame to choose dates
     date_frame = [
-        [sg.Text('Choose the date to collate')],
         [sg.InputText('', size=(20, 1), key='-START_DATE-', disabled=True, tooltip='Start Date', enable_events=True),
          sg.CalendarButton('Choose Start Date', target='-START_DATE-', key='-CALENDAR-', tooltip='Click to choose date', size=(20, 1), format='%m-%d-%Y %H:%M:%S', )],
         [sg.InputText('', size=(20, 1), key='-END_DATE-', disabled=True, tooltip='End Date', enable_events=True),
@@ -59,6 +58,7 @@ def build():
         [sg.Button('Collate Files', key='-COLLATE_FILES-', tooltip='Click to collate files in the chosen folder', visible=False)],
                         'Choose specific slots to collate (Non-repeated)',), enable_events=True, size=(27, 3), key='-OPTION-', expand_x=True)],
         [sg.Frame('Choose your Dates', date_frame, size=(WIDTH,HEIGHT), visible=False, key='-DATES_FRAME-', expand_x=True, expand_y=True)],
+        [sg.Frame('Choose Time Period', date_frame, size=(WIDTH,HEIGHT), visible=False, key='-DATES_FRAME-', expand_x=True, expand_y=True)],
     ]
 
     slots_frame = [[sg.Text('Choose the slots to collate')]]
