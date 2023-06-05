@@ -205,6 +205,7 @@ def interface():
             window['-PROGRESS_COL-'].update(visible=False)
             # window['-OPTION_COL-'].update(visible=False)
             window['-INFORM_USER_COL1-'].update(visible=True)
+            layout = 1
             # for i in range(1,5):
             #     window[f'button_{i}'].update(visible=True)
             window['-BUTTON_COL-'].update(visible=True)
