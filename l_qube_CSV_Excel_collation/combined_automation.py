@@ -90,13 +90,13 @@ def csv_collation(file, collated_df, files_with_errors, files_with_duplicate_tim
         else:
             df = pd.DataFrame(file_lines[1:],columns=file_lines[0])
 
-        try:
-            df.columns.get_loc('Timestamp')
-        except:
-            for time in TIME:
-                if time in df.columns:
-                    df = df.rename(columns={time: 'Timestamp'})
-                    break 
+        # try:
+        #     df.columns.get_loc('Timestamp')
+        # except:
+        #     for time in TIME:
+        #         if time in df.columns:
+        #             df = df.rename(columns={time: 'Timestamp'})
+        #             break 
             # df = df.rename(columns={'Time': 'Timestamp'})
 
         # From here onwards, its the same as excel collation 
@@ -109,7 +109,6 @@ def csv_collation(file, collated_df, files_with_errors, files_with_duplicate_tim
 
 def excel_collation(file, collated_df, files_with_errors, files_with_duplicate_timestamp_dict, missing_minutes_dict, empty_cells_timestamp_dict):
     try: 
-        date_and_time_format = ''
         df = pd.read_excel(file, sheet_name=0, header=None)
         df = df.reset_index(drop=True)
         # print(df.head())
@@ -130,40 +129,40 @@ def excel_collation(file, collated_df, files_with_errors, files_with_duplicate_t
         df = df.dropna(how='all')
         df.drop(columns=['index'], axis=1, inplace=True)
         print(file)
-        try:
-            df.columns.get_loc('Timestamp')
-        except:
-            for time in TIME:
-                if time in df.columns:
-                    df = df.rename(columns={time: 'Timestamp'})
-                    break
+        # try:
+        #     df.columns.get_loc('Timestamp')
+        # except:
+        #     for time in TIME:
+        #         if time in df.columns:
+        #             df = df.rename(columns={time: 'Timestamp'})
+        #             break
             
-        try:
-            # Check if there is a Date column
-            df.columns.get_loc('Date')
-        except:
-            # If there is no Date column, check for date column name in DATE
-            for date in DATE:
-                if date in df.columns:
-                    df = df.rename(columns={date: 'Date'})
-                    break
+        # try:
+        #     # Check if there is a Date column
+        #     df.columns.get_loc('Date')
+        # except:
+        #     # If there is no Date column, check for date column name in DATE
+        #     for date in DATE:
+        #         if date in df.columns:
+        #             df = df.rename(columns={date: 'Date'})
+        #             break
 
-        for date_time in DATE_AND_TIME:
-            try:
-                df[date_time] = df[date_time].str.split(' ')
-                df['Date'] = df[date_time].str[0]
-                date_and_time_format = date_time
+        # for date_time in DATE_AND_TIME:
+        #     try:
+        #         df[date_time] = df[date_time].str.split(' ')
+        #         df['Date'] = df[date_time].str[0]
+        #         date_and_time_format = date_time
 
-                timestamp_split = df[date_time].str[1].str.strip(':')
-                timestamp_split = timestamp_split.str.split(':')
-                df['Timestamp'] = timestamp_split.apply(lambda x: str('%02d' % int(x[0])) + ':' + str('%02d' % int(x[1])))
-                break
-            except:
-                pass
+        #         timestamp_split = df[date_time].str[1].str.strip(':')
+        #         timestamp_split = timestamp_split.str.split(':')
+        #         df['Timestamp'] = timestamp_split.apply(lambda x: str('%02d' % int(x[0])) + ':' + str('%02d' % int(x[1])))
+        #         break
+        #     except:
+        #         pass
         
-        if date_and_time_format != '':
-            df.drop(columns=[date_and_time_format], axis=1, inplace=True)
-        print(df.columns)
+        # if date_and_time_format != '':
+        #     df.drop(columns=[date_and_time_format], axis=1, inplace=True)
+        # print(df.columns)
 
         # From here onwards, its the same as csv collation
         return csv_excel_df_manipulation(file, collated_df, df, files_with_duplicate_timestamp_dict, missing_minutes_dict, empty_cells_timestamp_dict)
@@ -174,7 +173,39 @@ def excel_collation(file, collated_df, files_with_errors, files_with_duplicate_t
         return collated_df
 
 def csv_excel_df_manipulation(file, collated_df, df, files_with_duplicate_timestamp_dict, missing_minutes_dict, empty_cells_timestamp_dict):
-    
+    date_and_time_format = ''
+    try:
+            df.columns.get_loc('Timestamp')
+    except:
+        for time in TIME:
+            if time in df.columns:
+                df = df.rename(columns={time: 'Timestamp'})
+                break
+        
+    try:
+        # Check if there is a Date column
+        df.columns.get_loc('Date')
+    except:
+        # If there is no Date column, check for date column name in DATE
+        for date in DATE:
+            if date in df.columns:
+                df = df.rename(columns={date: 'Date'})
+                break
+
+    for date_time in DATE_AND_TIME:
+        try:
+            df[date_time] = df[date_time].str.split(' ')
+            df['Date'] = df[date_time].str[0]
+            date_and_time_format = date_time
+
+            timestamp_split = df[date_time].str[1].str.strip(':')
+            timestamp_split = timestamp_split.str.split(':')
+            df['Timestamp'] = timestamp_split.apply(lambda x: str('%02d' % int(x[0])) + ':' + str('%02d' % int(x[1])))
+            break
+        except:
+            pass
+    if date_and_time_format != '':
+            df.drop(columns=[date_and_time_format], axis=1, inplace=True)
     # Replace blank/None cells with NaN
     df = df.replace(r'^\s*$', np.nan, regex=True)
     df = df.replace('None', np.nan, regex=True)
