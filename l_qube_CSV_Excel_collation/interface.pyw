@@ -153,7 +153,7 @@ def interface():
     window['-EMPTY_CELLS_LIST-'].expand(True, True)
     popup_win = None
     layout = 1
-    folder = ''
+    path = ''
     # Display window
     while True:
         event, values = window.read()
@@ -184,7 +184,7 @@ def interface():
             sg.popup(title='No Valid Files Found', custom_text = 'No valid files found in the selected folder', button_type=sg.POPUP_BUTTONS_OK, icon='error')
 
         if event == '-COLLATE_FILES-':
-            if folder == '':
+            if path == '':
                 sg.popup(title='No Folder Selected', custom_text = 'Please select a folder first', button_type=sg.POPUP_BUTTONS_OK, icon='error')
             else:
                 for i in range(1,6):
@@ -200,7 +200,7 @@ def interface():
                 window.force_focus()
                 window['-PROGRESS_COL-'].update(visible=True)
                 # Parallel thread to execute the collation on top of the pop up loading
-                threading.Thread(target= combined_collation, args=(folder, window, )).start()
+                threading.Thread(target= combined_collation, args=(path, window, )).start()
         
         if event == 'EXECUTION DONE':
             popup_win.close()
