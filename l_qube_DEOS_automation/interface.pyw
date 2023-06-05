@@ -1,10 +1,8 @@
-from ui_selenium_automation import run_automation, choose_slot, collate_dataframes
+from ui_selenium_automation import run_automation, choose_slot, collate_dataframes, automate_time
 from configuration import get_config
 import PySimpleGUI as sg
+from psgtray import SystemTray
 import threading
-from time import sleep
-import os
-import concurrent.futures
 import datetime as dt
 
 # Add a touch of color
@@ -114,13 +112,17 @@ def build():
     # ]
 
     margins = (5, 5)
-    return sg.Window('L-QuBE DEOS Automation', layout, margins = margins, finalize=True, resizable=True)
+    return sg.Window('L-QuBE DEOS Automation', layout, margins = margins, finalize=True, resizable=True, enable_close_attempted_event=True)
 
 # Main function to run the GUI
 def interface():
     # config = get_config()
     # Create the window
     window = build()
+    menu = ['', ['Show Window', 'Hide Window', '---', 'End Scheduler', 'Change Icon', ['Happy', 'Sad', 'Plain'], 'Exit']]
+    tooltip = 'Double click to show interface'
+    tray = SystemTray(menu, single_click_events=False, window=window, tooltip=tooltip, icon=sg.DEFAULT_BASE64_ICON)
+    tray.show_message('System Tray', 'System Tray Icon Started!')
     # window.maximize()
     # window['-OPTION-'].expand(expand_x=True, expand_y=False)
     window['-OPTION_COL-'].expand(True, True)
@@ -135,9 +137,34 @@ def interface():
         # print(values['-OPTION-'])
         # print(values['-START_DATE-'])
         # End program if user closes window or clicks cancel
-        if event == sg.WIN_CLOSED or event == 'Exit':
+        if event == tray.key:
+            # sg.cprint(f'System Tray Event = ', values[event], c='white on red')
+            event = values[event]       # use the System Tray's event as if was from the window
+
+        if event in (sg.WIN_CLOSED, 'Exit'):
             break
         
+        print(event)
+        tray.show_message(title=event)
+
+        if event in ('Show Window', sg.EVENT_SYSTEM_TRAY_ICON_DOUBLE_CLICKED):
+            window.un_hide()
+            window.bring_to_front()
+        elif event in ('Hide Window', sg.WIN_CLOSE_ATTEMPTED_EVENT):
+            window.hide()
+            tray.show_icon()        # if hiding window, better make sure the icon is visible
+            tray.show_message('Exiting', 'Minimising to tray')
+        elif event == 'Happy':
+            tray.change_icon(sg.EMOJI_BASE64_HAPPY_JOY)
+        elif event == 'Sad':
+            tray.change_icon(sg.EMOJI_BASE64_FRUSTRATED)
+        elif event == 'Plain':
+            tray.change_icon(sg.DEFAULT_BASE64_ICON)
+        elif event == 'Hide Icon':
+            tray.hide_icon()
+        elif event == 'Show Icon':
+            tray.show_icon()
+
         if values['-OPTION-'] == 'Collate all data (Non-repeated)':
             window['-DATES_FRAME-'].update(visible=False)
             window['-COLLATE_FILES-' ].update(visible=True)
@@ -165,7 +192,7 @@ def interface():
                 # Parallel thread to execute the collation on top of the pop up loading
                 if window['-OPTION-'].get() == '1. Collate all data':
                     threading.Thread(target= run_automation, args=(config, 'all', window, )).start()
-                elif window['-OPTION-'].get() == '2. Choose specific slots to collate':
+                elif window['-OPTION-'].get() == 'Choose specific slots to collate (Non-repeated)':
                     window['-SLOTS_COL-'].update(visible=True)
                     window['-SELECT_SLOTS_BTN-'].update(visible=True)
                     window['-COLLATE_FILES-'].update(visible=False)
@@ -199,7 +226,7 @@ def interface():
             window['-ERROR_FILES_LIST-'].update('')
             window['-DUPLICATE_TIMESTAMP_LIST-'].update('')
 
-
+    tray.close()
     window.close()
 
 if __name__ == '__main__':
