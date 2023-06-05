@@ -15,7 +15,7 @@ sg.set_options(font=('Helvetica', 12))
 sg.set_options(tooltip_font=('Helvetica', 11))
 # Default size for frames, can be changed
 # WIDTH, HEIGHT = sg.Window.get_screen_size()
-WIDTH = 400
+WIDTH = 420
 HEIGHT = 350
 
 MULTILINE_WIDTH = 550
@@ -57,7 +57,7 @@ def build():
     ]
     # Initial frame to choose option
     option_frame = [
-        [sg.Text('Option'), sg.InputCombo(('1. Collate all data', '2. Choose specific slots to collate'), enable_events=True, size=(27, 2), key='-OPTION-')],
+        [sg.Text('Option'), sg.InputCombo(('Collate all data (Non-repeated)', 'Choose specific slots to collate (Non-repeated)'), enable_events=True, size=(27, 2), key='-OPTION-', expand_x=True)],
         [sg.Button('Collate Files', key='-COLLATE_FILES-', tooltip='Click to collate files in the chosen folder', visible=False)],
         [sg.Frame('Choose your Dates', date_frame, size=(WIDTH,HEIGHT), visible=False, key='-DATES_FRAME-', expand_x=True, expand_y=True)],
     ]
@@ -138,11 +138,11 @@ def interface():
         if event == sg.WIN_CLOSED or event == 'Exit':
             break
         
-        if values['-OPTION-'] == '1. Collate all data':
+        if values['-OPTION-'] == 'Collate all data (Non-repeated)':
             window['-DATES_FRAME-'].update(visible=False)
             window['-COLLATE_FILES-' ].update(visible=True)
 
-        if values['-OPTION-'] == '2. Choose specific slots to collate':
+        if values['-OPTION-'] == 'Choose specific slots to collate (Non-repeated)':
             window['-DATES_FRAME-'].update(visible=True)
             window['-COLLATE_FILES-' ].update(visible=False)
 
@@ -153,7 +153,8 @@ def interface():
         if event == '-END_DATE-':
             date, _ = values['-END_DATE-'].split(' ')
             window['-END_DATE-'].update(date + ' 23:59:59')
-        if event == '-COLLATE_FILES-':
+
+        if event == '-COLLATE_FILES-' or event == '-DATES_CHOSEN-':
             if window['-OPTION-'] == '':
                 sg.popup(title='No Option Selected', custom_text = 'Please select an option first', button_type=sg.POPUP_BUTTONS_OK, icon='error')
             else:
