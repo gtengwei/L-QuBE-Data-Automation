@@ -172,11 +172,17 @@ def collate_dataframes(option, change_directory):
 
 
     # Name files based on option
-    if option == 'all':
-        os.chdir(change_directory)
-        current_date = get_current_date()
-        collated_df.to_excel(f"AllData_{current_date}_collated.xlsx", index = False)
+    # Do not need to collate files for all and choose option
+    # if option == 'all':
+    #     os.chdir(change_directory)
+    #     current_date = get_current_date()
+    #     collated_df.to_excel(f"AllData_{current_date}_collated.xlsx", index = False)
     
+    # elif option == 'choose':
+    #     os.chdir(change_directory)
+    #     current_datetime = get_current_datetime()
+    #     filled_collated_df.to_excel(f"SelectedData_{current_datetime}_collated.xlsx", index = False)
+
     # Insert empty slots for missing minutes
     filled_collated_df = insert_empty_slot(collated_df)
     filled_collated_df = filled_collated_df.sort_values(by=['Date','Timestamp'], ascending=[True,True])
@@ -186,10 +192,7 @@ def collate_dataframes(option, change_directory):
         yesterday_date = get_yesterday_date()
         filled_collated_df.to_excel(f"Daily_{yesterday_date}_collated.xlsx", index = False)
     
-    elif option == 'choose':
-        os.chdir(change_directory)
-        current_datetime = get_current_datetime()
-        filled_collated_df.to_excel(f"SelectedData_{current_datetime}_collated.xlsx", index = False)
+
     
     elif option == 'daily_selected':
         os.chdir(change_directory)
