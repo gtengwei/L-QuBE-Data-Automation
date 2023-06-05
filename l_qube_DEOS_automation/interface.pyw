@@ -57,6 +57,7 @@ def build():
     option_frame = [
         [sg.Text('Option'), sg.InputCombo(('Collate all data (Non-repeated)', 'Choose specific slots to collate (Non-repeated)'), enable_events=True, size=(27, 2), key='-OPTION-', expand_x=True)],
         [sg.Button('Collate Files', key='-COLLATE_FILES-', tooltip='Click to collate files in the chosen folder', visible=False)],
+                        'Choose specific slots to collate (Non-repeated)',), enable_events=True, size=(27, 3), key='-OPTION-', expand_x=True)],
         [sg.Frame('Choose your Dates', date_frame, size=(WIDTH,HEIGHT), visible=False, key='-DATES_FRAME-', expand_x=True, expand_y=True)],
     ]
 
