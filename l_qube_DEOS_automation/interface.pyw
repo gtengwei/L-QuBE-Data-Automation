@@ -4,6 +4,7 @@ import PySimpleGUI as sg
 from psgtray import SystemTray
 import threading
 import datetime as dt
+import os
 
 # Add a touch of color
 sg.theme('DarkBlue3')  
@@ -17,6 +18,7 @@ WIDTH = 420
 HEIGHT = 350
 
 MULTILINE_WIDTH = 550
+config = get_config()
 
 # Blank frame for testing purposes
 def blank_frame():
@@ -52,12 +54,50 @@ def build():
         [sg.Button('Select Dates', key='-DATES_CHOSEN-', tooltip='Click to select dates to collate')]
 
     ]
+
+    device_input_combo = [
+        sg.InputCombo('default', size=(20, len(config.devices.keys())), key='-DEVICE-', tooltip='Device Name', enable_events=True)
+    ]
+    
+    device_parameters =[
+        [sg.Text(size=(12,1)), sg.Text('IP', size=(8, 1), key='-IP_text-', visible=False), sg.InputText('default ip', key='-IP-', tooltip='IP Address of device', enable_events=True, visible=False, size=(30, 1))],
+        [sg.Text(size=(12,1)), sg.Text('Password', size=(8, 1), key='-PASSWORD_text-', visible=False), sg.InputText('default password', key='-PASSWORD-', tooltip='Password of device', enable_events=True, visible=False, size=(30, 1))],
+        [sg.Text(size=(12,1)), sg.Text('Slots', size=(8, 1), key='-SLOTS_text-', visible=False), sg.InputCombo('default', size=(20, 5), key='-SLOTS-', tooltip='Slots to collate data from', enable_events=True, visible=False),],
+    ]
+
+    config_frame = []
+    config_frame += [
+        [sg.Text('Directory', size=(12, 1)), sg.InputText(config.directory, key='-DIRECTORY-', tooltip='Directory to save files', enable_events=True, size=(30, 1)), sg.FolderBrowse('Browse', key='-BROWSE-', tooltip='Click to browse for directory')],
+    ]
+    config_frame += [
+        [sg.Text('Folder Name', size=(12, 1)), sg.Text(os.path.basename(os.path.normpath(config.directory)), key='-FOLDER_NAME-', tooltip='Name of folder to save files', enable_events=True, size=(30, 1))],
+    ]
+    config_frame += [
+        [sg.Text('Device Choice', size=(12, 1)), sg.InputCombo(('DEOS', 'L-QuBE'), default_value=config.device_choice, key='-DEVICE_CHOICE-', tooltip='Choose device to collate data from', enable_events=True, size=(30, 1))],
+    ]
+    
+    config_frame += [
+        [sg.Text('Time to collate', size=(12, 1)), 
+         sg.InputText((config.hour), key='-HOUR-', tooltip='Choose hour to collate data from', enable_events=True, size=(3, 1)),
+         sg.Text(':'),
+         sg.InputText((config.minute), key='-MINUTE-', tooltip='Choose minute to collate data from', enable_events=True, size=(3, 1))],
+    ]
+
+    config_frame += [
+        [sg.Text('Devices', size=(12, 1))] + device_input_combo,
+    ]
+    config_frame += device_parameters
+    
+    
+
     # Initial frame to choose option
     option_frame = [
-        [sg.Text('Option'), sg.InputCombo(('Collate all data (Non-repeated)', 'Choose specific slots to collate (Non-repeated)'), enable_events=True, size=(27, 2), key='-OPTION-', expand_x=True)],
-        [sg.Button('Collate Files', key='-COLLATE_FILES-', tooltip='Click to collate files in the chosen folder', visible=False)],
-                        'Choose specific slots to collate (Non-repeated)',), enable_events=True, size=(27, 3), key='-OPTION-', expand_x=True)],
-        [sg.Frame('Choose your Dates', date_frame, size=(WIDTH,HEIGHT), visible=False, key='-DATES_FRAME-', expand_x=True, expand_y=True)],
+        [sg.Text('Option'), 
+         sg.InputCombo(('Edit Configuration',
+                        'Automate Collation (Repeated)',
+                        'Collate all data (Non-repeated)', 
+                        'Choose specific slots to collate (Non-repeated)',), enable_events=True, size=(27, 4), key='-OPTION-', expand_x=True)],
+        [sg.Button('Start Collation', key='-COLLATE_FILES-', tooltip='Click to collate files in the chosen folder', visible=False)],
         [sg.Frame('Choose Time Period', date_frame, size=(WIDTH,HEIGHT), visible=False, key='-DATES_FRAME-', expand_x=True, expand_y=True)],
     ]
 
@@ -94,7 +134,8 @@ def build():
     [
         sg.Frame('Progress Bar', progress_bar, size=(WIDTH,100), visible=False, key='-PROGRESS_COL-'),
         [sg.Frame('Choose your option', option_frame, size=(WIDTH,HEIGHT), visible=True, key='-OPTION_COL-'),
-        sg.Frame('Choose your slots', slots_column_frame, size=(WIDTH,HEIGHT), expand_x=True, expand_y=True, visible=False, key='-SLOTS_COL-')],
+        sg.Frame('Choose your slots', slots_column_frame, size=(WIDTH,HEIGHT), expand_x=True, expand_y=True, visible=False, key='-SLOTS_COL-'),
+        sg.Frame('Edit Configuration', config_frame, size=(WIDTH+59,HEIGHT), visible=False, expand_x=True, expand_y=True, key='-CONFIG_COL-'),],
         [sg.Frame('', select_slots_button, size=(WIDTH, 60),  expand_x=True, element_justification='right', visible=False, key='-SELECT_SLOTS_BTN-')]
     
      ]
@@ -131,6 +172,11 @@ def interface():
     layout = 1
     window['-START_DATE-'].update(value=dt.datetime.now().strftime('%m-%d-%Y' + ' 00:00:00'))
     window['-END_DATE-'].update(value=dt.datetime.now().strftime('%m-%d-%Y %H:%M:%S'))
+    config = get_config()
+    device_num_list = []
+    for device_num, device in config.devices.items():
+        device_num_list.append(device_num)
+    window['-DEVICE-'].update(value='', values=device_num_list)
     # Display window
     while True:
         event, values = window.read()
@@ -166,6 +212,10 @@ def interface():
         elif event == 'Show Icon':
             tray.show_icon()
 
+        if values['-OPTION-'] == 'Edit Configuration':
+            window['-DATES_FRAME-'].update(visible=False)
+            window['-COLLATE_FILES-' ].update(visible=False)
+            window['-CONFIG_COL-' ].update(visible=True)
         if values['-OPTION-'] == 'Collate all data (Non-repeated)':
             window['-DATES_FRAME-'].update(visible=False)
             window['-COLLATE_FILES-' ].update(visible=True)
@@ -182,11 +232,27 @@ def interface():
             date, _ = values['-END_DATE-'].split(' ')
             window['-END_DATE-'].update(date + ' 23:59:59')
 
+        if event == '-DEVICE-':
+            slots_list = []
+            window['-IP_text-'].update(visible=True)
+            window['-PASSWORD_text-'].update(visible=True)
+            window['-SLOTS_text-'].update(visible=True)
+            window['-IP-'].update(visible=True)
+            window['-PASSWORD-'].update(visible=True)
+            window['-SLOTS-'].update(visible=True)
+            device_num = values['-DEVICE-']
+            device = config.devices[device_num]
+            print(device)
+            window['-IP-'].update(value=device['ip'])
+            window['-PASSWORD-'].update(value=device['password'])
+            for slot_num, slot in device['slots'].items(): 
+                slots_list.append(slot)
+            window['-SLOTS-'].update(value='', values=slots_list)
+
         if event == '-COLLATE_FILES-' or event == '-DATES_CHOSEN-':
             if window['-OPTION-'] == '':
                 sg.popup(title='No Option Selected', custom_text = 'Please select an option first', button_type=sg.POPUP_BUTTONS_OK, icon='error')
             else:
-                config = get_config()
                 # popup_win = popup('Please wait for the UI to load...')
                 # window.force_focus()
                 # window['-PROGRESS_COL-'].update(visible=True)
