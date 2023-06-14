@@ -179,7 +179,9 @@ def interface():
     device_num_list = []
     for device_num, device in config.devices.items():
         device_num_list.append(device_num)
-    window['-DEVICE-'].update(value='', values=device_num_list)
+    window['-DEVICE-'].update(value=device_num_list[0], values=device_num_list)
+    window['-IP-'].update(value=config.devices[device_num_list[0]]['ip'])
+    window['-PASSWORD-'].update(value=config.devices[device_num_list[0]]['password'])
     # Display window
     while True:
         event, values = window.read()
