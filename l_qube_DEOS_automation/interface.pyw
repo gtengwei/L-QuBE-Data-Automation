@@ -180,6 +180,7 @@ def interface():
     for device_num, device in config.devices.items():
         device_num_list.append(device_num)
     window['-DEVICE-'].update(value=device_num_list[0], values=device_num_list)
+    window['-DEVICE_CHOICE-'].update(value=config.device_choice, values=device_num_list)
     window['-IP-'].update(value=config.devices[device_num_list[0]]['ip'])
     window['-PASSWORD-'].update(value=config.devices[device_num_list[0]]['password'])
     # Display window
@@ -257,6 +258,9 @@ def interface():
         if event == '-SAVE_CONFIG-':
             device_num = values['-DEVICE-']
             config.directory = values['-DIRECTORY-']
+            config.device_choice = values['-DEVICE_CHOICE-']
+            config.hour = values['-HOUR-']
+            config.minute = values['-MINUTE-']
             config.devices[device_num]['ip'] = values['-IP-']
             config.devices[device_num]['password'] = values['-PASSWORD-']
             # config.devices[device_num]['slots'] = values['-SLOTS-']
