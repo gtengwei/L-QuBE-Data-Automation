@@ -254,6 +254,7 @@ def interface():
 
         if event == '-SAVE_CONFIG-':
             device_num = values['-DEVICE-']
+            config.directory = values['-DIRECTORY-']
             config.devices[device_num]['ip'] = values['-IP-']
             config.devices[device_num]['password'] = values['-PASSWORD-']
             # config.devices[device_num]['slots'] = values['-SLOTS-']
