@@ -1,27 +1,24 @@
 {
-    "config": {
-        "directory": "C:\\Users\\tengwei.goh\\Documents\\GitHub\\L-QuBE-Data-Automation\\l_qube_DEOS_automation",
-        "device_choice": "device_1",
-        "devices" : {
-            "device_1" : {
-                "ip" : "192.168.170.103",
-                "password" : "0007",
-                "slots" : { 
-                    "1" : "HDR_CDW_FL",
-                    "2" : "HDR2_CDW_FL"     
-                } 
-            },
-            "device_2" : {
-                "ip" : "192.168.170.104",
-                "password" : "0007",
-                "slots" : {
-                    "1" : "HDR_CDW_FL",
-                    "2" : "HDR2_CDW_FL"
-                }
+    "directory": "C:\\Users\\tengwei.goh\\Documents\\GitHub\\L-QuBE-Data-Automation\\l_qube_DEOS_automation",
+    "device_choice": "device_1",
+    "devices": {
+        "device_1": {
+            "ip": "192.168.170.105",
+            "password": "0007",
+            "slots": {
+                "1": "HDR_CDW_FL",
+                "2": "HDR2_CDW_FL"
             }
-        
         },
-        "hour": "10",
-        "minute": "01"
-    }
+        "device_2": {
+            "ip": "192.168.170.104",
+            "password": "0007",
+            "slots": {
+                "1": "HDR_CDW_FL",
+                "2": "HDR2_CDW_FL"
+            }
+        }
+    },
+    "hour": "10",
+    "minute": "01"
 }

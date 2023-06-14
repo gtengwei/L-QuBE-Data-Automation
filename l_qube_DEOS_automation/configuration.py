@@ -8,6 +8,12 @@ class Configuration:
         self.devices = devices
         self.hour = hour
         self.minute = minute
+    
+    def save(self):
+        """ save configuration to json file"""
+        with open('config.json', 'w') as f:
+            json.dump(self.__dict__, f, indent=4)
+
 
 def get_json():
     """ read json content"""
@@ -18,10 +24,10 @@ def get_json():
 def get_config():
     try:
         json_config = get_json()
-        user_config = json_config['config']
-        config = Configuration(user_config['directory'], user_config['device_choice'],
-                               user_config['devices'],
-                               user_config['hour'], user_config['minute'])
+        # user_config = json_config['config']
+        config = Configuration(json_config['directory'], json_config['device_choice'],
+                               json_config['devices'],
+                               json_config['hour'], json_config['minute'])
         return config
     except Exception as e:
         file = open('error_log.txt','a')

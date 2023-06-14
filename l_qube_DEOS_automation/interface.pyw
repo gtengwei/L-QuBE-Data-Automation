@@ -87,6 +87,9 @@ def build():
         [sg.Text('Devices', size=(12, 1))] + device_input_combo,
     ]
     config_frame += device_parameters
+    config_frame += [
+        [sg.Button('Save Configuration', key='-SAVE_CONFIG-', tooltip='Click to save configuration')],
+    ]
     
     
 
@@ -249,6 +252,13 @@ def interface():
                 slots_list.append(slot)
             window['-SLOTS-'].update(value='', values=slots_list)
 
+        if event == '-SAVE_CONFIG-':
+            device_num = values['-DEVICE-']
+            config.devices[device_num]['ip'] = values['-IP-']
+            config.devices[device_num]['password'] = values['-PASSWORD-']
+            # config.devices[device_num]['slots'] = values['-SLOTS-']
+            config.save()
+            sg.popup('Configuration saved successfully!', icon='success')
         if event == '-COLLATE_FILES-' or event == '-DATES_CHOSEN-':
             if window['-OPTION-'] == '':
                 sg.popup(title='No Option Selected', custom_text = 'Please select an option first', button_type=sg.POPUP_BUTTONS_OK, icon='error')
