@@ -223,6 +223,7 @@ def find_all_slots(driver):
 
 def choose_slot(driver, chosen_slots, window):
     # part 2: add slot number to choose
+    directory = os.getcwd()
     for slot in chosen_slots:
         slot_name = driver.find_element('xpath', "//*[.='" + slot + "']").get_attribute("id")
         print(slot_name)
@@ -237,8 +238,19 @@ def choose_slot(driver, chosen_slots, window):
         csv.click()
         print('downloaded csv file')
         # time.sleep(1)
-    window.write_event_value('EXECUTION DONE', None)
-    driver.close()
+    while True:
+        csv_downloaded_length = 0
+        for root,dirs,files in os.walk(directory):
+            for file in files:
+                if file.endswith('.csv'):
+                    csv_downloaded_length += 1
+        if csv_downloaded_length == len(chosen_slots):
+            window.write_event_value('EXECUTION DONE', None)
+            driver.close()
+            return
+        time.sleep(1)
+        print('waiting for csv files to download')
+        
 
 
 
