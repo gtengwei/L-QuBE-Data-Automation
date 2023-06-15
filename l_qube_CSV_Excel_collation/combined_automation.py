@@ -4,7 +4,7 @@ import numpy as np
 import datetime as dt
 from collections import defaultdict
 
-DATE = ['Date', 'date', 'DATE']
+DATE = ['Date', 'date', 'DATE', '#Date', '#date', '#DATE']
 TIME = ['Time', 'time', 'TIME']
 
 DATE_FORMAT = ['%d/%m/%Y', '%d/%m/%y', 
@@ -82,6 +82,10 @@ def csv_collation(file, collated_df, files_with_errors, files_with_duplicate_tim
                 if file_lines[i][j] == '':
                     file_lines[i][j] = np.nan
 
+        # Check for DEOS raw data that did not go through my DEOS software
+        if '#' in file_lines[0][0]:
+            # Change 'Value' Column to Slot name, which is in file_lines[0][0]
+            file_lines[1][2] = file_lines[0][0].split(' ')[2]
         # Read the cleaned list into a Pandas DataFrame
         # For csv files with slot name in the first cell
         if len(file_lines[0]) < 2:
