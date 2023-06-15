@@ -170,6 +170,9 @@ def collate_dataframes(option, change_directory):
                         continue
                     collated_df = merge_dataframes(collated_df,clean_df)
 
+    if option == 'all' or option == 'choose':
+        os.chdir(main_directory)
+        return
     collated_df = collated_df.sort_values(by=['Date','Timestamp'], ascending=[True,True])
 
 
