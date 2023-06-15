@@ -326,10 +326,11 @@ def interface():
                     threading.Thread(target= run_automation, args=(config, 'all', window, )).start()
 
                 elif window['-OPTION-'].get() == 'Choose specific slots to download (Non-repeated)':
-                    sg.popup_quick_message('Please wait for the slots to be displayed...', keep_on_top=True)
+                    sg.popup_quick_message('Please wait for the slots to be displayed...', keep_on_top=True, background_color='grey')
                     window['-SLOTS_COL-'].update(visible=True)
                     window['-SELECT_SLOTS_BTN-'].update(visible=True)
                     window['-COLLATE_FILES-'].update(visible=False)
+                    window['-DATES_CHOSEN-'].update(disabled=True)
                     driver, slots, directory = run_automation(config, 'choose', window)
                     
         
@@ -345,6 +346,7 @@ def interface():
             window['-SLOTS_COL-'].update(visible=False)
             window['-SELECT_SLOTS_BTN-'].update(visible=False)
             window['-COLLATE_FILES-'].update(visible=True)
+            window['-DATES_CHOSEN-'].update(disabled=False)
         
         if event == '-START_SCHEDULER-':
             sg.popup(title='Scheduler Started', custom_text = 'Scheduler started successfully!', button_type=sg.POPUP_BUTTONS_OK, icon='success')
@@ -356,10 +358,11 @@ def interface():
                 if window[f'-SLOT{i+1}-'].get() == True:
                     chosen_slots.append(slots[i])
             print(chosen_slots)
+            sg.popup_quick_message('Please wait for the download to complete...', keep_on_top=True, background_color='grey')
             choose_slot(driver, chosen_slots, window)
             collate_dataframes('choose', directory)
             driver.close()
-            sg.popup(title='Download Completed', custom_text = 'Download successfully!', button_type=sg.POPUP_BUTTONS_OK, icon='success')
+            sg.popup(custom_text = 'Download successfully!', button_type=sg.POPUP_BUTTONS_OK, icon='success')
         
         if event == '-BACK-':
             window['-OPTION_COL-'].update(visible=True)
