@@ -238,6 +238,7 @@ def choose_slot(driver, chosen_slots, window):
         print('downloaded csv file')
         # time.sleep(1)
     window.write_event_value('EXECUTION DONE', None)
+    driver.close()
 
 
 
