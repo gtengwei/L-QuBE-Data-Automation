@@ -326,11 +326,12 @@ def interface():
                     threading.Thread(target= run_automation, args=(config, 'all', window, )).start()
 
                 elif window['-OPTION-'].get() == 'Choose specific slots to download (Non-repeated)':
-                    sg.popup_quick_message('Please wait for the slots to be displayed...')
-                    driver, slots, directory = run_automation(config, 'choose', window)
+                    sg.popup_quick_message('Please wait for the slots to be displayed...', keep_on_top=True)
                     window['-SLOTS_COL-'].update(visible=True)
                     window['-SELECT_SLOTS_BTN-'].update(visible=True)
                     window['-COLLATE_FILES-'].update(visible=False)
+                    driver, slots, directory = run_automation(config, 'choose', window)
+                    
         
         if event == '-STOP_SCHEDULER-':
             if start_scheduler == True:
@@ -357,7 +358,7 @@ def interface():
             print(chosen_slots)
             choose_slot(driver, chosen_slots, window)
             collate_dataframes('choose', directory)
-            sg.popup(title='Collation Completed', custom_text = 'Collation completed successfully!', button_type=sg.POPUP_BUTTONS_OK, icon='success')
+            sg.popup(title='Download Completed', custom_text = 'Download successfully!', button_type=sg.POPUP_BUTTONS_OK, icon='success')
         
         if event == '-BACK-':
             window['-OPTION_COL-'].update(visible=True)
