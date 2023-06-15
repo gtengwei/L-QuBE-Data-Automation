@@ -266,6 +266,10 @@ def interface():
             # config.devices[device_num]['slots'] = values['-SLOTS-']
             config.save()
             sg.popup('Configuration saved successfully!', icon='success')
+        
+        if event == '-DEVICE_CHOICE-':
+            config.device_choice = values['-DEVICE_CHOICE-'].split(' ')[0]
+            config.save()
         if event == '-COLLATE_FILES-' or event == '-DATES_CHOSEN-':
             if window['-OPTION-'] == '':
                 sg.popup(title='No Option Selected', custom_text = 'Please select an option first', button_type=sg.POPUP_BUTTONS_OK, icon='error')
