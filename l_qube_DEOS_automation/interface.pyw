@@ -294,6 +294,14 @@ def interface():
             config.devices[device_num]['password'] = values['-PASSWORD-']
             # config.devices[device_num]['slots'] = values['-SLOTS-']
             config.save()
+            device_num_dict = defaultdict()
+            for device_num, device in config.devices.items():
+                device_num_dict[device_num] = f"{device_num} ({device['ip']})"
+            first_device = next(iter(device_num_dict))
+            window['-DEVICE-'].update(value=next(iter(device_num_dict.values())), values=list(device_num_dict.values()))
+            window['-DEVICE_CHOICE-'].update(value=f"{config.device_choice} ({config.devices[config.device_choice]['ip']})", values=list(device_num_dict.values()))
+            window['-IP-'].update(value=config.devices[first_device]['ip'])
+            window['-PASSWORD-'].update(value=config.devices[first_device]['password'])
             sg.popup('Configuration saved successfully!', icon='success')
         
         if event == '-DEVICE_CHOICE-':
