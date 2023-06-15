@@ -251,7 +251,7 @@ def interface():
             window['-IP-'].update(visible=True)
             window['-PASSWORD-'].update(visible=True)
             window['-SLOTS-'].update(visible=True)
-            device_num = values['-DEVICE-']
+            device_num = values['-DEVICE-'].split(' ')[0]
             device = config.devices[device_num]
             print(device)
             window['-IP-'].update(value=device['ip'])
@@ -261,7 +261,7 @@ def interface():
             window['-SLOTS-'].update(value='', values=slots_list)
 
         if event == '-SAVE_CONFIG-':
-            device_num = values['-DEVICE-']
+            device_num = values['-DEVICE-'].split(' ')[0]
             config.directory = values['-DIRECTORY-']
             config.device_choice = values['-DEVICE_CHOICE-']
             config.hour = values['-HOUR-']
