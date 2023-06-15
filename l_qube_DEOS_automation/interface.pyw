@@ -98,8 +98,8 @@ def build():
         [sg.Text('Option'), 
          sg.InputCombo(('Edit Configuration',
                         'Automate Collation (Repeated)',
-                        'Collate all data (Non-repeated)', 
-                        'Choose specific slots to collate (Non-repeated)',), default_value='Edit Configuration', enable_events=True, size=(70, 4), key='-OPTION-')],
+                        'Download all data (Non-repeated)', 
+                        'Choose specific slots to download (Non-repeated)',), default_value='Edit Configuration', enable_events=True, size=(70, 4), key='-OPTION-')],
         [sg.Button('Start Collation', key='-COLLATE_FILES-', tooltip='Click to collate files in the chosen folder', visible=False), 
          sg.Button('Stop Collation', key='-STOP_SCHEDULER-', tooltip='Click to stop scheduler', visible=False)],
         [sg.Frame('Choose Time Period', date_frame, size=(WIDTH,HEIGHT), visible=False, key='-DATES_FRAME-', expand_x=True, expand_y=True)],
@@ -322,10 +322,10 @@ def interface():
                     start_scheduler = True
 
                 
-                if window['-OPTION-'].get() == 'Collate all data (Non-repeated)':
+                if window['-OPTION-'].get() == 'Download all data (Non-repeated)':
                     threading.Thread(target= run_automation, args=(config, 'all', window, )).start()
 
-                elif window['-OPTION-'].get() == 'Choose specific slots to collate (Non-repeated)':
+                elif window['-OPTION-'].get() == 'Choose specific slots to download (Non-repeated)':
                     sg.popup_quick_message('Please wait for the slots to be displayed...')
                     driver, slots, directory = run_automation(config, 'choose', window)
                     window['-SLOTS_COL-'].update(visible=True)
