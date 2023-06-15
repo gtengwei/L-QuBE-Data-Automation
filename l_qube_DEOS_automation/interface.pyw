@@ -326,11 +326,11 @@ def interface():
                     threading.Thread(target= run_automation, args=(config, 'all', window, )).start()
 
                 elif window['-OPTION-'].get() == 'Choose specific slots to collate (Non-repeated)':
+                    sg.popup_quick_message('Please wait for the slots to be displayed...')
+                    driver, slots, directory = run_automation(config, 'choose', window)
                     window['-SLOTS_COL-'].update(visible=True)
                     window['-SELECT_SLOTS_BTN-'].update(visible=True)
                     window['-COLLATE_FILES-'].update(visible=False)
-                    # threading.Thread(target= run_automation, args=(config, 'choose', window, )).start()
-                    driver, slots, directory = run_automation(config, 'choose', window)
         
         if event == '-STOP_SCHEDULER-':
             if start_scheduler == True:
@@ -347,9 +347,7 @@ def interface():
         
         if event == '-START_SCHEDULER-':
             sg.popup(title='Scheduler Started', custom_text = 'Scheduler started successfully!', button_type=sg.POPUP_BUTTONS_OK, icon='success')
-        # if event == 'CHOOSING SLOTS':
-        #     popup_win.close()
-        #     popup_win = None
+        
             
         if event == '-SLOTS_CHOSEN-':
             chosen_slots = []
