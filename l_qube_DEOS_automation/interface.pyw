@@ -70,7 +70,7 @@ def build():
 
     config_frame = []
     config_frame += [
-        [sg.Text('Directory', size=(12, 1)), sg.InputText(config.directory, key='-DIRECTORY-', tooltip='Directory to save files', enable_events=True, size=(30, 1)), sg.FolderBrowse('Browse', key='-BROWSE-', tooltip='Click to browse for directory')],
+        [sg.Text('Directory', size=(12, 1)), sg.InputText(config.directory, key='-DIRECTORY-', tooltip='Directory to save files', enable_events=True, size=(30, 1), expand_x=True), sg.FolderBrowse('Browse', key='-BROWSE-', tooltip='Click to browse for directory')],
     ]
     config_frame += [
         [sg.Text('Folder Name', size=(12, 1)), sg.Text(os.path.basename(os.path.normpath(config.directory)), key='-FOLDER_NAME-', tooltip='Name of folder to save files', enable_events=True, size=(30, 1))],
@@ -99,7 +99,7 @@ def build():
          sg.InputCombo(('Edit Configuration',
                         'Automate Collation (Repeated)',
                         'Collate all data (Non-repeated)', 
-                        'Choose specific slots to collate (Non-repeated)',), default_value='Edit Configuration', enable_events=True, size=(27, 4), key='-OPTION-', expand_x=True)],
+                        'Choose specific slots to collate (Non-repeated)',), default_value='Edit Configuration', enable_events=True, size=(70, 4), key='-OPTION-')],
         [sg.Button('Start Collation', key='-COLLATE_FILES-', tooltip='Click to collate files in the chosen folder', visible=False), 
          sg.Button('End Scheduler', key='-END_SCHEDULER-', tooltip='Click to end scheduler', visible=False)],
         [sg.Frame('Choose Time Period', date_frame, size=(WIDTH,HEIGHT), visible=False, key='-DATES_FRAME-', expand_x=True, expand_y=True)],
@@ -331,7 +331,7 @@ def interface():
                 tray.show_message('Scheduler', 'Scheduler has been stopped')
             else:
                 sg.popup('Scheduler has not been started yet!')
-                
+
         if event == 'EXECUTION DONE':
             window['-SLOTS_COL-'].update(visible=False)
             window['-SELECT_SLOTS_BTN-'].update(visible=False)
