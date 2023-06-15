@@ -51,7 +51,7 @@ def build():
 
     folder_frame = [
         [sg.Text('Folder Path:', size=(10,1)), sg.In(size=(25,1), enable_events=True ,key='-PATH-', expand_x=True), sg.FolderBrowse(tooltip='Click to choose folder')], 
-        [sg.Text('Folder Name:', size=(10,1)), sg.In(size=(35,1), enable_events=True ,key='-FOLDER-', expand_x=True)], 
+        [sg.Text('Folder Name:', size=(10,1)), sg.Text(size=(35,1), enable_events=True ,key='-FOLDER-', expand_x=True)], 
         [sg.Frame('Valid Files', valid_files_multiline)],
         [sg.Frame('Invalid Files', invalid_files_multiline)],
         [sg.Button('Collate Files', key='-COLLATE_FILES-', tooltip='Click to collate files in the chosen folder')]
