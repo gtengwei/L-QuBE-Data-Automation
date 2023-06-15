@@ -10,8 +10,8 @@ import os
 sg.theme('DarkBlue3')  
 
 # Change font and font size
-sg.set_options(font=('Helvetica', 12))
-sg.set_options(tooltip_font=('Helvetica', 11))
+sg.set_options(font=('Helvetica', 10))
+sg.set_options(tooltip_font=('Helvetica', 10))
 # Default size for frames, can be changed
 # WIDTH, HEIGHT = sg.Window.get_screen_size()
 WIDTH = 420
