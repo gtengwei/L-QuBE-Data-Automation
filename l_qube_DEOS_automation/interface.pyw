@@ -73,9 +73,6 @@ def build():
     config_frame += [
         [sg.Text('Folder Name', size=(12, 1)), sg.Text(os.path.basename(os.path.normpath(config.directory)), key='-FOLDER_NAME-', tooltip='Name of folder to save files', enable_events=True, size=(30, 1))],
     ]
-    config_frame += [
-        [sg.Text('Device Choice', size=(12, 1)), sg.InputCombo(('DEOS', 'L-QuBE'), default_value=config.device_choice, key='-DEVICE_CHOICE-', tooltip='Choose device to collate data from', enable_events=True, size=(30, 1))],
-    ]
     
     config_frame += [
         [sg.Text('Time to collate', size=(12, 1)), 
@@ -183,7 +180,6 @@ def interface():
     first_device = next(iter(device_num_dict))
     print(device_num_dict[first_device])
     window['-DEVICE-'].update(value=first_device, values=list(device_num_dict.values()))
-    window['-DEVICE_CHOICE-'].update(value=f"{device_num_dict[first_device]}", values=list(device_num_dict.values()))
     window['-IP-'].update(value=config.devices[first_device]['ip'])
     window['-PASSWORD-'].update(value=config.devices[first_device]['password'])
     # Display window
@@ -263,7 +259,6 @@ def interface():
         if event == '-SAVE_CONFIG-':
             device_num = values['-DEVICE-'].split(' ')[0]
             config.directory = values['-DIRECTORY-']
-            config.device_choice = values['-DEVICE_CHOICE-']
             config.hour = values['-HOUR-']
             config.minute = values['-MINUTE-']
             config.devices[device_num]['ip'] = values['-IP-']
