@@ -11,6 +11,8 @@ from apscheduler.triggers.interval import IntervalTrigger
 from apscheduler.executors.debug import DebugExecutor
 import pytz
 
+stop_thread = False
+
 def initialise_driver(ip, password, device_num):
     # Must wait for 'Run' LED light to start blinking before running the program
     directory = os.getcwd()
@@ -91,13 +93,13 @@ def run_to_trend_export_page(driver, password, device_num):
     driver.switch_to.frame(1)
     print('switched to frame')
 
-def automate_time(config):
+def automate_time(config, window):
     open('error_log.txt', 'w').close()
     SG = pytz.timezone('Asia/Singapore')
     scheduler = BackgroundScheduler()
     scheduler.start()
     print('starting scheduler')
-
+    window.write_event_value('-START_SCHEDULER-', None)
     cron_trigger = CronTrigger(
         year="*", month="*", day="*", 
         hour=config.hour, minute=config.minute, second="0", timezone=SG
@@ -106,13 +108,16 @@ def automate_time(config):
     # trigger = AndTrigger([interval_trigger, cron_trigger])
 
     scheduler.add_executor(DebugExecutor(), 'consecutive')
-    scheduler.add_job(run_automation, args=[config,'daily'], trigger=cron_trigger, id='daily', 
+    scheduler.add_job(run_automation, args=[config,'daily', window], trigger=cron_trigger, id='daily', 
                       executor='consecutive', misfire_grace_time=600, max_instances=1)
-    scheduler.add_job(run_automation, args=[config,'daily_selected'], trigger=cron_trigger, id='daily_selected', 
+    scheduler.add_job(run_automation, args=[config,'daily_selected', window], trigger=cron_trigger, id='daily_selected', 
                       executor='consecutive', misfire_grace_time=600, max_instances=1)
 
     while True:
         time.sleep(5)
+        print(stop_thread)
+        if stop_thread:
+            break
     
     scheduler.shutdown()
 

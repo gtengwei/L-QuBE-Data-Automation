@@ -1,9 +1,11 @@
 from ui_selenium_automation import run_automation, choose_slot, collate_dataframes, automate_time
+import ui_selenium_automation
 from configuration import get_config
 import PySimpleGUI as sg
 from psgtray import SystemTray
 import threading
 import datetime as dt
+import time
 import os
 from collections import defaultdict
 
@@ -162,15 +164,16 @@ def interface():
     # config = get_config()
     # Create the window
     window = build()
-    menu = ['', ['Show Window', 'Hide Window', '---', 'End Scheduler', 'Change Icon', ['Happy', 'Sad', 'Plain'], 'Exit']]
+    menu = ['', ['Show Window', 'Hide Window', '---', 'Scheduler',['Start Scheduler','End Scheduler'], 'Change Icon', ['Happy', 'Sad', 'Plain'], 'Exit']]
     tooltip = 'Double click to show interface'
     tray = SystemTray(menu, single_click_events=False, window=window, tooltip=tooltip, icon=sg.DEFAULT_BASE64_ICON)
-    tray.show_message('System Tray', 'System Tray Icon Started!')
+    tray.show_message('DEOS Interface', 'DEOS Interface launched!')
     # window.maximize()
     # window['-OPTION-'].expand(expand_x=True, expand_y=False)
     window['-OPTION_COL-'].expand(True, True)
     popup_win = None
     layout = 1
+    start_scheduler = False
     window['-START_DATE-'].update(value=dt.datetime.now().strftime('%m-%d-%Y' + ' 00:00:00'))
     window['-END_DATE-'].update(value=dt.datetime.now().strftime('%m-%d-%Y %H:%M:%S'))
     config = get_config()
@@ -197,8 +200,23 @@ def interface():
             break
         
         print(event)
+        print(tray.menu_items[3])
         tray.show_message(title=event)
+        if event == 'End Scheduler':
+            if start_scheduler == True:
+                ui_selenium_automation.stop_thread = True
+                automate_thread.join()
+                tray.show_message('Scheduler', 'Scheduler has been stopped')
+            else:
+                sg.popup('Scheduler has not been started yet!')
 
+        elif event == 'Start Scheduler':
+            if start_scheduler == False:
+                automate_thread = threading.Thread(target= automate_time, args=(config, window, ))
+                automate_thread.start()
+                tray.show_message('Scheduler', 'Scheduler has been started')
+            else:
+                sg.popup('Scheduler has already been started!')
         if event in ('Show Window', sg.EVENT_SYSTEM_TRAY_ICON_DOUBLE_CLICKED):
             window.un_hide()
             window.bring_to_front()
@@ -221,6 +239,12 @@ def interface():
             window['-DATES_FRAME-'].update(visible=False)
             window['-COLLATE_FILES-' ].update(visible=False)
             window['-CONFIG_COL-' ].update(visible=True)
+
+        if values['-OPTION-'] == 'Automate Collation (Repeated)':
+            window['-DATES_FRAME-'].update(visible=False)
+            window['-CONFIG_COL-' ].update(visible=False)
+            window['-COLLATE_FILES-' ].update(visible=True)
+
         if values['-OPTION-'] == 'Collate all data (Non-repeated)':
             window['-DATES_FRAME-'].update(visible=False)
             window['-CONFIG_COL-' ].update(visible=False)
@@ -270,6 +294,7 @@ def interface():
         if event == '-DEVICE_CHOICE-':
             config.device_choice = values['-DEVICE_CHOICE-'].split(' ')[0]
             config.save()
+
         if event == '-COLLATE_FILES-' or event == '-DATES_CHOSEN-':
             if window['-OPTION-'] == '':
                 sg.popup(title='No Option Selected', custom_text = 'Please select an option first', button_type=sg.POPUP_BUTTONS_OK, icon='error')
@@ -278,8 +303,15 @@ def interface():
                 # window.force_focus()
                 # window['-PROGRESS_COL-'].update(visible=True)
                 # Parallel thread to execute the collation on top of the pop up loading
-                if window['-OPTION-'].get() == '1. Collate all data':
+                if window['-OPTION-'].get() == 'Automate Collation (Repeated)':
+                    automate_thread = threading.Thread(target= automate_time, args=(config, window, ))
+                    automate_thread.start()
+                    start_scheduler = True
+
+                
+                if window['-OPTION-'].get() == 'Collate all data (Non-repeated)':
                     threading.Thread(target= run_automation, args=(config, 'all', window, )).start()
+
                 elif window['-OPTION-'].get() == 'Choose specific slots to collate (Non-repeated)':
                     window['-SLOTS_COL-'].update(visible=True)
                     window['-SELECT_SLOTS_BTN-'].update(visible=True)
@@ -292,6 +324,8 @@ def interface():
             window['-SELECT_SLOTS_BTN-'].update(visible=False)
             window['-COLLATE_FILES-'].update(visible=True)
         
+        if event == '-START_SCHEDULER-':
+            sg.popup(title='Scheduler Started', custom_text = 'Scheduler started successfully!', button_type=sg.POPUP_BUTTONS_OK, icon='success')
         # if event == 'CHOOSING SLOTS':
         #     popup_win.close()
         #     popup_win = None
