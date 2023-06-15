@@ -180,6 +180,7 @@ def interface():
     first_device = next(iter(device_num_dict))
     print(device_num_dict[first_device])
     window['-DEVICE-'].update(value=first_device, values=list(device_num_dict.values()))
+    window['-DEVICE_CHOICE-'].update(value=f"{config.device_choice} ({config.devices[config.device_choice]['ip']})", values=list(device_num_dict.values()))
     window['-IP-'].update(value=config.devices[first_device]['ip'])
     window['-PASSWORD-'].update(value=config.devices[first_device]['password'])
     # Display window
