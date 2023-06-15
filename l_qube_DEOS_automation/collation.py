@@ -166,6 +166,8 @@ def collate_dataframes(option, change_directory):
                 continue
             if file.endswith(".csv"):
                     clean_df = clean_dataframe(file, option)
+                    if option == 'all' or option == 'choose':
+                        continue
                     collated_df = merge_dataframes(collated_df,clean_df)
 
     collated_df = collated_df.sort_values(by=['Date','Timestamp'], ascending=[True,True])
