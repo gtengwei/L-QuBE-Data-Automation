@@ -358,6 +358,7 @@ def interface():
             print(chosen_slots)
             choose_slot(driver, chosen_slots, window)
             collate_dataframes('choose', directory)
+            driver.close()
             sg.popup(title='Download Completed', custom_text = 'Download successfully!', button_type=sg.POPUP_BUTTONS_OK, icon='success')
         
         if event == '-BACK-':

@@ -238,18 +238,7 @@ def choose_slot(driver, chosen_slots, window):
         csv.click()
         print('downloaded csv file')
         # time.sleep(1)
-    while True:
-        csv_downloaded_length = 0
-        for root,dirs,files in os.walk(directory):
-            for file in files:
-                if file.endswith('.csv'):
-                    csv_downloaded_length += 1
-        if csv_downloaded_length == len(chosen_slots):
-            window.write_event_value('EXECUTION DONE', None)
-            driver.close()
-            return
-        time.sleep(1)
-        print('waiting for csv files to download')
+    
         
 
 
