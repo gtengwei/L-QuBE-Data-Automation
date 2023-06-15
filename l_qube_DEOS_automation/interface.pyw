@@ -101,7 +101,7 @@ def build():
                         'Collate all data (Non-repeated)', 
                         'Choose specific slots to collate (Non-repeated)',), default_value='Edit Configuration', enable_events=True, size=(70, 4), key='-OPTION-')],
         [sg.Button('Start Collation', key='-COLLATE_FILES-', tooltip='Click to collate files in the chosen folder', visible=False), 
-         sg.Button('End Scheduler', key='-END_SCHEDULER-', tooltip='Click to end scheduler', visible=False)],
+         sg.Button('Stop Collation', key='-STOP_SCHEDULER-', tooltip='Click to stop scheduler', visible=False)],
         [sg.Frame('Choose Time Period', date_frame, size=(WIDTH,HEIGHT), visible=False, key='-DATES_FRAME-', expand_x=True, expand_y=True)],
     ]
 
@@ -240,25 +240,25 @@ def interface():
             window['-DATES_FRAME-'].update(visible=False)
             window['-COLLATE_FILES-' ].update(visible=False)
             window['-CONFIG_COL-' ].update(visible=True)
-            window['-END_SCHEDULER-' ].update(visible=False)
+            window['-STOP_SCHEDULER-' ].update(visible=False)
 
         if values['-OPTION-'] == 'Automate Collation (Repeated)':
             window['-DATES_FRAME-'].update(visible=False)
             window['-CONFIG_COL-' ].update(visible=False)
             window['-COLLATE_FILES-' ].update(visible=True)
-            window['-END_SCHEDULER-' ].update(visible=True)
+            window['-STOP_SCHEDULER-' ].update(visible=True)
 
         if values['-OPTION-'] == 'Collate all data (Non-repeated)':
             window['-DATES_FRAME-'].update(visible=False)
             window['-CONFIG_COL-' ].update(visible=False)
             window['-COLLATE_FILES-' ].update(visible=True)
-            window['-END_SCHEDULER-' ].update(visible=False)
+            window['-STOP_SCHEDULER-' ].update(visible=False)
 
         if values['-OPTION-'] == 'Choose specific slots to collate (Non-repeated)':
             window['-DATES_FRAME-'].update(visible=True)
             window['-CONFIG_COL-' ].update(visible=False)
             window['-COLLATE_FILES-' ].update(visible=False)
-            window['-END_SCHEDULER-' ].update(visible=False)
+            window['-STOP_SCHEDULER-' ].update(visible=False)
 
         if event == '-START_DATE-':
             date, _ = values['-START_DATE-'].split(' ')
@@ -324,7 +324,7 @@ def interface():
                     # threading.Thread(target= run_automation, args=(config, 'choose', window, )).start()
                     driver, slots, directory = run_automation(config, 'choose', window)
         
-        if event == '-END_SCHEDULER-':
+        if event == '-STOP_SCHEDULER-':
             if start_scheduler == True:
                 ui_selenium_automation.stop_thread = True
                 automate_thread.join()
