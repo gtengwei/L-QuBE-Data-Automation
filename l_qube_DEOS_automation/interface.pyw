@@ -97,7 +97,7 @@ def build():
          sg.InputCombo(('Edit Configuration',
                         'Automate Collation (Repeated)',
                         'Collate all data (Non-repeated)', 
-                        'Choose specific slots to collate (Non-repeated)',), enable_events=True, size=(27, 4), key='-OPTION-', expand_x=True)],
+                        'Choose specific slots to collate (Non-repeated)',), default_value='Edit Configuration', enable_events=True, size=(27, 4), key='-OPTION-', expand_x=True)],
         [sg.Button('Start Collation', key='-COLLATE_FILES-', tooltip='Click to collate files in the chosen folder', visible=False)],
         [sg.Frame('Choose Time Period', date_frame, size=(WIDTH,HEIGHT), visible=False, key='-DATES_FRAME-', expand_x=True, expand_y=True)],
     ]
@@ -136,7 +136,7 @@ def build():
         sg.Frame('Progress Bar', progress_bar, size=(WIDTH,100), visible=False, key='-PROGRESS_COL-'),
         [sg.Frame('Choose your option', option_frame, size=(WIDTH,HEIGHT), visible=True, key='-OPTION_COL-'),
         sg.Frame('Choose your slots', slots_column_frame, size=(WIDTH,HEIGHT), expand_x=True, expand_y=True, visible=False, key='-SLOTS_COL-'),
-        sg.Frame('Edit Configuration', config_frame, size=(WIDTH+59,HEIGHT), visible=False, expand_x=True, expand_y=True, key='-CONFIG_COL-'),],
+        sg.Frame('Edit Configuration', config_frame, size=(WIDTH+59,HEIGHT), visible=True, expand_x=True, expand_y=True, key='-CONFIG_COL-'),],
         [sg.Frame('', select_slots_button, size=(WIDTH, 60),  expand_x=True, element_justification='right', visible=False, key='-SELECT_SLOTS_BTN-')]
     
      ]
