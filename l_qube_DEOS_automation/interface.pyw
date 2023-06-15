@@ -224,10 +224,12 @@ def interface():
             window['-CONFIG_COL-' ].update(visible=True)
         if values['-OPTION-'] == 'Collate all data (Non-repeated)':
             window['-DATES_FRAME-'].update(visible=False)
+            window['-CONFIG_COL-' ].update(visible=False)
             window['-COLLATE_FILES-' ].update(visible=True)
 
         if values['-OPTION-'] == 'Choose specific slots to collate (Non-repeated)':
             window['-DATES_FRAME-'].update(visible=True)
+            window['-CONFIG_COL-' ].update(visible=False)
             window['-COLLATE_FILES-' ].update(visible=False)
 
         if event == '-START_DATE-':
