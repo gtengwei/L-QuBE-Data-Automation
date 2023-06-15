@@ -5,6 +5,7 @@ from psgtray import SystemTray
 import threading
 import datetime as dt
 import os
+from collections import defaultdict
 
 # Add a touch of color
 sg.theme('DarkBlue3')  
@@ -51,12 +52,12 @@ def build():
          sg.CalendarButton('Choose Start Date', target='-START_DATE-', key='-CALENDAR-', tooltip='Click to choose date', size=(20, 1), format='%m-%d-%Y %H:%M:%S', )],
         [sg.InputText('', size=(20, 1), key='-END_DATE-', disabled=True, tooltip='End Date', enable_events=True),
          sg.CalendarButton('Choose End Date', target='-END_DATE-', key='-CALENDAR-', tooltip='Click to choose date', size=(20, 1), format='%m-%d-%Y %H:%M:%S')],
-        [sg.Button('Select Dates', key='-DATES_CHOSEN-', tooltip='Click to select dates to collate')]
+        [sg.InputCombo('default', size=(24, len(config.devices.keys())), key='-DEVICE_CHOICE-', tooltip='Choose which device to choose slots from', enable_events=True)],
+        [sg.Button('Select Dates', key='-DATES_CHOSEN-', tooltip='Click to select dates to collate')],
 
     ]
-
     device_input_combo = [
-        sg.InputCombo('default', size=(20, len(config.devices.keys())), key='-DEVICE-', tooltip='Device Name', enable_events=True)
+        sg.InputCombo(('default'), size=(20, len(config.devices.keys())), default_value=next(iter(config.devices)), key='-DEVICE-', tooltip='Device Name', enable_events=True)
     ]
     
     device_parameters =[
@@ -176,13 +177,15 @@ def interface():
     window['-START_DATE-'].update(value=dt.datetime.now().strftime('%m-%d-%Y' + ' 00:00:00'))
     window['-END_DATE-'].update(value=dt.datetime.now().strftime('%m-%d-%Y %H:%M:%S'))
     config = get_config()
-    device_num_list = []
+    device_num_dict = defaultdict()
     for device_num, device in config.devices.items():
-        device_num_list.append(device_num)
-    window['-DEVICE-'].update(value=device_num_list[0], values=device_num_list)
-    window['-DEVICE_CHOICE-'].update(value=config.device_choice, values=device_num_list)
-    window['-IP-'].update(value=config.devices[device_num_list[0]]['ip'])
-    window['-PASSWORD-'].update(value=config.devices[device_num_list[0]]['password'])
+        device_num_dict[device_num] = f"{device_num} ({device['ip']})"
+    first_device = next(iter(device_num_dict))
+    print(device_num_dict[first_device])
+    window['-DEVICE-'].update(value=first_device, values=list(device_num_dict.values()))
+    window['-DEVICE_CHOICE-'].update(value=f"{device_num_dict[first_device]}", values=list(device_num_dict.values()))
+    window['-IP-'].update(value=config.devices[first_device]['ip'])
+    window['-PASSWORD-'].update(value=config.devices[first_device]['password'])
     # Display window
     while True:
         event, values = window.read()
