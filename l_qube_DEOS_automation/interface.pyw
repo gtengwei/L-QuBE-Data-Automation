@@ -100,7 +100,8 @@ def build():
                         'Automate Collation (Repeated)',
                         'Collate all data (Non-repeated)', 
                         'Choose specific slots to collate (Non-repeated)',), default_value='Edit Configuration', enable_events=True, size=(27, 4), key='-OPTION-', expand_x=True)],
-        [sg.Button('Start Collation', key='-COLLATE_FILES-', tooltip='Click to collate files in the chosen folder', visible=False)],
+        [sg.Button('Start Collation', key='-COLLATE_FILES-', tooltip='Click to collate files in the chosen folder', visible=False), 
+         sg.Button('End Scheduler', key='-END_SCHEDULER-', tooltip='Click to end scheduler', visible=False)],
         [sg.Frame('Choose Time Period', date_frame, size=(WIDTH,HEIGHT), visible=False, key='-DATES_FRAME-', expand_x=True, expand_y=True)],
     ]
 
@@ -239,21 +240,25 @@ def interface():
             window['-DATES_FRAME-'].update(visible=False)
             window['-COLLATE_FILES-' ].update(visible=False)
             window['-CONFIG_COL-' ].update(visible=True)
+            window['-END_SCHEDULER-' ].update(visible=False)
 
         if values['-OPTION-'] == 'Automate Collation (Repeated)':
             window['-DATES_FRAME-'].update(visible=False)
             window['-CONFIG_COL-' ].update(visible=False)
             window['-COLLATE_FILES-' ].update(visible=True)
+            window['-END_SCHEDULER-' ].update(visible=True)
 
         if values['-OPTION-'] == 'Collate all data (Non-repeated)':
             window['-DATES_FRAME-'].update(visible=False)
             window['-CONFIG_COL-' ].update(visible=False)
             window['-COLLATE_FILES-' ].update(visible=True)
+            window['-END_SCHEDULER-' ].update(visible=False)
 
         if values['-OPTION-'] == 'Choose specific slots to collate (Non-repeated)':
             window['-DATES_FRAME-'].update(visible=True)
             window['-CONFIG_COL-' ].update(visible=False)
             window['-COLLATE_FILES-' ].update(visible=False)
+            window['-END_SCHEDULER-' ].update(visible=False)
 
         if event == '-START_DATE-':
             date, _ = values['-START_DATE-'].split(' ')
@@ -319,6 +324,14 @@ def interface():
                     # threading.Thread(target= run_automation, args=(config, 'choose', window, )).start()
                     driver, slots, directory = run_automation(config, 'choose', window)
         
+        if event == '-END_SCHEDULER-':
+            if start_scheduler == True:
+                ui_selenium_automation.stop_thread = True
+                automate_thread.join()
+                tray.show_message('Scheduler', 'Scheduler has been stopped')
+            else:
+                sg.popup('Scheduler has not been started yet!')
+                
         if event == 'EXECUTION DONE':
             window['-SLOTS_COL-'].update(visible=False)
             window['-SELECT_SLOTS_BTN-'].update(visible=False)
