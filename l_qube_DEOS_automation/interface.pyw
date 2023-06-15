@@ -57,7 +57,7 @@ def build():
 
     ]
     device_input_combo = [
-        sg.InputCombo(('default'), size=(20, len(config.devices.keys())), default_value=next(iter(config.devices)), key='-DEVICE-', tooltip='Device Name', enable_events=True)
+        sg.InputCombo(('default'), size=(24, len(config.devices.keys())), default_value=next(iter(config.devices)), key='-DEVICE-', tooltip='Device Name', enable_events=True)
     ]
     
     device_parameters =[
@@ -178,8 +178,7 @@ def interface():
     for device_num, device in config.devices.items():
         device_num_dict[device_num] = f"{device_num} ({device['ip']})"
     first_device = next(iter(device_num_dict))
-    print(device_num_dict[first_device])
-    window['-DEVICE-'].update(value=first_device, values=list(device_num_dict.values()))
+    window['-DEVICE-'].update(value=next(iter(device_num_dict.values())), values=list(device_num_dict.values()))
     window['-DEVICE_CHOICE-'].update(value=f"{config.device_choice} ({config.devices[config.device_choice]['ip']})", values=list(device_num_dict.values()))
     window['-IP-'].update(value=config.devices[first_device]['ip'])
     window['-PASSWORD-'].update(value=config.devices[first_device]['password'])
