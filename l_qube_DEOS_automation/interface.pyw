@@ -345,6 +345,7 @@ def interface():
             print(device)
             window['-IP-'].update(value=device['ip'])
             window['-PASSWORD-'].update(value=device['password'])
+            window['-SLOTS-'].update(value='')
             for slot_num, slot in device['slots'].items(): 
                 window['-SLOTS-'].update(f'{slot}\n', append=True)
 
