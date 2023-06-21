@@ -295,7 +295,9 @@ def interface():
             config.devices[device_num]['ip'] = values['-IP-']
             config.devices[device_num]['password'] = values['-PASSWORD-']
             slots_list = values['-SLOTS-'].split('\n')
+            print(slots_list)
             for i in range(len(slots_list)):
+                slots_list[i] = slots_list[i].strip()
                 config.devices[device_num]['slots'][str(i+1)] = slots_list[i]
             print(values['-SLOTS-'])
             config.save()
