@@ -426,6 +426,7 @@ def interface():
                 if window['-OPTION-'].get() == 'Automate Collation (Repeated)':
                     automate_thread = threading.Thread(target= automate_time, args=(config, window, ))
                     automate_thread.start()
+                    ui_selenium_automation.stop_thread = False
                     start_scheduler = True
 
                 
