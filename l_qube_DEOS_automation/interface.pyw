@@ -90,7 +90,7 @@ def popup_add_device():
         [sg.Text('Enter Device Password')],
         [sg.InputText(key='-PASSWORD-', tooltip='Device Password', enable_events=True)],
         [sg.Text('Enter Device Slots')],
-        [sg.Multiline(key='-SLOTS-', tooltip='Device Slots', enable_events=True)],
+        [sg.Multiline(key='-SLOTS-', size=(43, 5), tooltip='Enter every new slot on new line', enable_events=True)],
         [sg.Column(col_layout, expand_x=True, element_justification='right')],
     ]
     window = sg.Window("Add Device", layout, use_default_focus=False, finalize=True, modal=True)
