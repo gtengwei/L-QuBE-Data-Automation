@@ -256,16 +256,8 @@ def interface():
     window['-START_DATE-'].update(value=dt.datetime.now().strftime('%m-%d-%Y' + ' 00:00:00'))
     window['-END_DATE-'].update(value=dt.datetime.now().strftime('%m-%d-%Y %H:%M:%S'))
     config = get_config()
-    device_num_dict = defaultdict()
-    for device_num, device in config.devices.items():
-        device_num_dict[device_num] = f"{device_num} ({device['ip']})"
-    first_device = next(iter(device_num_dict))
-    window['-DEVICE-'].update(value=next(iter(device_num_dict.values())), values=list(device_num_dict.values()))
-    window['-DEVICE_CHOICE-'].update(value=f"{config.device_choice} ({config.devices[config.device_choice]['ip']})", values=list(device_num_dict.values()))
-    window['-IP-'].update(value=config.devices[first_device]['ip'])
-    window['-PASSWORD-'].update(value=config.devices[first_device]['password'])
-    for slot_num, slot in config.devices[first_device]['slots'].items(): 
-        window['-SLOTS-'].update(f'{slot}\n', append=True)
+    update_device_display(window, config)
+
     # Display window
     while True:
         event, values = window.read()
