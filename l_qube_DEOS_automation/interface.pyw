@@ -75,6 +75,39 @@ def popup_remove_device(config):
         if event == 'Remove':
             window.close()
             return values['-DEVICE-']
+
+def popup_add_device():
+    class device:
+        def __init__(self, num, ip, password, slots):
+            self.num = num
+            self.ip = ip
+            self.password = password
+            self.slots = slots
+    col_layout = [[sg.Button('Add', bind_return_key=True), sg.Button('Cancel')]]
+    layout = [
+        [sg.Text('Enter Device IP')],
+        [sg.InputText(key='-IP-', tooltip='Device IP', enable_events=True)],
+        [sg.Text('Enter Device Password')],
+        [sg.InputText(key='-PASSWORD-', tooltip='Device Password', enable_events=True)],
+        [sg.Text('Enter Device Slots')],
+        [sg.Multiline(key='-SLOTS-', tooltip='Device Slots', enable_events=True)],
+        [sg.Column(col_layout, expand_x=True, element_justification='right')],
+    ]
+    window = sg.Window("Add Device", layout, use_default_focus=False, finalize=True, modal=True)
+    block_focus(window)
+
+    while True:
+        event, values = window.read()
+        if event == sg.WIN_CLOSED or event == 'Cancel':
+            window.close()
+            return None
+        if event == 'Add':
+            window.close()
+            device.ip = values['-IP-']
+            device.password = values['-PASSWORD-']
+            device.slots = values['-SLOTS-']
+            return device
+        
 # Build the GUI
 def build():
     # Frame to choose dates
@@ -118,6 +151,7 @@ def build():
     config_frame += device_parameters
     config_frame += [
         [sg.Button('Save Configuration', key='-SAVE_CONFIG-', tooltip='Click to save configuration'),
+         sg.Button('Add Device', key='-ADD_DEVICE-', tooltip='Click to add device'),
          sg.Button('Remove Device', key='-REMOVE_DEVICE-', tooltip='Click to remove device')],
     ]
     
@@ -345,6 +379,28 @@ def interface():
         if event == '-DEVICE_CHOICE-':
             config.device_choice = values['-DEVICE_CHOICE-'].split(' ')[0]
             config.save()
+
+        if event == '-ADD_DEVICE-':
+            device = popup_add_device()
+            print(device)
+            if device:
+                device.num = f'device_{len(config.devices) + 1}'
+                config.devices[device.num] = {'ip': device.ip, 'password': device.password, 'slots': {}}
+                slots_list = device.slots.split('\n')
+                print(slots_list)
+                for i in range(len(slots_list)):
+                    slots_list[i] = slots_list[i].strip()
+                    config.devices[device.num]['slots'][str(i+1)] = slots_list[i]
+                device_num_dict = defaultdict()
+                for device_num, device in config.devices.items():
+                    device_num_dict[device_num] = f"{device_num} ({device['ip']})"
+                first_device = next(iter(device_num_dict))
+                window['-DEVICE-'].update(value=next(iter(device_num_dict.values())), values=list(device_num_dict.values()))
+                window['-DEVICE_CHOICE-'].update(value=f"{config.device_choice} ({config.devices[config.device_choice]['ip']})", values=list(device_num_dict.values()))
+                window['-IP-'].update(value=config.devices[first_device]['ip'])
+                window['-PASSWORD-'].update(value=config.devices[first_device]['password'])
+                config.save()
+                sg.popup('Device added successfully!', icon='success')
 
         if event == '-REMOVE_DEVICE-':
             device = popup_remove_device(config)
