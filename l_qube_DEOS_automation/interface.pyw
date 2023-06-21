@@ -117,6 +117,7 @@ def update_device_display(window, config):
     window['-DEVICE_CHOICE-'].update(value=f"{config.device_choice} ({config.devices[config.device_choice]['ip']})", values=list(device_num_dict.values()))
     window['-IP-'].update(value=config.devices[first_device]['ip'])
     window['-PASSWORD-'].update(value=config.devices[first_device]['password'])
+    window['-SLOTS-'].update(value=config.devices[first_device]['slots'])
 
 # Build the GUI
 def build():
@@ -377,8 +378,18 @@ def interface():
             for i in range(len(slots_list)):
                 slots_list[i] = slots_list[i].strip()
                 config.devices[device_num]['slots'][str(i+1)] = slots_list[i]
-            print(values['-SLOTS-'])
-            update_device_display(window, config)
+            # print(values['-SLOTS-'])
+            device_num_dict = defaultdict()
+            for device_number, device in config.devices.items():
+                device_num_dict[device_number] = f"{device_number} ({device['ip']})"
+            first_device = next(iter(device_num_dict))
+            window['-DEVICE-'].update(value=device_num_dict[device_num], values=list(device_num_dict.values()))
+            window['-DEVICE_CHOICE-'].update(value=f"{config.device_choice} ({config.devices[config.device_choice]['ip']})", values=list(device_num_dict.values()))
+            window['-IP-'].update(value=config.devices[device_num]['ip'])
+            window['-PASSWORD-'].update(value=config.devices[device_num]['password'])
+            window['-SLOTS-'].update(value='')
+            for slot_num, slot in config.devices[device_num]['slots'].items(): 
+                window['-SLOTS-'].update(f'{slot}\n', append=True)
             config.save()
             sg.popup('Configuration saved successfully!', icon='success')
         
