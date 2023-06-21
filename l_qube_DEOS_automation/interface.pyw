@@ -46,6 +46,35 @@ def popup(message):
     window = sg.Window('Message', layout, no_titlebar=True, keep_on_top=True, finalize=True)
     return window
 
+def block_focus(window):
+    for key in window.key_dict:    # Remove dash box of all Buttons
+        element = window[key]
+        if isinstance(element, sg.Button):
+            element.block_focus()
+
+def popup_remove_device(config):
+    col_layout = [[sg.Button('Remove', bind_return_key=True), sg.Button('Cancel')]]
+    layout = [
+        [sg.Text('Select Device to Remove')],
+        [sg.InputCombo(list(config.devices.keys()), size=(24, len(config.devices.keys())), key='-DEVICE-', tooltip='Device Name', enable_events=True)],
+        [sg.Column(col_layout, expand_x=True, element_justification='right')],
+    ]
+    window = sg.Window("Remove Device", layout, use_default_focus=False, finalize=True, modal=True)
+    block_focus(window)
+
+    device_num_dict = defaultdict()
+    for device_num, device in config.devices.items():
+        device_num_dict[device_num] = f"{device_num} ({device['ip']})"
+    window['-DEVICE-'].update(value=next(iter(device_num_dict.values())), values=list(device_num_dict.values()))
+
+    while True:
+        event, values = window.read()
+        if event == sg.WIN_CLOSED or event == 'Cancel':
+            window.close()
+            return None
+        if event == 'Remove':
+            window.close()
+            return values['-DEVICE-']
 # Build the GUI
 def build():
     # Frame to choose dates
@@ -88,7 +117,8 @@ def build():
     ]
     config_frame += device_parameters
     config_frame += [
-        [sg.Button('Save Configuration', key='-SAVE_CONFIG-', tooltip='Click to save configuration')],
+        [sg.Button('Save Configuration', key='-SAVE_CONFIG-', tooltip='Click to save configuration'),
+         sg.Button('Remove Device', key='-REMOVE_DEVICE-', tooltip='Click to remove device')],
     ]
     
     
@@ -316,6 +346,21 @@ def interface():
             config.device_choice = values['-DEVICE_CHOICE-'].split(' ')[0]
             config.save()
 
+        if event == '-REMOVE_DEVICE-':
+            device = popup_remove_device(config)
+            if device:
+                device = device.split(' ')[0]
+                del config.devices[device]
+                device_num_dict = defaultdict()
+                for device_num, device in config.devices.items():
+                    device_num_dict[device_num] = f"{device_num} ({device['ip']})"
+                first_device = next(iter(device_num_dict))
+                window['-DEVICE-'].update(value=next(iter(device_num_dict.values())), values=list(device_num_dict.values()))
+                window['-DEVICE_CHOICE-'].update(value=f"{config.device_choice} ({config.devices[config.device_choice]['ip']})", values=list(device_num_dict.values()))
+                window['-IP-'].update(value=config.devices[first_device]['ip'])
+                window['-PASSWORD-'].update(value=config.devices[first_device]['password'])
+                config.save()
+                sg.popup('Device removed successfully!', icon='success')
         if event == '-COLLATE_FILES-' or event == '-DATES_CHOSEN-':
             if window['-OPTION-'] == '':
                 sg.popup(title='No Option Selected', custom_text = 'Please select an option first', button_type=sg.POPUP_BUTTONS_OK, icon='error')
