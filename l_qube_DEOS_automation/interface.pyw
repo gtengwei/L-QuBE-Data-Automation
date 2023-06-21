@@ -116,12 +116,12 @@ def build():
          sg.CalendarButton('Choose Start Date', target='-START_DATE-', key='-CALENDAR-', tooltip='Click to choose date', size=(20, 1), format='%m-%d-%Y %H:%M:%S', )],
         [sg.InputText('', size=(20, 1), key='-END_DATE-', disabled=True, tooltip='End Date', enable_events=True),
          sg.CalendarButton('Choose End Date', target='-END_DATE-', key='-CALENDAR-', tooltip='Click to choose date', size=(20, 1), format='%m-%d-%Y %H:%M:%S')],
-        [sg.InputCombo('default', size=(24, len(config.devices.keys())), key='-DEVICE_CHOICE-', tooltip='Choose which device to choose slots from', enable_events=True)],
+        [sg.InputCombo('default', size=(24, 5), key='-DEVICE_CHOICE-', tooltip='Choose which device to choose slots from', enable_events=True)],
         [sg.Button('Select Dates', key='-DATES_CHOSEN-', tooltip='Click to select dates to collate')],
 
     ]
     device_input_combo = [
-        sg.InputCombo(('default'), size=(24, len(config.devices.keys())), default_value=next(iter(config.devices)), key='-DEVICE-', tooltip='Device Name', enable_events=True)
+        sg.InputCombo(('default'), size=(24, 5), default_value=next(iter(config.devices)), key='-DEVICE-', tooltip='Device Name', enable_events=True)
     ]
     
     device_parameters =[
