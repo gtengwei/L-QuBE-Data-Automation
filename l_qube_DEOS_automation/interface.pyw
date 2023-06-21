@@ -224,7 +224,7 @@ def interface():
     # config = get_config()
     # Create the window
     window = build()
-    menu = ['', ['Show Window', 'Hide Window', '---', 'Scheduler',['Start Scheduler','End Scheduler'], 'Change Icon', ['Happy', 'Sad', 'Plain'], 'Exit']]
+    menu = ['', ['Show Window', 'Hide Window', '---', 'Scheduler',['Start Scheduler','Stop Scheduler'], 'Change Icon', ['Happy', 'Sad', 'Plain'], 'Exit']]
     tooltip = 'Double click to show interface'
     tray = SystemTray(menu, single_click_events=False, window=window, tooltip=tooltip, icon=sg.DEFAULT_BASE64_ICON)
     tray.show_message('DEOS Interface', 'DEOS Interface launched!')
