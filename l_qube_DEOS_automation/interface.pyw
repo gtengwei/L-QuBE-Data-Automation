@@ -294,6 +294,7 @@ def interface():
             config.minute = values['-MINUTE-']
             config.devices[device_num]['ip'] = values['-IP-']
             config.devices[device_num]['password'] = values['-PASSWORD-']
+            config.devices[device_num]['slots'].clear()
             slots_list = values['-SLOTS-'].split('\n')
             print(slots_list)
             for i in range(len(slots_list)):
