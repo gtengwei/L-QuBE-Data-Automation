@@ -260,6 +260,8 @@ def interface():
     window['-DEVICE_CHOICE-'].update(value=f"{config.device_choice} ({config.devices[config.device_choice]['ip']})", values=list(device_num_dict.values()))
     window['-IP-'].update(value=config.devices[first_device]['ip'])
     window['-PASSWORD-'].update(value=config.devices[first_device]['password'])
+    for slot_num, slot in config.devices[first_device]['slots'].items(): 
+        window['-SLOTS-'].update(f'{slot}\n', append=True)
     # Display window
     while True:
         event, values = window.read()
