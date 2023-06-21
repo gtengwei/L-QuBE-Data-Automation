@@ -15,8 +15,8 @@ sg.theme('DarkBlue3')
 # Change font and font size
 sg.set_options(font=('Helvetica', 10))
 sg.set_options(tooltip_font=('Helvetica', 10))
+
 # Default size for frames, can be changed
-# WIDTH, HEIGHT = sg.Window.get_screen_size()
 WIDTH = 420
 HEIGHT = 350
 
@@ -38,13 +38,6 @@ def move_center(window):
 # Update tooltip text
 def update(element, text):
     element.TooltipObject.text = text
-
-# Popup loading message
-def popup(message):
-    sg.theme('DarkGrey')
-    layout = [[sg.Text(message)]]
-    window = sg.Window('Message', layout, no_titlebar=True, keep_on_top=True, finalize=True)
-    return window
 
 def block_focus(window):
     for key in window.key_dict:    # Remove dash box of all Buttons
@@ -222,18 +215,6 @@ def build():
     
      ]
     ]
-    # layout = [
-    #     [
-    #         sg.Frame('Progress Bar', progress_bar, size=(WIDTH,100), visible=False, key='-PROGRESS_COL-'),
-    #         [sg.Frame('Choose your folder', folder_frame, size=(WIDTH,HEIGHT), visible=True, key='-OPTION_COL-'),
-    #         sg.Frame('Summary', inform_user_frame_1, size=(MULTILINE_WIDTH,HEIGHT), visible=False, key='-INFORM_USER_COL1-', expand_x=True, expand_y=True),
-    #         sg.Frame('Error Files', inform_user_frame_2, size=(MULTILINE_WIDTH,HEIGHT), visible=False, key='-INFORM_USER_COL2-', expand_x=True, expand_y=True),
-    #         sg.Frame('Duplicate Timestamps Detected', inform_user_frame_3, size=(MULTILINE_WIDTH,HEIGHT), visible=False, key='-INFORM_USER_COL3-', expand_x=True, expand_y=True),
-    #         sg.Frame('Missing Minutes Added', inform_user_frame_4, size=(MULTILINE_WIDTH,HEIGHT), visible=False, key='-INFORM_USER_COL4-', expand_x=True, expand_y=True),
-    #         sg.Frame('Empty Cells Detected', inform_user_frame_5, size=(MULTILINE_WIDTH,HEIGHT), visible=False, key='-INFORM_USER_COL5-', expand_x=True, expand_y=True)],
-    #         sg.Frame('', button_frame, visible=False, key='-BUTTON_COL-', element_justification='right')
-    #     ]
-    # ]
 
     margins = (5, 5)
     return sg.Window('L-QuBE DEOS Automation', layout, margins = margins, finalize=True, resizable=True, enable_close_attempted_event=True)
@@ -250,8 +231,6 @@ def interface():
     # window.maximize()
     # window['-OPTION-'].expand(expand_x=True, expand_y=False)
     window['-OPTION_COL-'].expand(True, True)
-    popup_win = None
-    layout = 1
     start_scheduler = False
     window['-START_DATE-'].update(value=dt.datetime.now().strftime('%m-%d-%Y' + ' 00:00:00'))
     window['-END_DATE-'].update(value=dt.datetime.now().strftime('%m-%d-%Y %H:%M:%S'))
@@ -419,16 +398,12 @@ def interface():
             if window['-OPTION-'] == '':
                 sg.popup(title='No Option Selected', custom_text = 'Please select an option first', button_type=sg.POPUP_BUTTONS_OK, icon='error')
             else:
-                # popup_win = popup('Please wait for the UI to load...')
-                # window.force_focus()
-                # window['-PROGRESS_COL-'].update(visible=True)
-                # Parallel thread to execute the collation on top of the pop up loading
+                # Parallel thread to execute the collation
                 if window['-OPTION-'].get() == 'Automate Collation (Repeated)':
                     automate_thread = threading.Thread(target= automate_time, args=(config, window, ))
                     automate_thread.start()
                     ui_selenium_automation.stop_thread = False
                     start_scheduler = True
-
                 
                 if window['-OPTION-'].get() == 'Download all data (Non-repeated)':
                     threading.Thread(target= run_automation, args=(config, 'all', window, )).start()
@@ -441,7 +416,6 @@ def interface():
                     window['-DATES_CHOSEN-'].update(disabled=True)
                     driver, slots, directory = run_automation(config, 'choose', window)
                     
-        
         if event == '-STOP_SCHEDULER-':
             if start_scheduler == True:
                 ui_selenium_automation.stop_thread = True
@@ -472,14 +446,6 @@ def interface():
             driver.close()
             sg.popup(custom_text = 'Download successfully!', button_type=sg.POPUP_BUTTONS_OK, icon='success')
         
-        if event == '-BACK-':
-            window['-OPTION_COL-'].update(visible=True)
-            window['-ERROR_FILES_COL-'].update(visible=False)
-            window['-DUPLICATE_TIMESTAMP_COL-'].update(visible=False)
-            window['-BACK_COL-'].update(visible=False)
-            window['-ERROR_FILES_LIST-'].update('')
-            window['-DUPLICATE_TIMESTAMP_LIST-'].update('')
-
     tray.close()
     window.close()
 
