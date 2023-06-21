@@ -117,7 +117,9 @@ def update_device_display(window, config):
     window['-DEVICE_CHOICE-'].update(value=f"{config.device_choice} ({config.devices[config.device_choice]['ip']})", values=list(device_num_dict.values()))
     window['-IP-'].update(value=config.devices[first_device]['ip'])
     window['-PASSWORD-'].update(value=config.devices[first_device]['password'])
-    window['-SLOTS-'].update(value=config.devices[first_device]['slots'])
+    window['-SLOTS-'].update(value='')
+    for slot_num, slot in config.devices[first_device]['slots'].items(): 
+        window['-SLOTS-'].update(f'{slot}\n', append=True)
 
 # Build the GUI
 def build():
