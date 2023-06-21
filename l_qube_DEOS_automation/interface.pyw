@@ -77,12 +77,13 @@ def popup_remove_device(config):
             return values['-DEVICE-']
 
 def popup_add_device():
-    class device:
+    class Device:
         def __init__(self, num, ip, password, slots):
             self.num = num
             self.ip = ip
             self.password = password
             self.slots = slots
+    device = Device('', '', '', '')
     col_layout = [[sg.Button('Add', bind_return_key=True), sg.Button('Cancel')]]
     layout = [
         [sg.Text('Enter Device IP')],
