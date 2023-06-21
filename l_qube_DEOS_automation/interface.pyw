@@ -107,7 +107,17 @@ def popup_add_device():
             device.password = values['-PASSWORD-']
             device.slots = values['-SLOTS-']
             return device
-        
+
+def update_device_display(window, config):
+    device_num_dict = defaultdict()
+    for device_num, device in config.devices.items():
+        device_num_dict[device_num] = f"{device_num} ({device['ip']})"
+    first_device = next(iter(device_num_dict))
+    window['-DEVICE-'].update(value=next(iter(device_num_dict.values())), values=list(device_num_dict.values()))
+    window['-DEVICE_CHOICE-'].update(value=f"{config.device_choice} ({config.devices[config.device_choice]['ip']})", values=list(device_num_dict.values()))
+    window['-IP-'].update(value=config.devices[first_device]['ip'])
+    window['-PASSWORD-'].update(value=config.devices[first_device]['password'])
+
 # Build the GUI
 def build():
     # Frame to choose dates
@@ -366,15 +376,8 @@ def interface():
                 slots_list[i] = slots_list[i].strip()
                 config.devices[device_num]['slots'][str(i+1)] = slots_list[i]
             print(values['-SLOTS-'])
+            update_device_display(window, config)
             config.save()
-            device_num_dict = defaultdict()
-            for device_num, device in config.devices.items():
-                device_num_dict[device_num] = f"{device_num} ({device['ip']})"
-            first_device = next(iter(device_num_dict))
-            window['-DEVICE-'].update(value=next(iter(device_num_dict.values())), values=list(device_num_dict.values()))
-            window['-DEVICE_CHOICE-'].update(value=f"{config.device_choice} ({config.devices[config.device_choice]['ip']})", values=list(device_num_dict.values()))
-            window['-IP-'].update(value=config.devices[first_device]['ip'])
-            window['-PASSWORD-'].update(value=config.devices[first_device]['password'])
             sg.popup('Configuration saved successfully!', icon='success')
         
         if event == '-DEVICE_CHOICE-':
@@ -383,7 +386,6 @@ def interface():
 
         if event == '-ADD_DEVICE-':
             device = popup_add_device()
-            print(device)
             if device:
                 device.num = f'device_{len(config.devices) + 1}'
                 config.devices[device.num] = {'ip': device.ip, 'password': device.password, 'slots': {}}
@@ -392,14 +394,7 @@ def interface():
                 for i in range(len(slots_list)):
                     slots_list[i] = slots_list[i].strip()
                     config.devices[device.num]['slots'][str(i+1)] = slots_list[i]
-                device_num_dict = defaultdict()
-                for device_num, device in config.devices.items():
-                    device_num_dict[device_num] = f"{device_num} ({device['ip']})"
-                first_device = next(iter(device_num_dict))
-                window['-DEVICE-'].update(value=next(iter(device_num_dict.values())), values=list(device_num_dict.values()))
-                window['-DEVICE_CHOICE-'].update(value=f"{config.device_choice} ({config.devices[config.device_choice]['ip']})", values=list(device_num_dict.values()))
-                window['-IP-'].update(value=config.devices[first_device]['ip'])
-                window['-PASSWORD-'].update(value=config.devices[first_device]['password'])
+                update_device_display(window, config)
                 config.save()
                 sg.popup('Device added successfully!', icon='success')
 
@@ -408,16 +403,10 @@ def interface():
             if device:
                 device = device.split(' ')[0]
                 del config.devices[device]
-                device_num_dict = defaultdict()
-                for device_num, device in config.devices.items():
-                    device_num_dict[device_num] = f"{device_num} ({device['ip']})"
-                first_device = next(iter(device_num_dict))
-                window['-DEVICE-'].update(value=next(iter(device_num_dict.values())), values=list(device_num_dict.values()))
-                window['-DEVICE_CHOICE-'].update(value=f"{config.device_choice} ({config.devices[config.device_choice]['ip']})", values=list(device_num_dict.values()))
-                window['-IP-'].update(value=config.devices[first_device]['ip'])
-                window['-PASSWORD-'].update(value=config.devices[first_device]['password'])
+                update_device_display(window, config)
                 config.save()
                 sg.popup('Device removed successfully!', icon='success')
+
         if event == '-COLLATE_FILES-' or event == '-DATES_CHOSEN-':
             if window['-OPTION-'] == '':
                 sg.popup(title='No Option Selected', custom_text = 'Please select an option first', button_type=sg.POPUP_BUTTONS_OK, icon='error')
