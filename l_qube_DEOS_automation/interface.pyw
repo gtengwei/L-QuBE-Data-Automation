@@ -1,4 +1,4 @@
-from ui_selenium_automation import run_automation, choose_slot, collate_dataframes, automate_time, initialise_driver
+from ui_selenium_automation import run_automation, choose_slot, collate_dataframes, automate_time, initialise_driver, find_all_slots
 import ui_selenium_automation
 from configuration import get_config
 import PySimpleGUI as sg
@@ -53,15 +53,42 @@ def popup_add_device():
             self.password = password
             self.slots = slots
     device = Device('', '', '', '')
+
+    slots_frame = [[sg.Text('Choose the slots to collate')]]
+    for i in range(1, 251):
+        if i % 4 == 1:
+            slots_frame += [
+                [sg.Checkbox('Slot {}'.format(i), key='-SLOT{}-'.format(i), enable_events=True, visible=False),
+                sg.Checkbox('Slot {}'.format(i+1), key='-SLOT{}-'.format(i+1), enable_events=True, visible=False),
+                sg.Checkbox('Slot {}'.format(i+2), key='-SLOT{}-'.format(i+2), enable_events=True, visible=False),
+                sg.Checkbox('Slot {}'.format(i+3), key='-SLOT{}-'.format(i+3), enable_events=True, visible=False),]
+
+            ]
+
+    slots_column_frame = [
+        [sg.Column(slots_frame, size=(WIDTH, HEIGHT), scrollable=True,expand_x=True, expand_y=True, key='-SLOTS_COL_FRAME-')],
+        [sg.Button('Select Slots', key='-SLOTS CHOSEN-', tooltip='Click to select slots to collate')]
+    ]
+
+    select_slots_button = [
+        [sg.Button('Select Slots', key='-SLOTS_CHOSEN-', tooltip='Click to select slots to collate')]
+    ]
+
     col_layout = [[sg.Button('Add', bind_return_key=True), sg.Button('Cancel')]]
-    layout = [
+    device_info_frame = [
         [sg.Text('Enter Device IP')],
         [sg.InputText(key='-IP-', tooltip='Device IP', enable_events=True)],
         [sg.Text('Enter Device Password')],
         [sg.InputText(key='-PASSWORD-', tooltip='Device Password', enable_events=True)],
-        [sg.Text('Enter Device Slots')],
+        [sg.Text('Enter Device Slots'), sg.Button('Find All Slots', key='-FIND_All_SLOTS-', tooltip='Find all slots on device')],
         [sg.Multiline(key='-SLOTS-', size=(43, 5), tooltip='Enter every new slot on new line', enable_events=True)],
-        [sg.Column(col_layout, expand_x=True, element_justification='right')],
+        [sg.Column(col_layout, expand_x=True, element_justification='left')],
+    ]
+    layout = [
+        
+        [sg.Frame('Enter Device Information', device_info_frame, size=(WIDTH,HEIGHT), expand_x=True, expand_y=True, visible=True, key='-DEVICE_INFO_FRAME-'),
+        sg.Frame('Choose your slots', slots_column_frame, size=(WIDTH,HEIGHT), expand_x=True, expand_y=True, visible=False, key='-SLOTS_COL-'),],
+        [sg.Frame('', select_slots_button, size=(WIDTH, 60),  expand_x=True, element_justification='right', visible=False, key='-SELECT_SLOTS_BTN-')]
     ]
     window = sg.Window("Add Device", layout, use_default_focus=False, finalize=True, modal=True)
     block_focus(window)
@@ -77,6 +104,35 @@ def popup_add_device():
             device.password = values['-PASSWORD-']
             device.slots = values['-SLOTS-']
             return device
+        if event == '-FIND_All_SLOTS-':
+            sg.popup_quick_message('Finding all slots on device. Please wait...', keep_on_top=True, background_color='grey')
+            try:
+                device_num = f'device_{len(config.devices) + 1}'
+                print(values['-IP-'], values['-PASSWORD-'], device_num)
+                driver = initialise_driver(values['-IP-'], values['-PASSWORD-'], device_num)
+                driver.implicitly_wait(10)
+                slots = find_all_slots(driver)
+                window['-SLOTS_COL-'].update(visible=True)
+                window['-SELECT_SLOTS_BTN-'].update(visible=True)
+                window['-FIND_All_SLOTS-'].update(visible=False)
+                print('This is the list of slot names: ')
+                for i in range(len(slots)):
+                    print(str(i+1) + '. ' + slots[i])
+                    window['-SLOT' + str(i+1) + '-'].update(text = slots[i])
+                    window['-SLOT' + str(i+1) + '-'].update(visible = True)
+            except:
+                sg.popup_error('Unable to find all slots on device. Please check if the device information is correct and try again.')
+                window['-SLOTS_COL-'].update(visible=False)
+                window['-SELECT_SLOTS_BTN-'].update(visible=False)
+                window['-FIND_All_SLOTS-'].update(visible=True)
+
+        if event == '-SLOTS_CHOSEN-':
+            chosen_slots = []
+            for i in range(len(slots)):
+                if window[f'-SLOT{i+1}-'].get() == True:
+                    chosen_slots.append(slots[i])
+            window['-SLOTS-'].update(value = '\n'.join(chosen_slots))
+            driver.close()
         
 def popup_remove_device(config):
     col_layout = [[sg.Button('Remove', bind_return_key=True), sg.Button('Cancel')]]
