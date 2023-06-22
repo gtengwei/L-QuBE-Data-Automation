@@ -114,7 +114,9 @@ def popup_add_device():
                 device.ip = values['-IP-']
                 device.password = values['-PASSWORD-']
                 device.slots = values['-SLOTS-']
+                driver.close()
                 return device
+            
         if event == '-FIND_All_SLOTS-':
             sg.popup_quick_message('Finding all slots on device. Please wait...', keep_on_top=True, background_color='grey')
             try:
@@ -143,7 +145,7 @@ def popup_add_device():
                 if window[f'-SLOT{i+1}-'].get() == True:
                     chosen_slots.append(slots[i])
             window['-SLOTS-'].update(value = '\n'.join(chosen_slots))
-            driver.close()
+            
         
 def popup_remove_device(config):
     col_layout = [[sg.Button('Remove', bind_return_key=True), sg.Button('Cancel')]]
