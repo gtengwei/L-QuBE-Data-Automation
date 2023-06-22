@@ -221,7 +221,6 @@ def build():
 
 # Main function to run the GUI
 def interface():
-    # config = get_config()
     # Create the window
     window = build()
     menu = ['', ['Show Window', 'Hide Window', '---', 'Scheduler',['Start Scheduler','Stop Scheduler'], 'Exit']]
@@ -271,46 +270,56 @@ def interface():
             else:
                 sg.popup('Scheduler has already been started!')
 
+        # Show window when tray icon is double clicked
         if event in ('Show Window', sg.EVENT_SYSTEM_TRAY_ICON_DOUBLE_CLICKED):
             window.un_hide()
             window.bring_to_front()
+        
+        # Hide window when user clicks on close button
         elif event in ('Hide Window', sg.WIN_CLOSE_ATTEMPTED_EVENT):
             window.hide()
             tray.show_icon()        # if hiding window, better make sure the icon is visible
             tray.show_message('Exiting', 'Minimising to tray')
 
+        # Edit configuration
         if values['-OPTION-'] == 'Edit Configuration':
             window['-DATES_FRAME-'].update(visible=False)
             window['-COLLATE_FILES-' ].update(visible=False)
             window['-CONFIG_COL-' ].update(visible=True)
             window['-STOP_SCHEDULER-' ].update(visible=False)
 
+        # Run daily automation
         if values['-OPTION-'] == 'Automate Collation (Repeated)':
             window['-DATES_FRAME-'].update(visible=False)
             window['-CONFIG_COL-' ].update(visible=False)
             window['-COLLATE_FILES-' ].update(visible=True)
             window['-STOP_SCHEDULER-' ].update(visible=True)
 
+        # Download all data
         if values['-OPTION-'] == 'Download all data (Non-repeated)':
             window['-DATES_FRAME-'].update(visible=False)
             window['-CONFIG_COL-' ].update(visible=False)
             window['-COLLATE_FILES-' ].update(visible=True)
             window['-STOP_SCHEDULER-' ].update(visible=False)
 
+        # Download specific slots in a specific date range
         if values['-OPTION-'] == 'Choose specific slots to download (Non-repeated)':
             window['-DATES_FRAME-'].update(visible=True)
             window['-CONFIG_COL-' ].update(visible=False)
             window['-COLLATE_FILES-' ].update(visible=False)
             window['-STOP_SCHEDULER-' ].update(visible=False)
 
+        # Set default start date to 00:00:00
         if event == '-START_DATE-':
             date, _ = values['-START_DATE-'].split(' ')
             window['-START_DATE-'].update(date + ' 00:00:00')
         
+        # Set default end date to 23:59:59
         if event == '-END_DATE-':
             date, _ = values['-END_DATE-'].split(' ')
             window['-END_DATE-'].update(date + ' 23:59:59')
 
+        # Only show device details when a device is selected
         if event == '-DEVICE-':
             slots_list = []
             window['-IP_text-'].update(visible=True)
@@ -328,6 +337,7 @@ def interface():
             for slot_num, slot in device['slots'].items(): 
                 window['-SLOTS-'].update(f'{slot}\n', append=True)
 
+        # Save configuration
         if event == '-SAVE_CONFIG-':
             device_num = values['-DEVICE-'].split(' ')[0]
             config.directory = values['-DIRECTORY-']
@@ -341,11 +351,12 @@ def interface():
             for i in range(len(slots_list)):
                 slots_list[i] = slots_list[i].strip()
                 config.devices[device_num]['slots'][str(i+1)] = slots_list[i]
-            # print(values['-SLOTS-'])
             device_num_dict = defaultdict()
             for device_number, device in config.devices.items():
                 device_num_dict[device_number] = f"{device_number} ({device['ip']})"
             first_device = next(iter(device_num_dict))
+
+            # Update values in window to show current device details
             window['-DEVICE-'].update(value=device_num_dict[device_num], values=list(device_num_dict.values()))
             window['-DEVICE_CHOICE-'].update(value=f"{config.device_choice} ({config.devices[config.device_choice]['ip']})", values=list(device_num_dict.values()))
             window['-IP-'].update(value=config.devices[device_num]['ip'])
@@ -356,10 +367,12 @@ def interface():
             config.save()
             sg.popup('Configuration saved successfully!', icon='success')
         
+        # Device chosen in specific slots to download
         if event == '-DEVICE_CHOICE-':
             config.device_choice = values['-DEVICE_CHOICE-'].split(' ')[0]
             config.save()
 
+        # Add device to configuration
         if event == '-ADD_DEVICE-':
             device = popup_add_device()
             if device:
@@ -374,6 +387,7 @@ def interface():
                 config.save()
                 sg.popup('Device added successfully!', icon='success')
 
+        # Remove device from configuration
         if event == '-REMOVE_DEVICE-':
             device = popup_remove_device(config)
             if device:
@@ -404,7 +418,8 @@ def interface():
                     window['-COLLATE_FILES-'].update(visible=False)
                     window['-DATES_CHOSEN-'].update(disabled=True)
                     driver, slots, directory = run_automation(config, 'choose', window)
-                    
+        
+        # Stop scheduler within UI
         if event == '-STOP_SCHEDULER-':
             if start_scheduler == True:
                 ui_selenium_automation.stop_thread = True
