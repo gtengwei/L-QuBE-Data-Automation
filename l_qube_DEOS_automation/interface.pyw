@@ -99,11 +99,21 @@ def popup_add_device():
             window.close()
             return None
         if event == 'Add':
-            window.close()
-            device.ip = values['-IP-']
-            device.password = values['-PASSWORD-']
-            device.slots = values['-SLOTS-']
-            return device
+            if values['-IP-'] == '' or values['-PASSWORD-'] == '':
+                sg.popup('Please fill in IP and Password field', keep_on_top=True, background_color='grey')
+                continue
+            exist = False
+            for device_num, device in config.devices.items():
+                if device['ip'] == values['-IP-']:
+                    sg.popup('IP already exists', keep_on_top=True, background_color='grey')
+                    exist = True
+                    break
+            if not exist:
+                window.close()
+                device.ip = values['-IP-']
+                device.password = values['-PASSWORD-']
+                device.slots = values['-SLOTS-']
+                return device
         if event == '-FIND_All_SLOTS-':
             sg.popup_quick_message('Finding all slots on device. Please wait...', keep_on_top=True, background_color='grey')
             try:
