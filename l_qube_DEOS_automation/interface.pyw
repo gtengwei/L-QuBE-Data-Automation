@@ -224,7 +224,7 @@ def interface():
     # config = get_config()
     # Create the window
     window = build()
-    menu = ['', ['Show Window', 'Hide Window', '---', 'Scheduler',['Start Scheduler','Stop Scheduler'], 'Change Icon', ['Happy', 'Sad', 'Plain'], 'Exit']]
+    menu = ['', ['Show Window', 'Hide Window', '---', 'Scheduler',['Start Scheduler','Stop Scheduler'], 'Exit']]
     tooltip = 'Double click to show interface'
     tray = SystemTray(menu, single_click_events=False, window=window, tooltip=tooltip, icon=sg.DEFAULT_BASE64_ICON)
     tray.show_message('DEOS Interface', 'DEOS Interface launched!')
@@ -240,20 +240,17 @@ def interface():
     # Display window
     while True:
         event, values = window.read()
-        # print(event)
-        # print(values['-OPTION-'])
-        # print(values['-START_DATE-'])
         # End program if user closes window or clicks cancel
         if event == tray.key:
-            # sg.cprint(f'System Tray Event = ', values[event], c='white on red')
             event = values[event]       # use the System Tray's event as if was from the window
 
         if event in (sg.WIN_CLOSED, 'Exit'):
             break
         
         print(event)
-        print(tray.menu_items[3])
         tray.show_message(title=event)
+
+        # When user stops scheduler via tray menu
         if event == 'Stop Scheduler':
             if start_scheduler == True:
                 start_scheduler = False
@@ -263,6 +260,7 @@ def interface():
             else:
                 sg.popup('Scheduler has not been started yet!')
 
+        # When user starts scheduler via tray menu
         elif event == 'Start Scheduler':
             if start_scheduler == False:
                 automate_thread = threading.Thread(target= automate_time, args=(config, window, ))
@@ -272,6 +270,7 @@ def interface():
                 tray.show_message('Scheduler', 'Scheduler has been started')
             else:
                 sg.popup('Scheduler has already been started!')
+
         if event in ('Show Window', sg.EVENT_SYSTEM_TRAY_ICON_DOUBLE_CLICKED):
             window.un_hide()
             window.bring_to_front()
@@ -279,16 +278,6 @@ def interface():
             window.hide()
             tray.show_icon()        # if hiding window, better make sure the icon is visible
             tray.show_message('Exiting', 'Minimising to tray')
-        elif event == 'Happy':
-            tray.change_icon(sg.EMOJI_BASE64_HAPPY_JOY)
-        elif event == 'Sad':
-            tray.change_icon(sg.EMOJI_BASE64_FRUSTRATED)
-        elif event == 'Plain':
-            tray.change_icon(sg.DEFAULT_BASE64_ICON)
-        elif event == 'Hide Icon':
-            tray.hide_icon()
-        elif event == 'Show Icon':
-            tray.show_icon()
 
         if values['-OPTION-'] == 'Edit Configuration':
             window['-DATES_FRAME-'].update(visible=False)
