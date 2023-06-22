@@ -100,7 +100,7 @@ def popup_add_device():
             return None
         if event == 'Add':
             if values['-IP-'] == '' or values['-PASSWORD-'] == '':
-                sg.popup('Please fill in IP and Password field', keep_on_top=True, background_color='grey')
+                sg.popup('Please fill in both IP and Password field', keep_on_top=True, background_color='grey')
                 continue
             exist = False
             for device_num, device in config.devices.items():
