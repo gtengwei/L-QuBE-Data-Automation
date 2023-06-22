@@ -292,7 +292,6 @@ def interface():
     window['-END_DATE-'].update(value=dt.datetime.now().strftime('%m-%d-%Y %H:%M:%S'))
     config = get_config()
     update_device_display(window, config)
-
     # Display window
     while True:
         event, values = window.read()
@@ -312,6 +311,7 @@ def interface():
                 start_scheduler = False
                 ui_selenium_automation.stop_thread = True
                 automate_thread.join()
+                tray.change_icon(sg.DEFAULT_BASE64_ICON)
                 tray.show_message('Scheduler', 'Scheduler has been stopped')
             else:
                 sg.popup('Scheduler has not been started yet!')
@@ -323,6 +323,7 @@ def interface():
                 automate_thread.start()
                 start_scheduler = True
                 ui_selenium_automation.stop_thread = False
+                tray.change_icon(sg.EMOJI_BASE64_HAPPY_JOY)
                 tray.show_message('Scheduler', 'Scheduler has been started')
             else:
                 sg.popup('Scheduler has already been started!')
@@ -336,7 +337,7 @@ def interface():
         elif event in ('Hide Window', sg.WIN_CLOSE_ATTEMPTED_EVENT):
             window.hide()
             tray.show_icon()        # if hiding window, better make sure the icon is visible
-            tray.show_message('Exiting', 'Minimising to tray')
+            tray.show_message('Minimising to tray(Application not closed)', 'Running in the background...')
 
         # Edit configuration
         if values['-OPTION-'] == 'Edit Configuration':
@@ -475,6 +476,8 @@ def interface():
                     automate_thread.start()
                     ui_selenium_automation.stop_thread = False
                     start_scheduler = True
+                    tray.change_icon(sg.EMOJI_BASE64_HAPPY_JOY)
+                    tray.show_message('Scheduler', 'Scheduler has been started')
                 
                 if window['-OPTION-'].get() == 'Download all data (Non-repeated)':
                     threading.Thread(target= run_automation, args=(config, 'all', window, )).start()
@@ -493,6 +496,7 @@ def interface():
                 ui_selenium_automation.stop_thread = True
                 start_scheduler = False
                 automate_thread.join()
+                tray.change_icon(sg.DEFAULT_BASE64_ICON)
                 tray.show_message('Scheduler', 'Scheduler has been stopped')
             else:
                 sg.popup('Scheduler has not been started yet!')
