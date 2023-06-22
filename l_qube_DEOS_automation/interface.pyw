@@ -45,30 +45,6 @@ def block_focus(window):
         if isinstance(element, sg.Button):
             element.block_focus()
 
-def popup_remove_device(config):
-    col_layout = [[sg.Button('Remove', bind_return_key=True), sg.Button('Cancel')]]
-    layout = [
-        [sg.Text('Select Device to Remove')],
-        [sg.InputCombo(list(config.devices.keys()), size=(24, len(config.devices.keys())), key='-DEVICE-', tooltip='Device Name', enable_events=True)],
-        [sg.Column(col_layout, expand_x=True, element_justification='right')],
-    ]
-    window = sg.Window("Remove Device", layout, use_default_focus=False, finalize=True, modal=True)
-    block_focus(window)
-
-    device_num_dict = defaultdict()
-    for device_num, device in config.devices.items():
-        device_num_dict[device_num] = f"{device_num} ({device['ip']})"
-    window['-DEVICE-'].update(value=next(iter(device_num_dict.values())), values=list(device_num_dict.values()))
-
-    while True:
-        event, values = window.read()
-        if event == sg.WIN_CLOSED or event == 'Cancel':
-            window.close()
-            return None
-        if event == 'Remove':
-            window.close()
-            return values['-DEVICE-']
-
 def popup_add_device():
     class Device:
         def __init__(self, num, ip, password, slots):
@@ -101,6 +77,30 @@ def popup_add_device():
             device.password = values['-PASSWORD-']
             device.slots = values['-SLOTS-']
             return device
+        
+def popup_remove_device(config):
+    col_layout = [[sg.Button('Remove', bind_return_key=True), sg.Button('Cancel')]]
+    layout = [
+        [sg.Text('Select Device to Remove')],
+        [sg.InputCombo(list(config.devices.keys()), size=(24, len(config.devices.keys())), key='-DEVICE-', tooltip='Device Name', enable_events=True)],
+        [sg.Column(col_layout, expand_x=True, element_justification='right')],
+    ]
+    window = sg.Window("Remove Device", layout, use_default_focus=False, finalize=True, modal=True)
+    block_focus(window)
+
+    device_num_dict = defaultdict()
+    for device_num, device in config.devices.items():
+        device_num_dict[device_num] = f"{device_num} ({device['ip']})"
+    window['-DEVICE-'].update(value=next(iter(device_num_dict.values())), values=list(device_num_dict.values()))
+
+    while True:
+        event, values = window.read()
+        if event == sg.WIN_CLOSED or event == 'Cancel':
+            window.close()
+            return None
+        if event == 'Remove':
+            window.close()
+            return values['-DEVICE-']
 
 def update_device_display(window, config):
     device_num_dict = defaultdict()
