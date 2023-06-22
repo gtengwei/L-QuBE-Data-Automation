@@ -98,14 +98,15 @@ def popup_add_device():
         if event == sg.WIN_CLOSED or event == 'Cancel':
             window.close()
             return None
+        
         if event == 'Add':
             if values['-IP-'] == '' or values['-PASSWORD-'] == '':
-                sg.popup('Please fill in both IP and Password field', keep_on_top=True, background_color='grey')
+                sg.popup('Please fill in both IP and Password field', keep_on_top=True)
                 continue
             exist = False
             for device_num, device in config.devices.items():
                 if device['ip'] == values['-IP-']:
-                    sg.popup('IP already exists', keep_on_top=True, background_color='grey')
+                    sg.popup('IP already exists', keep_on_top=True)
                     exist = True
                     break
             if not exist:
