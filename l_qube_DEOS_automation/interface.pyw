@@ -243,6 +243,7 @@ def build():
                         'Choose specific slots to download (Non-repeated)',), default_value='Edit Configuration', enable_events=True, size=(70, 4), key='-OPTION-')],
         [sg.Button('Start Collation', key='-COLLATE_FILES-', tooltip='Click to collate files in the chosen folder', visible=False), 
          sg.Button('Stop Collation', key='-STOP_SCHEDULER-', tooltip='Click to stop scheduler', visible=False, disabled=True)],
+         [sg.Text('Status: ', size=(5, 1), key='-STATUS_text-', visible=False), sg.Text('Scheduler not started', size=(20, 1), key='-STATUS-', text_color='firebrick3', visible=False)],
         [sg.Frame('Choose Time Period', date_frame, size=(WIDTH,HEIGHT), visible=False, key='-DATES_FRAME-', expand_x=True, expand_y=True)],
     ]
 
@@ -326,6 +327,7 @@ def interface():
                 automate_thread.join()
                 window['-COLLATE_FILES-'].update(disabled=False)
                 window['-STOP_SCHEDULER-'].update(disabled=True)
+                window['-STATUS-'].update(value='Scheduler stopped', text_color='firebrick3')
                 tray.change_icon(sg.DEFAULT_BASE64_ICON)
                 tray.show_message('Scheduler', 'Scheduler has been stopped')
             else:
@@ -340,6 +342,7 @@ def interface():
                 ui_selenium_automation.stop_thread = False
                 window['-COLLATE_FILES-'].update(disabled=True)
                 window['-STOP_SCHEDULER-'].update(disabled=False)
+                window['-STATUS-'].update(value='Scheduler started', text_color='lightgreen')
                 tray.change_icon(sg.EMOJI_BASE64_HAPPY_JOY)
                 tray.show_message('Scheduler', 'Scheduler has been started')
             else:
@@ -362,6 +365,8 @@ def interface():
             window['-COLLATE_FILES-' ].update(visible=False)
             window['-CONFIG_COL-' ].update(visible=True)
             window['-STOP_SCHEDULER-' ].update(visible=False)
+            window['-STATUS_text-'].update(visible=False)
+            window['-STATUS-'].update(visible=False)
 
         # Run daily automation
         if values['-OPTION-'] == 'Automate Collation (Repeated)':
@@ -369,6 +374,8 @@ def interface():
             window['-CONFIG_COL-' ].update(visible=False)
             window['-COLLATE_FILES-' ].update(visible=True)
             window['-STOP_SCHEDULER-' ].update(visible=True)
+            window['-STATUS_text-'].update(visible=True)
+            window['-STATUS-'].update(visible=True)
 
         # Download all data
         if values['-OPTION-'] == 'Download all data (Non-repeated)':
@@ -376,6 +383,8 @@ def interface():
             window['-CONFIG_COL-' ].update(visible=False)
             window['-COLLATE_FILES-' ].update(visible=True)
             window['-STOP_SCHEDULER-' ].update(visible=False)
+            window['-STATUS_text-'].update(visible=False)
+            window['-STATUS-'].update(visible=False)
 
         # Download specific slots in a specific date range
         if values['-OPTION-'] == 'Choose specific slots to download (Non-repeated)':
@@ -383,6 +392,8 @@ def interface():
             window['-CONFIG_COL-' ].update(visible=False)
             window['-COLLATE_FILES-' ].update(visible=False)
             window['-STOP_SCHEDULER-' ].update(visible=False)
+            window['-STATUS_text-'].update(visible=False)
+            window['-STATUS-'].update(visible=False)
 
         # Set default start date to 00:00:00
         if event == '-START_DATE-':
@@ -496,6 +507,7 @@ def interface():
                         tray.show_message('Scheduler', 'Scheduler has been started')
                         window['-COLLATE_FILES-'].update(disabled=True)
                         window['-STOP_SCHEDULER-'].update(disabled=False)
+                        window['-STATUS-'].update(value='Scheduler started', text_color='lightgreen')
                         automate_thread = threading.Thread(target= automate_time, args=(config, window, ))
                         automate_thread.start()
                         
@@ -521,6 +533,7 @@ def interface():
                 automate_thread.join()
                 window['-COLLATE_FILES-'].update(disabled=False)
                 window['-STOP_SCHEDULER-'].update(disabled=True)
+                window['-STATUS-'].update(value='Scheduler stopped', text_color='firebrick3')
                 tray.change_icon(sg.DEFAULT_BASE64_ICON)
                 tray.show_message('Scheduler', 'Scheduler has been stopped')
             else:
