@@ -53,7 +53,7 @@ def popup_add_device():
             self.password = password
             self.slots = slots
     device = Device('', '', '', '')
-
+    driver = None
     slots_frame = [[sg.Text('Choose the slots to collate')]]
     for i in range(1, 251):
         if i % 4 == 1:
@@ -104,8 +104,8 @@ def popup_add_device():
                 sg.popup('Please fill in both IP and Password field', keep_on_top=True)
                 continue
             exist = False
-            for device_num, device in config.devices.items():
-                if device['ip'] == values['-IP-']:
+            for device_num, device_info in config.devices.items():
+                if device_info['ip'] == values['-IP-']:
                     sg.popup('IP already exists', keep_on_top=True)
                     exist = True
                     break
@@ -114,7 +114,8 @@ def popup_add_device():
                 device.ip = values['-IP-']
                 device.password = values['-PASSWORD-']
                 device.slots = values['-SLOTS-']
-                driver.close()
+                if driver:
+                    driver.close()
                 return device
             
         if event == '-FIND_All_SLOTS-':
