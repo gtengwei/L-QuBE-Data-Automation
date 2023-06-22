@@ -189,9 +189,9 @@ def build():
     ]
     
     device_parameters =[
-        [sg.Text(size=(12,1)), sg.Text('IP', size=(8, 1), key='-IP_text-', visible=False), sg.InputText('default ip', key='-IP-', tooltip='IP Address of device', enable_events=True, visible=False, size=(30, 1))],
-        [sg.Text(size=(12,1)), sg.Text('Password', size=(8, 1), key='-PASSWORD_text-', visible=False), sg.InputText('default password', key='-PASSWORD-', tooltip='Password of device', enable_events=True, visible=False, size=(30, 1))],
-        [sg.Text(size=(12,1)), sg.Text('Slots', size=(8, 1), key='-SLOTS_text-', visible=False), sg.Multiline(key='-SLOTS-', tooltip='Slots to collate data from', enable_events=True, visible=False, size=(30, 5))],
+        [sg.Text(size=(12,1)), sg.Text('IP', size=(8, 1), key='-IP_text-'), sg.InputText('default ip', key='-IP-', tooltip='IP Address of device', enable_events=True, size=(30, 1))],
+        [sg.Text(size=(12,1)), sg.Text('Password', size=(8, 1), key='-PASSWORD_text-'), sg.InputText('default password', key='-PASSWORD-', tooltip='Password of device', enable_events=True, size=(30, 1))],
+        [sg.Text(size=(12,1)), sg.Text('Slots', size=(8, 1), key='-SLOTS_text-'), sg.Multiline(key='-SLOTS-', tooltip='Slots to collate data from', enable_events=True, size=(30, 5))],
     ]
 
     config_frame = []
