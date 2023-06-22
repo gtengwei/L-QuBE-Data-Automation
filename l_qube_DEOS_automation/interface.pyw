@@ -254,8 +254,9 @@ def interface():
         print(event)
         print(tray.menu_items[3])
         tray.show_message(title=event)
-        if event == 'End Scheduler':
+        if event == 'Stop Scheduler':
             if start_scheduler == True:
+                start_scheduler = False
                 ui_selenium_automation.stop_thread = True
                 automate_thread.join()
                 tray.show_message('Scheduler', 'Scheduler has been stopped')
@@ -266,6 +267,8 @@ def interface():
             if start_scheduler == False:
                 automate_thread = threading.Thread(target= automate_time, args=(config, window, ))
                 automate_thread.start()
+                start_scheduler = True
+                ui_selenium_automation.stop_thread = False
                 tray.show_message('Scheduler', 'Scheduler has been started')
             else:
                 sg.popup('Scheduler has already been started!')
@@ -335,9 +338,6 @@ def interface():
             window['-SLOTS-'].update(value='')
             for slot_num, slot in device['slots'].items(): 
                 window['-SLOTS-'].update(f'{slot}\n', append=True)
-
-            #     slots_list.append(slot)
-            # window['-SLOTS-'].update(value='', values=slots_list)
 
         if event == '-SAVE_CONFIG-':
             device_num = values['-DEVICE-'].split(' ')[0]
@@ -419,6 +419,7 @@ def interface():
         if event == '-STOP_SCHEDULER-':
             if start_scheduler == True:
                 ui_selenium_automation.stop_thread = True
+                start_scheduler = False
                 automate_thread.join()
                 tray.show_message('Scheduler', 'Scheduler has been stopped')
             else:
@@ -429,10 +430,6 @@ def interface():
             window['-SELECT_SLOTS_BTN-'].update(visible=False)
             window['-COLLATE_FILES-'].update(visible=True)
             window['-DATES_CHOSEN-'].update(disabled=False)
-        
-        if event == '-START_SCHEDULER-':
-            sg.popup(title='Scheduler Started', custom_text = 'Scheduler started successfully!', button_type=sg.POPUP_BUTTONS_OK, icon='success')
-        
             
         if event == '-SLOTS_CHOSEN-':
             chosen_slots = []
