@@ -435,6 +435,7 @@ def interface():
             config.devices[device_num]['slots'].clear()
             slots_list = values['-SLOTS-'].split('\n')
             print(slots_list)
+            slots_list = [slot for slot in slots_list if slot != '']
             for i in range(len(slots_list)):
                 slots_list[i] = slots_list[i].strip()
                 config.devices[device_num]['slots'][str(i+1)] = slots_list[i]
@@ -467,6 +468,7 @@ def interface():
                 config.devices[device.num] = {'ip': device.ip, 'password': device.password, 'slots': {}}
                 slots_list = device.slots.split('\n')
                 print(slots_list)
+                slots_list = [slot.strip() for slot in slots_list if slot.strip() != '']
                 for i in range(len(slots_list)):
                     slots_list[i] = slots_list[i].strip()
                     config.devices[device.num]['slots'][str(i+1)] = slots_list[i]
