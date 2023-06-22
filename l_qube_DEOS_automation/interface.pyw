@@ -229,7 +229,7 @@ def build():
                         'Download all data (Non-repeated)', 
                         'Choose specific slots to download (Non-repeated)',), default_value='Edit Configuration', enable_events=True, size=(70, 4), key='-OPTION-')],
         [sg.Button('Start Collation', key='-COLLATE_FILES-', tooltip='Click to collate files in the chosen folder', visible=False), 
-         sg.Button('Stop Collation', key='-STOP_SCHEDULER-', tooltip='Click to stop scheduler', visible=False)],
+         sg.Button('Stop Collation', key='-STOP_SCHEDULER-', tooltip='Click to stop scheduler', visible=False, disabled=True)],
         [sg.Frame('Choose Time Period', date_frame, size=(WIDTH,HEIGHT), visible=False, key='-DATES_FRAME-', expand_x=True, expand_y=True)],
     ]
 
@@ -311,6 +311,8 @@ def interface():
                 start_scheduler = False
                 ui_selenium_automation.stop_thread = True
                 automate_thread.join()
+                window['-COLLATE_FILES-'].update(disabled=False)
+                window['-STOP_SCHEDULER-'].update(disabled=True)
                 tray.change_icon(sg.DEFAULT_BASE64_ICON)
                 tray.show_message('Scheduler', 'Scheduler has been stopped')
             else:
@@ -323,6 +325,8 @@ def interface():
                 automate_thread.start()
                 start_scheduler = True
                 ui_selenium_automation.stop_thread = False
+                window['-COLLATE_FILES-'].update(disabled=True)
+                window['-STOP_SCHEDULER-'].update(disabled=False)
                 tray.change_icon(sg.EMOJI_BASE64_HAPPY_JOY)
                 tray.show_message('Scheduler', 'Scheduler has been started')
             else:
@@ -472,12 +476,18 @@ def interface():
             else:
                 # Parallel thread to execute the collation
                 if window['-OPTION-'].get() == 'Automate Collation (Repeated)':
-                    automate_thread = threading.Thread(target= automate_time, args=(config, window, ))
-                    automate_thread.start()
-                    ui_selenium_automation.stop_thread = False
-                    start_scheduler = True
-                    tray.change_icon(sg.EMOJI_BASE64_HAPPY_JOY)
-                    tray.show_message('Scheduler', 'Scheduler has been started')
+                    if not start_scheduler:
+                        ui_selenium_automation.stop_thread = False
+                        start_scheduler = True
+                        tray.change_icon(sg.EMOJI_BASE64_HAPPY_JOY)
+                        tray.show_message('Scheduler', 'Scheduler has been started')
+                        window['-COLLATE_FILES-'].update(disabled=True)
+                        window['-STOP_SCHEDULER-'].update(disabled=False)
+                        automate_thread = threading.Thread(target= automate_time, args=(config, window, ))
+                        automate_thread.start()
+                        
+                    else:
+                        sg.popup('Scheduler has already been started', icon='warning')
                 
                 if window['-OPTION-'].get() == 'Download all data (Non-repeated)':
                     threading.Thread(target= run_automation, args=(config, 'all', window, )).start()
@@ -496,6 +506,8 @@ def interface():
                 ui_selenium_automation.stop_thread = True
                 start_scheduler = False
                 automate_thread.join()
+                window['-COLLATE_FILES-'].update(disabled=False)
+                window['-STOP_SCHEDULER-'].update(disabled=True)
                 tray.change_icon(sg.DEFAULT_BASE64_ICON)
                 tray.show_message('Scheduler', 'Scheduler has been stopped')
             else:
