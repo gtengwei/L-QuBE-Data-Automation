@@ -1,4 +1,4 @@
-from ui_selenium_automation import run_automation, choose_slot, collate_dataframes, automate_time
+from ui_selenium_automation import run_automation, choose_slot, collate_dataframes, automate_time, initialise_driver
 import ui_selenium_automation
 from configuration import get_config
 import PySimpleGUI as sg
@@ -128,7 +128,8 @@ def build():
 
     ]
     device_input_combo = [
-        sg.InputCombo(('default'), size=(24, 5), default_value=next(iter(config.devices)), key='-DEVICE-', tooltip='Device Name', enable_events=True)
+        sg.InputCombo(('default'), size=(24, 5), default_value=next(iter(config.devices)), key='-DEVICE-', tooltip='Device Name', enable_events=True),
+        sg.Button('Test IP', key='-TEST_IP-', tooltip='Click to test IP address'),
     ]
     
     device_parameters =[
@@ -397,6 +398,17 @@ def interface():
                 config.save()
                 sg.popup('Device removed successfully!', icon='success')
 
+        # Test connection to device
+        if event == '-TEST_IP-':
+            print(values['-IP-'], values['-PASSWORD-'], values['-DEVICE-'].split(' ')[0])
+            sg.popup_quick_message('Testing connection to device...', keep_on_top=True, background_color='grey')
+            driver = initialise_driver(values['-IP-'], values['-PASSWORD-'], values['-DEVICE-'].split(' ')[0])
+            if driver:
+                sg.popup('Connection successful!', icon='success')
+                driver.quit()
+            else:
+                sg.popup('Connection failed!', icon='error')
+            
         if event == '-COLLATE_FILES-' or event == '-DATES_CHOSEN-':
             if window['-OPTION-'] == '':
                 sg.popup(title='No Option Selected', custom_text = 'Please select an option first', button_type=sg.POPUP_BUTTONS_OK, icon='error')
