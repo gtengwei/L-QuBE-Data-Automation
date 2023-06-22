@@ -77,11 +77,11 @@ def popup_add_device():
     col_layout = [[sg.Button('Add', bind_return_key=True), sg.Button('Cancel')]]
     device_info_frame = [
         [sg.Text('Enter Device IP')],
-        [sg.InputText(key='-IP-', tooltip='Device IP', enable_events=True)],
+        [sg.InputText(key='-IP-', tooltip='Device IP', enable_events=True, expand_x=True)],
         [sg.Text('Enter Device Password')],
-        [sg.InputText(key='-PASSWORD-', tooltip='Device Password', enable_events=True)],
+        [sg.InputText(key='-PASSWORD-', tooltip='Device Password', enable_events=True, expand_x=True)],
         [sg.Text('Enter Device Slots'), sg.Button('Find All Slots', key='-FIND_All_SLOTS-', tooltip='Find all slots on device')],
-        [sg.Multiline(key='-SLOTS-', size=(43, 5), tooltip='Enter every new slot on new line', enable_events=True)],
+        [sg.Multiline(key='-SLOTS-', size=(43, 10), tooltip='Enter every new slot on new line', enable_events=True, expand_x=True, expand_y=True)],
         [sg.Column(col_layout, expand_x=True, element_justification='left')],
     ]
     layout = [
@@ -90,7 +90,7 @@ def popup_add_device():
         sg.Frame('Choose your slots', slots_column_frame, size=(WIDTH,HEIGHT), expand_x=True, expand_y=True, visible=False, key='-SLOTS_COL-'),],
         [sg.Frame('', select_slots_button, size=(WIDTH, 60),  expand_x=True, element_justification='right', visible=False, key='-SELECT_SLOTS_BTN-')]
     ]
-    window = sg.Window("Add Device", layout, use_default_focus=False, finalize=True, modal=True)
+    window = sg.Window("Add Device", layout, use_default_focus=False, finalize=True, modal=True, resizable=True)
     block_focus(window)
 
     while True:
