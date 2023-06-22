@@ -445,6 +445,7 @@ def interface():
             first_device = next(iter(device_num_dict))
 
             # Update values in window to show current device details
+            window['-FOLDER_NAME-'].update(value=os.path.basename(os.path.normpath(config.directory)))
             window['-DEVICE-'].update(value=device_num_dict[device_num], values=list(device_num_dict.values()))
             window['-DEVICE_CHOICE-'].update(value=f"{config.device_choice} ({config.devices[config.device_choice]['ip']})", values=list(device_num_dict.values()))
             window['-IP-'].update(value=config.devices[device_num]['ip'])
