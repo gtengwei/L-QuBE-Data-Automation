@@ -270,6 +270,7 @@ def build():
     
     error_log_multiline= [
         [sg.Multiline(key='-ERROR_LOG-', tooltip='Error log', enable_events=True, size=(30, 8), autoscroll=True, expand_x=True, expand_y=True)],
+        [sg.Button('Clear Error Log', key='-CLEAR_ERROR_LOG-', tooltip='Click to clear error log')]
     ]
 
     # Initial frame to choose option
@@ -560,6 +561,12 @@ def interface():
             window['-ERROR_LOG-'].update(value=file.read())   
             file.close()
 
+        if event == '-CLEAR_ERROR_LOG-':
+            open('error_log.txt', 'w').close()
+            file = open('error_log.txt','r')
+            window['-ERROR_LOG-'].update(value=file.read())   
+            file.close()
+            
         if event == '-COLLATE_FILES-' or event == '-DATES_CHOSEN-':
             if window['-OPTION-'] == '':
                 sg.popup(title='No Option Selected', custom_text = 'Please select an option first', button_type=sg.POPUP_BUTTONS_OK, icon='error')
