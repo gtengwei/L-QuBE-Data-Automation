@@ -8,6 +8,7 @@ import threading
 import datetime as dt
 import os
 from collections import defaultdict
+
 # Add a touch of color
 sg.theme('DarkBlue3')  
 
@@ -485,7 +486,6 @@ def interface():
             device_num_dict = defaultdict()
             for device_number, device in config.devices.items():
                 device_num_dict[device_number] = f"{device_number} ({device['ip']})"
-            first_device = next(iter(device_num_dict))
 
             # Update values in window to show current device details
             window['-FOLDER_NAME-'].update(value=os.path.basename(os.path.normpath(config.directory)))
@@ -571,7 +571,6 @@ def interface():
                 
                 if window['-OPTION-'].get() == 'Download all data (Non-repeated)':
                     sg.popup_quick_message('Please wait for the data to be downloaded...', keep_on_top=True, background_color='grey')
-                    # threading.Thread(target= run_automation, args=(config, 'all', window, )).start()
                     run_automation(config, 'all', window)
 
                 elif window['-OPTION-'].get() == 'Choose specific slots to download (Non-repeated)':

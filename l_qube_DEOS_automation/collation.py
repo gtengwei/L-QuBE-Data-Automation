@@ -19,7 +19,6 @@ def clean_dataframe(csv, option):
 
     for i in range(len(result)):
         result[i] = result[i].replace('\n','')
-    # result = result.split(',')
 
     temp = result[1:]
 
@@ -30,9 +29,6 @@ def clean_dataframe(csv, option):
     
     temp_df['Timestamp'] = temp_df['Timestamp'].str.split(':')
     temp_df['Timestamp'] = temp_df['Timestamp'].str[0] + ':' + temp_df['Timestamp'].str[1]
-    # for i in range(len(temp_df['Timestamp'])):
-    #     temp_df['Timestamp'][i] = temp_df['Timestamp'][i].split(':')
-    #     temp_df['Timestamp'][i] = temp_df['Timestamp'][i][0] + ':' + temp_df['Timestamp'][i][1]
     
     slot_name = result[0]
     slot_name = slot_name.split(':')[1][1:]
@@ -137,12 +133,10 @@ def insert_empty_slot(df):
     hour_minute_list = [[i,j] for i in range(0,24) for j in range(0,60)]
     for i in range(len(hour_minute_list)):
         hour_minute_list[i] = ['%02d' % hour_minute_list[i][0], '%02d' % hour_minute_list[i][1]]
-    # print(hour_minute_list)
     for i in range(len(df['Timestamp'])):
         temp = df['Timestamp'][i].split(':')
         if [temp[0],temp[1]] in hour_minute_list:
             hour_minute_list.remove([temp[0],temp[1]])
-    # print(hour_minute_list)
 
     empty_row = [None for _ in range(len(df.columns))]
     for i in range(len(hour_minute_list)):
@@ -151,7 +145,6 @@ def insert_empty_slot(df):
         empty_row[1] = hour_minute_list[i]
         df.loc[len(df)] = empty_row
     df = df.sort_values(by=['Timestamp'], ascending=True)
-    # df.to_csv('test.csv', index=False)
     return df
 
 def collate_dataframes(option, change_directory):
@@ -210,5 +203,3 @@ def collate_dataframes(option, change_directory):
         filled_collated_df.to_excel(f"Today_{current_date}_collated.xlsx", index = False)
     print("Collation Complete")
     os.chdir(main_directory)
-
-# collate_dataframes()

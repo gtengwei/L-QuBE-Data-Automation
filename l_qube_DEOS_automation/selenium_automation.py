@@ -43,11 +43,6 @@ def initialise_driver(ip, password, device_num):
         file.write(f'Configuration Error: {device_num}\'s IP address {ip} is not valid/incorrect. \n')
         file.close()
         
-    
-        
-    
-
-
 def run_to_trend_export_page(driver, password, device_num):
     
     driver.implicitly_wait(10)
@@ -102,8 +97,6 @@ def automate_time(config):
         year="*", month="*", day="*", 
         hour=config.hour, minute=config.minute, second="0", timezone=SG
     )
-    # interval_trigger = IntervalTrigger(minutes=3)
-    # trigger = AndTrigger([interval_trigger, cron_trigger])
 
     scheduler.add_executor(DebugExecutor(), 'consecutive')
     scheduler.add_job(run_automation, args=[config,'daily'], trigger=cron_trigger, id='daily', 
@@ -263,19 +256,11 @@ def run_automation(config, option):
             ip = device['ip']
             directory = create_new_directory(ip, config.directory, option)
             driver = initialise_driver(ip, device['password'])
-            # run_to_trend_export_page(driver)
             driver.implicitly_wait(10)
 
             download_csv(driver, device, option)
             collate_dataframes(option, directory)
             driver.close()
-    
-
-# driver = initialise_driver()
-# run_to_trend_export_page(driver)
-# choose_slot(driver)
-# collate_dataframes()
-# driver.close()
 
 #download google chrome (chrome.exe)
 #pip3 install webdriver-manager

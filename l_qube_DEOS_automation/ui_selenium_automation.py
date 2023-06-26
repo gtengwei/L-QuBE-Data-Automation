@@ -7,7 +7,6 @@ from subprocess import CREATE_NO_WINDOW # This flag will only be available in wi
 import os
 from apscheduler.schedulers.background import BackgroundScheduler
 from apscheduler.triggers.cron import CronTrigger
-from apscheduler.triggers.interval import IntervalTrigger
 from apscheduler.executors.debug import DebugExecutor
 import pytz
 
@@ -54,11 +53,6 @@ def initialise_driver(ip, password, device_num):
         file.write(f'{current_date} - Configuration Error: {device_num}\'s IP address {ip} is not valid/incorrect. \n')
         file.close()
         
-    
-        
-    
-
-
 def run_to_trend_export_page(driver, password, device_num):
     
     driver.implicitly_wait(10)
@@ -114,8 +108,6 @@ def automate_time(config, window):
         year="*", month="*", day="*", 
         hour=config.hour, minute=config.minute, second="0", timezone=SG
     )
-    # interval_trigger = IntervalTrigger(minutes=3)
-    # trigger = AndTrigger([interval_trigger, cron_trigger])
 
     scheduler.add_executor(DebugExecutor(), 'consecutive')
     scheduler.add_job(run_automation, args=[config,'daily', window], trigger=cron_trigger, id='daily', 
@@ -167,8 +159,7 @@ def download_csv(driver, device, option, device_num, window):
             daily_button.click()
             print('downloaded csv ' + str(i+1))
 
-    # If the user wants to choose and download selected files' data for the whole duration
-    # Not yet implemented allowing user to choose time period
+    # If the user wants to choose and download selected files' data for the specified duration
     elif option == 'choose':
         slots = find_all_slots(driver)
         window.write_event_value('CHOOSING SLOTS', None)
@@ -228,18 +219,13 @@ def find_all_slots(driver):
     slot_names = driver.find_elements('xpath', "//*[@id[contains(.,'slotbez')]]")
     print(len(slot_names))
     for slot_name in slot_names:
-        # print(slot_name.text)
         slots.append(slot_name.text)
     return slots
 
 def choose_slot(driver, chosen_slots, window):
-    # part 2: add slot number to choose
     for slot in chosen_slots:
         slot_name = driver.find_element('xpath', "//*[.='" + slot + "']").get_attribute("id")
-        print(slot_name)
-        # time.sleep(1)
         slot_num = slot_name[7:]
-        print(slot_num)
 
         checkbox = driver.find_element('id', "checkbox" + slot_num)
         checkbox.click()
@@ -247,7 +233,6 @@ def choose_slot(driver, chosen_slots, window):
         csv = driver.find_element('id', "csvlink" + slot_num)
         csv.click()
         print('downloaded csv file')
-        # time.sleep(1)
     window.write_event_value('EXECUTION DONE', None)
         
 
@@ -259,7 +244,6 @@ def run_automation(config, option, window):
                 for key, item in device.items():
                     if key == 'ip':
                         ip = item
-                        print(ip)
                         if option == 'daily_selected':
                             if len(device['slots']) == 0:
                                 print('No slots selected')

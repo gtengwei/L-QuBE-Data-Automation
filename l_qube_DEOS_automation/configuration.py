@@ -24,7 +24,6 @@ def get_json():
 def get_config():
     try:
         json_config = get_json()
-        # user_config = json_config['config']
         config = Configuration(json_config['directory'], json_config['device_choice'],
                                json_config['devices'],
                                json_config['hour'], json_config['minute'])
@@ -35,35 +34,3 @@ def get_config():
         file.close()
         return None
 
-# config = get_config()
-# print(config.devices)
-# for _, device in config.devices.items():
-#     print(len(device['slots']) == 0)
-
-# print(config.devices['device_1']['slots']['1'])
-# print(config.devices[config.device_choice]['ip'])
-# print(config.devices[config.device_choice])
-# device = config.devices[config.device_choice]
-
-# ip = device['ip']
-# print(ip)
-
-# for _, slots in device['slots'].items():
-#     print(slots)
-
-# for _, device in config.devices.items():
-#             for key, item in device.items():
-#                 if key == 'ip':
-#                      print(device['password'])
-
-# for key, items in config.ip.items():
-#     print(key, items)
-# print(config.ip[config.ip_choice])
-
-# for key, items in config.slots.items():
-#     print(config.slots[key])
-# print(config.slots['192.168.253.20'])
-
-# for key, items in config.slots['192.168.253.20'].items():
-#     print(items)
-# print(config.slots['ip_1'])
