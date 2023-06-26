@@ -6,7 +6,6 @@ import PySimpleGUI as sg
 from psgtray import SystemTray
 import threading
 import datetime as dt
-import time
 import os
 from collections import defaultdict
 # Add a touch of color
@@ -22,22 +21,6 @@ HEIGHT = 360
 
 MULTILINE_WIDTH = 550
 config = get_config()
-
-# Blank frame for testing purposes
-def blank_frame():
-    return sg.Frame("", [[]], pad=(5, 3), expand_x=True, expand_y=True, background_color='#404040', border_width=0)
-
-# Move window to the center of the screen
-def move_center(window):
-    print(window.current_location())
-    screen_width, screen_height = window.get_screen_dimensions()
-    win_width, win_height = window.size
-    x, y = (screen_width - win_width)//2, (screen_height - win_height)//2
-    window.move(x, y)
-
-# Update tooltip text
-def update(element, text):
-    element.TooltipObject.text = text
 
 def block_focus(window):
     for key in window.key_dict:    # Remove dash box of all Buttons
@@ -237,6 +220,7 @@ def build():
         [sg.Button('Select Dates', key='-DATES_CHOSEN-', tooltip='Click to select dates to collate')],
 
     ]
+
     device_input_combo = [
         sg.InputCombo(('default'), size=(24, 5), default_value=next(iter(config.devices)), key='-DEVICE-', tooltip='Device Name', enable_events=True),
         sg.Button('Test IP', key='-TEST_IP-', tooltip='Click to test IP address'),
@@ -252,6 +236,7 @@ def build():
     config_frame += [
         [sg.Text('Directory', size=(12, 1)), sg.InputText(config.directory, key='-DIRECTORY-', tooltip='Directory to save files', enable_events=True, size=(30, 1), expand_x=True), sg.FolderBrowse('Browse', key='-BROWSE-', tooltip='Click to browse for directory')],
     ]
+
     config_frame += [
         [sg.Text('Folder Name', size=(12, 1)), sg.Text(os.path.basename(os.path.normpath(config.directory)), key='-FOLDER_NAME-', tooltip='Name of folder to save files', enable_events=True, size=(30, 1))],
     ]
@@ -266,7 +251,9 @@ def build():
     config_frame += [
         [sg.Text('Devices', size=(12, 1))] + device_input_combo,
     ]
+
     config_frame += device_parameters
+
     config_frame += [
         [sg.Button('Save Configuration', key='-SAVE_CONFIG-', tooltip='Click to save configuration'),
          sg.Button('Add Device', key='-ADD_DEVICE-', tooltip='Click to add device'),
@@ -312,9 +299,6 @@ def build():
     select_slots_button = [
         [sg.Button('Select Slots', key='-SLOTS_CHOSEN-', tooltip='Click to select slots to collate')]
     ]
-    back_button = [
-        [sg.Button('Back', key='-BACK-')]
-    ]
 
     progress_bar = [
         [sg.Text('', key='-PROGRESS_TEXT-', justification='center', size=(20, 1), expand_x=True)],
@@ -323,14 +307,13 @@ def build():
     
     # Layout to combine all frames
     layout = [
-    [
-        sg.Frame('Progress Bar', progress_bar, size=(WIDTH,100), visible=False, key='-PROGRESS_COL-'),
-        [sg.Frame('Choose your option', option_frame, size=(WIDTH,HEIGHT), visible=True, key='-OPTION_COL-'),
-        sg.Frame('Choose your slots', slots_column_frame, size=(WIDTH,HEIGHT), expand_x=True, expand_y=True, visible=False, key='-SLOTS_COL-'),
-        sg.Frame('Edit Configuration', config_frame, size=(WIDTH+59,HEIGHT), visible=True, expand_x=True, expand_y=True, key='-CONFIG_COL-'),],
-        [sg.Frame('', select_slots_button, size=(WIDTH, 60),  expand_x=True, element_justification='right', visible=False, key='-SELECT_SLOTS_BTN-')]
-    
-     ]
+        [
+            sg.Frame('Progress Bar', progress_bar, size=(WIDTH,100), visible=False, key='-PROGRESS_COL-'),
+            [sg.Frame('Choose your option', option_frame, size=(WIDTH,HEIGHT), visible=True, key='-OPTION_COL-'),
+            sg.Frame('Choose your slots', slots_column_frame, size=(WIDTH,HEIGHT), expand_x=True, expand_y=True, visible=False, key='-SLOTS_COL-'),
+            sg.Frame('Edit Configuration', config_frame, size=(WIDTH+59,HEIGHT), visible=True, expand_x=True, expand_y=True, key='-CONFIG_COL-'),],
+            [sg.Frame('', select_slots_button, size=(WIDTH, 60),  expand_x=True, element_justification='right', visible=False, key='-SELECT_SLOTS_BTN-')]
+        ]
     ]
 
     margins = (5, 5)
