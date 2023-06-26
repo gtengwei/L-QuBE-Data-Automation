@@ -273,7 +273,6 @@ def combined_collation(path, window):
     collated_df = collated_df.sort_values(by=['Date','Timestamp'], ascending=[True,True])
     collated_df['Date'] = collated_df['Date'].dt.strftime('%d/%m/%Y')
     
-    print(f'These are the files with errors: {files_with_errors}')
     if files_with_errors:
         window['-SUMMARY_LIST-'].update('These are the files with errors: \n', append=True)
     for file in files_with_errors:

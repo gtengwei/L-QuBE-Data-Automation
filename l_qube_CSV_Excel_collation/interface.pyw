@@ -129,11 +129,9 @@ def interface():
         
         if event == '-PATH-':
             path = values['-PATH-']
-            print(path)
             window['-VALID_FILES_LIST-'].update('')
             window['-INVALID_FILES_LIST-'].update('')
             files = os.listdir(path)
-            print(os.path.basename(os.path.normpath(path)))
             window['-FOLDER-'].update(os.path.basename(os.path.normpath(path)))
             for file in files:
                 if file.endswith('collated.csv') or file.endswith('collated.xlsx'):
