@@ -52,17 +52,8 @@ def insert_empty_slot(df, missing_minutes_dict, file):
             empty_row[1] = temp
             df.loc[len(df)] = empty_row
             missing_minutes_dict[file, empty_row[0]].append(temp)
-    # print(hour_minute_list)
-    
-    # empty_row = [None for _ in range(len(df.columns))]
-    # for i in range(len(temp_hour_minute_list)):
-    #     hour_minute_list[i] = ':'.join(temp_hour_minute_list[i])
-    #     empty_row[0] = df['Date'][0]
-    #     empty_row[1] = temp_hour_minute_list[i]
-    #     df.loc[len(df)] = empty_row
-    #     missing_minutes_dict[file, empty_row[0]].append(temp_hour_minute_list[i])
+
     df = df.sort_values(by=['Date', 'Timestamp'], ascending=[True,True])
-    # df.to_csv('test.csv', index=False)
     return df
 
 def csv_collation(file, collated_df, files_with_errors, files_with_duplicate_timestamp_dict, missing_minutes_dict, empty_cells_timestamp_dict):
@@ -86,6 +77,7 @@ def csv_collation(file, collated_df, files_with_errors, files_with_duplicate_tim
         if '#' in file_lines[0][0]:
             # Change 'Value' Column to Slot name, which is in file_lines[0][0]
             file_lines[1][2] = file_lines[0][0].split(' ')[2]
+
         # Read the cleaned list into a Pandas DataFrame
         # For csv files with slot name in the first cell
         if len(file_lines[0]) < 2:
@@ -93,15 +85,6 @@ def csv_collation(file, collated_df, files_with_errors, files_with_duplicate_tim
         # For csv files with no slot name in first cell
         else:
             df = pd.DataFrame(file_lines[1:],columns=file_lines[0])
-
-        # try:
-        #     df.columns.get_loc('Timestamp')
-        # except:
-        #     for time in TIME:
-        #         if time in df.columns:
-        #             df = df.rename(columns={time: 'Timestamp'})
-        #             break 
-            # df = df.rename(columns={'Time': 'Timestamp'})
 
         # From here onwards, its the same as excel collation 
         return csv_excel_df_manipulation(file, collated_df, df, files_with_duplicate_timestamp_dict, missing_minutes_dict, empty_cells_timestamp_dict)
@@ -115,12 +98,10 @@ def excel_collation(file, collated_df, files_with_errors, files_with_duplicate_t
     try: 
         df = pd.read_excel(file, sheet_name=0, header=None)
         df = df.reset_index(drop=True)
-        # print(df.head())
         df = df.replace(r'^\s*$', np.nan, regex=True)
         df = df.replace('None', np.nan, regex=True)
         number_of_columns = len(df.columns)
         for i, row in df.iterrows():
-            # print(row.isnull().sum())
             if row.isnull().sum() >= number_of_columns-5:
                 df.drop(i,inplace=True)
             else:
@@ -133,40 +114,6 @@ def excel_collation(file, collated_df, files_with_errors, files_with_duplicate_t
         df = df.dropna(how='all')
         df.drop(columns=['index'], axis=1, inplace=True)
         print(file)
-        # try:
-        #     df.columns.get_loc('Timestamp')
-        # except:
-        #     for time in TIME:
-        #         if time in df.columns:
-        #             df = df.rename(columns={time: 'Timestamp'})
-        #             break
-            
-        # try:
-        #     # Check if there is a Date column
-        #     df.columns.get_loc('Date')
-        # except:
-        #     # If there is no Date column, check for date column name in DATE
-        #     for date in DATE:
-        #         if date in df.columns:
-        #             df = df.rename(columns={date: 'Date'})
-        #             break
-
-        # for date_time in DATE_AND_TIME:
-        #     try:
-        #         df[date_time] = df[date_time].str.split(' ')
-        #         df['Date'] = df[date_time].str[0]
-        #         date_and_time_format = date_time
-
-        #         timestamp_split = df[date_time].str[1].str.strip(':')
-        #         timestamp_split = timestamp_split.str.split(':')
-        #         df['Timestamp'] = timestamp_split.apply(lambda x: str('%02d' % int(x[0])) + ':' + str('%02d' % int(x[1])))
-        #         break
-        #     except:
-        #         pass
-        
-        # if date_and_time_format != '':
-        #     df.drop(columns=[date_and_time_format], axis=1, inplace=True)
-        # print(df.columns)
 
         # From here onwards, its the same as csv collation
         return csv_excel_df_manipulation(file, collated_df, df, files_with_duplicate_timestamp_dict, missing_minutes_dict, empty_cells_timestamp_dict)
@@ -208,6 +155,7 @@ def csv_excel_df_manipulation(file, collated_df, df, files_with_duplicate_timest
             break
         except:
             pass
+
     if date_and_time_format != '':
             df.drop(columns=[date_and_time_format], axis=1, inplace=True)
     # Replace blank/None cells with NaN
@@ -254,36 +202,26 @@ def csv_excel_df_manipulation(file, collated_df, df, files_with_duplicate_timest
 
     # Tracking of duplicate timestamp
     duplicate_df = df[df.duplicated(subset=['Date', 'Timestamp'])]
-    # print(duplicate_df.head())
-    # print((duplicate_df[['Date','Timestamp']]).values.tolist())
     duplicate_date_timestamp = duplicate_df[['Date','Timestamp']].values.tolist()
-    # duplicate_timestamp = [str(date) +' {} '.format(timestamp) for timestamp in duplicate_timestamp]
     if duplicate_date_timestamp:
         for date_timestamp in duplicate_date_timestamp:
             date = str(date_timestamp[0])
             timestamp = str(date_timestamp[1])
             files_with_duplicate_timestamp_dict[file, date].extend(['{} '.format(timestamp)])
-        # files_with_duplicate_timestamp_dict[file].extend(['{} '.format(timestamp) for timestamp in duplicate_timestamp])
 
     # Locate and inform user about missing value in cells
     empty_cells_location = np.where(pd.isnull(df))
     unique_empty_cells_location = np.unique(empty_cells_location[0])
-    # print(unique_empty_cells_location)
     if empty_cells_location[0].size != 0:
         for index in unique_empty_cells_location:
             empty_cells_timestamp_dict[file, df.iloc[index, date_column_index]].extend(['{} '. format(df.iloc[index,timestamp_column_index])])
-        # empty_cells_timestamp_dict[file, date].extend(['{} '. format(df.iloc[i,timestamp_column_index]) for i in unique_empty_cells_location])
-    # print(empty_cells_timestamp)
-    
     
     df = insert_empty_slot(df, missing_minutes_dict, file)
     df = df.set_index(['Date','Timestamp'])
     collated_df = collated_df.combine_first(df).reindex(columns=cols)
-    # files_with_duplicate_timestamp_dict.append((file, duplicate_timestamp))
     return collated_df
 
 def combined_collation(path, window):
-    # directory = collation['directory']
     directory = path
     vendor = os.path.basename(directory)
     os.chdir(directory)
@@ -323,8 +261,6 @@ def combined_collation(path, window):
                     window['-PROGRESS_TEXT-'].update('Saving collated file...')
                 else:
                     window['-PROGRESS_TEXT-'].update(str(progress) + '% completed')
-                # if file.endswith('collated.xlsx') or file.endswith('collated.csv'):
-                #     continue
                 
                 if file.endswith('.csv'):
                     collated_df = csv_collation(file, collated_df, files_with_errors, files_with_duplicate_timestamp_dict, missing_minutes_dict, empty_cells_timestamp_dict)
@@ -344,39 +280,30 @@ def combined_collation(path, window):
         window['-ERROR_FILES_LIST-'].update(f'{file}\n', append=True)
         window['-SUMMARY_LIST-'].update(f'{file}\n', append=True)
 
-    print('These are the files with duplicate timestamp: ')
-    print(files_with_duplicate_timestamp_dict)
     if files_with_duplicate_timestamp_dict:
         window['-SUMMARY_LIST-'].update('\nThese are the files with duplicate timestamp detected: \n', append=True)
     for file, duplicate_timestamp in files_with_duplicate_timestamp_dict.items():
-        # print(''.join(duplicate_timestamp))
         temp = ''.join(duplicate_timestamp)
-        # print(f'{file}: {temp}')
         window['-DUPLICATE_TIMESTAMPS_LIST-'].update(f'{file}: Timestamp {temp}\n\n', append=True)
         window['-SUMMARY_LIST-'].update(f'{file}: Timestamp {temp}\n\n', append=True)
     
-    print('These are the files with missing minutes: ')
     if missing_minutes_dict:
         window['-SUMMARY_LIST-'].update('\nThese are the files with missing minutes added: \n', append=True)
     for file, missing_minutes in missing_minutes_dict.items():
         temp = ' '.join(missing_minutes)
-        # print(f'{file}: {temp}')
         window['-MISSING_MINUTES_LIST-'].update(f'{file}: Timestamp {temp}\n\n', append=True)
         window['-SUMMARY_LIST-'].update(f'{file}: Timestamp {temp}\n\n', append=True)
     
-    print('These are the files with empty cells: ')
     if empty_cells_timestamp_dict:
         window['-SUMMARY_LIST-'].update('\nThese are the files with empty cells detected: \n', append=True)
     for file, empty_cells_timestamp in empty_cells_timestamp_dict.items():
         temp = ''.join(empty_cells_timestamp)
-        # print(f'{file}: {temp}')
         window['-EMPTY_CELLS_LIST-'].update(f'{file}: Timestamp {temp}\n\n', append=True)
         window['-SUMMARY_LIST-'].update(f'{file}: Timestamp {temp}\n\n', append=True)
 
 
     current_date = get_current_date()
     collated_df.to_excel(f'{vendor}_{current_date}_collated.xlsx', index=False)
-    # collated_df.to_csv(f'{vendor}_{current_date}_collated.csv', index=False)
     writer = pd.ExcelWriter(f'{vendor}_{current_date}_collated.xlsx',
                         engine='xlsxwriter',
                         date_format='d/m/yyyy')
@@ -388,17 +315,3 @@ def combined_collation(path, window):
         window.write_event_value('COLLATION SUCCESSFUL', None)
     else:
         window.write_event_value('EXECUTION DONE', None)
-
-
-# issues with excel file: date and time column, and format of date and time(2022-08-26 :23:59:00 PM)
-# e2i: 01:50 chiller 41 has duplicate timestamp
-# e2i: chiller 217 has no column header
-# e2i: mixture of files within
-# e2i: MSB has no column header
-# e2i: date format changes when there is no slot name
-
-# hybrid(some has missing slot name)
-# missing data
-# missing slot name and missing data
-# missing slot name in first cell
-# normal

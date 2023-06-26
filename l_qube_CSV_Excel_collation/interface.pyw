@@ -110,7 +110,6 @@ def build():
 
 # Main function to run the GUI
 def interface():
-    # config = get_config()
     # Create the window
     window = build()
     window['-OPTION_COL-'].expand(True, True)
