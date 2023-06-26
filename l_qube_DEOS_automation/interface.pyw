@@ -338,7 +338,7 @@ def interface():
     tooltip = 'Double click to show interface'
     tray = SystemTray(menu, single_click_events=False, window=window, tooltip=tooltip, icon=sg.DEFAULT_BASE64_ICON)
     tray.show_message('DEOS Interface', 'DEOS Interface launched!')
-    
+
     window['-OPTION_COL-'].expand(True, True)
     start_scheduler = False
 
@@ -382,8 +382,6 @@ def interface():
         # When user starts scheduler via tray menu
         elif event == 'Start Scheduler':
             if start_scheduler == False:
-                automate_thread = threading.Thread(target= automate_time, args=(config, window, ))
-                automate_thread.start()
                 start_scheduler = True
                 ui_selenium_automation.stop_thread = False
                 window['-COLLATE_FILES-'].update(disabled=True)
@@ -391,6 +389,10 @@ def interface():
                 window['-STATUS-'].update(value='Scheduler started', text_color='lightgreen')
                 tray.change_icon(sg.EMOJI_BASE64_HAPPY_JOY)
                 tray.show_message('Scheduler', 'Scheduler has been started')
+
+                automate_thread = threading.Thread(target= automate_time, args=(config, window, ))
+                automate_thread.start()
+                
             else:
                 sg.popup('Scheduler has already been started!')
 
@@ -403,7 +405,7 @@ def interface():
         elif event in ('Hide Window', sg.WIN_CLOSE_ATTEMPTED_EVENT):
             window.hide()
             tray.show_icon()        # if hiding window, better make sure the icon is visible
-            tray.show_message('Minimising to tray(Application not closed)', 'Running in the background...')
+            tray.show_message('Minimising to tray (Application not closed)', 'Running in the background...')
 
         # Edit configuration
         if values['-OPTION-'] == 'Edit Configuration':
