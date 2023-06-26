@@ -29,7 +29,7 @@ def block_focus(window):
         if isinstance(element, sg.Button):
             element.block_focus()
 
-def popup_add_device():
+def popup_add_device(config):
     class Device:
         def __init__(self, num, ip, password, slots):
             self.num = num
@@ -506,7 +506,7 @@ def interface():
 
         # Add device to configuration
         if event == '-ADD_DEVICE-':
-            device = popup_add_device()
+            device = popup_add_device(config)
             if device:
                 device.num = f'device_{len(config.devices) + 1}'
                 config.devices[device.num] = {'ip': device.ip, 'password': device.password, 'slots': {}}
