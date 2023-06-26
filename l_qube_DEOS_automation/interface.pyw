@@ -220,6 +220,11 @@ def update_device_display(window, config):
     for slot_num, slot in config.devices[first_device]['slots'].items(): 
         window['-SLOTS-'].update(f'{slot}\n', append=True)
 
+def update_error_log_display(window):
+    file = open('error_log.txt','r')
+    window['-ERROR_LOG-'].update(value=file.read())   
+    file.close()
+    
 # Build the GUI
 def build():
     # Frame to choose dates
@@ -349,9 +354,7 @@ def interface():
     config = get_config()
     update_device_display(window, config)
 
-    file = open('error_log.txt','r')
-    window['-ERROR_LOG-'].update(value=file.read())   
-    file.close()
+    update_error_log_display(window)
 
     # Display window
     while True:
@@ -557,15 +560,11 @@ def interface():
         
         if event == '-CHECK_DEVICE_INFO-':
             check_device_info(config)
-            file = open('error_log.txt','r')
-            window['-ERROR_LOG-'].update(value=file.read())   
-            file.close()
+            update_error_log_display(window)
 
         if event == '-CLEAR_ERROR_LOG-':
             open('error_log.txt', 'w').close()
-            file = open('error_log.txt','r')
-            window['-ERROR_LOG-'].update(value=file.read())   
-            file.close()
+            update_error_log_display(window)
             
         if event == '-COLLATE_FILES-' or event == '-DATES_CHOSEN-':
             if window['-OPTION-'] == '':

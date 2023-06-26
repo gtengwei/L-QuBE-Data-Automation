@@ -1,13 +1,13 @@
 {
-    "directory": "C:\\Users\\tengwei.goh\\Documents\\GitHub\\L-QuBE-Data-Automation\\l_qube_DEOS_automation",
+    "directory": "C:/Users/tengwei.goh/Documents/GitHub/L-QuBE-Data-Automation/l_qube_DEOS_automation",
     "device_choice": "device_1",
     "devices": {
         "device_1": {
-            "ip": "192.168.170.105",
+            "ip": "192.168.170.101",
             "password": "0007",
             "slots": {
-                "1": "HDR_CDW_FL",
-                "2": "HDR2_CDW_FL"
+                "1": "Trend1",
+                "2": "Trend1"
             }
         },
         "device_2": {
@@ -19,6 +19,6 @@
             }
         }
     },
-    "hour": "10",
-    "minute": "01"
+    "hour": "14",
+    "minute": "54"
 }
