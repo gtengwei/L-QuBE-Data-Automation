@@ -519,14 +519,13 @@ def interface():
                         sg.popup('Scheduler has already been started', icon='warning')
                 
                 if window['-OPTION-'].get() == 'Download all data (Non-repeated)':
-                    threading.Thread(target= run_automation, args=(config, 'all', window, )).start()
+                    sg.popup_quick_message('Please wait for the data to be downloaded...', keep_on_top=True, background_color='grey')
+                    # threading.Thread(target= run_automation, args=(config, 'all', window, )).start()
+                    run_automation(config, 'all', window)
 
                 elif window['-OPTION-'].get() == 'Choose specific slots to download (Non-repeated)':
                     sg.popup_quick_message('Please wait for the slots to be displayed...', keep_on_top=True, background_color='grey')
-                    window['-SLOTS_COL-'].update(visible=True)
-                    window['-SELECT_SLOTS_BTN-'].update(visible=True)
-                    window['-COLLATE_FILES-'].update(visible=False)
-                    window['-DATES_CHOSEN-'].update(disabled=True)
+                    
                     driver, slots, directory = run_automation(config, 'choose', window)
                     if driver is None:
                         sg.popup('Error occurred!', icon='warning')
@@ -554,7 +553,6 @@ def interface():
         if event == 'EXECUTION DONE':
             window['-SLOTS_COL-'].update(visible=False)
             window['-SELECT_SLOTS_BTN-'].update(visible=False)
-            window['-COLLATE_FILES-'].update(visible=True)
             window['-DATES_CHOSEN-'].update(disabled=False)
             
         if event == '-SLOTS_CHOSEN-':
@@ -563,6 +561,7 @@ def interface():
                 if window[f'-SLOT{i+1}-'].get() == True:
                     chosen_slots.append(slots[i])
             print(chosen_slots)
+            window['-SLOTS_CHOSEN-'].update(disabled=True)
             sg.popup_quick_message('Please wait for the download to complete...', keep_on_top=True, background_color='grey')
             choose_slot(driver, chosen_slots, window)
             collate_dataframes('choose', directory)
