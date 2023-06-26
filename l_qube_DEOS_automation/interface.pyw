@@ -268,7 +268,9 @@ def build():
          sg.Button('Remove Device', key='-REMOVE_DEVICE-', tooltip='Click to remove device')],
     ]
     
-    
+    error_log_multiline= [
+        [sg.Multiline(key='-ERROR_LOG-', tooltip='Error log', enable_events=True, size=(30, 8), autoscroll=True, expand_x=True, expand_y=True)],
+    ]
 
     # Initial frame to choose option
     option_frame = [
@@ -280,7 +282,8 @@ def build():
                         sg.Button('Check Device Info', key='-CHECK_DEVICE_INFO-', tooltip='Click to check device info', visible=False)],
         [sg.Button('Start Collation', key='-COLLATE_FILES-', tooltip='Click to collate files in the chosen folder', visible=False), 
          sg.Button('Stop Collation', key='-STOP_SCHEDULER-', tooltip='Click to stop scheduler', visible=False, disabled=True)],
-         [sg.Text('Status: ', size=(5, 1), key='-STATUS_text-', visible=False), sg.Text('Scheduler not started', size=(20, 1), key='-STATUS-', text_color='firebrick3', visible=False)],
+        [sg.Text('Status: ', size=(5, 1), key='-STATUS_text-', visible=False), sg.Text('Scheduler not started', size=(20, 1), key='-STATUS-', text_color='firebrick3', visible=False)],
+        [sg.pin(sg.Column(error_log_multiline, key='-ERROR_FRAME-', visible=False, pad=(0,0), expand_x=True, expand_y=True), expand_x=True, expand_y=True)],
         [sg.Frame('Choose Time Period', date_frame, size=(WIDTH,HEIGHT), visible=False, key='-DATES_FRAME-', expand_x=True, expand_y=True)],
     ]
 
@@ -335,14 +338,20 @@ def interface():
     tooltip = 'Double click to show interface'
     tray = SystemTray(menu, single_click_events=False, window=window, tooltip=tooltip, icon=sg.DEFAULT_BASE64_ICON)
     tray.show_message('DEOS Interface', 'DEOS Interface launched!')
-    # window.maximize()
-    # window['-OPTION-'].expand(expand_x=True, expand_y=False)
+    
     window['-OPTION_COL-'].expand(True, True)
     start_scheduler = False
+
     window['-START_DATE-'].update(value=dt.datetime.now().strftime('%m-%d-%Y' + ' 00:00:00'))
     window['-END_DATE-'].update(value=dt.datetime.now().strftime('%m-%d-%Y %H:%M:%S'))
+
     config = get_config()
     update_device_display(window, config)
+
+    file = open('error_log.txt','r')
+    window['-ERROR_LOG-'].update(value=file.read())   
+    file.close()
+
     # Display window
     while True:
         event, values = window.read()
@@ -405,6 +414,7 @@ def interface():
             window['-STATUS_text-'].update(visible=False)
             window['-STATUS-'].update(visible=False)
             window['-CHECK_DEVICE_INFO-'].update(visible=False)
+            window['-ERROR_FRAME-'].update(visible=False)
 
         # Run daily automation
         if values['-OPTION-'] == 'Automate Collation (Repeated)':
@@ -415,6 +425,7 @@ def interface():
             window['-STATUS_text-'].update(visible=True)
             window['-STATUS-'].update(visible=True)
             window['-CHECK_DEVICE_INFO-'].update(visible=True)
+            window['-ERROR_FRAME-'].update(visible=True)
 
 
         # Download all data
@@ -426,6 +437,7 @@ def interface():
             window['-STATUS_text-'].update(visible=False)
             window['-STATUS-'].update(visible=False)
             window['-CHECK_DEVICE_INFO-'].update(visible=False)
+            window['-ERROR_FRAME-'].update(visible=False)
 
         # Download specific slots in a specific date range
         if values['-OPTION-'] == 'Choose specific slots to download (Non-repeated)':
@@ -436,6 +448,7 @@ def interface():
             window['-STATUS_text-'].update(visible=False)
             window['-STATUS-'].update(visible=False)
             window['-CHECK_DEVICE_INFO-'].update(visible=False)
+            window['-ERROR_FRAME-'].update(visible=False)
 
         # Set default start date to 00:00:00
         if event == '-START_DATE-':
