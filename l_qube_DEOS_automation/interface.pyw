@@ -1,6 +1,7 @@
 from ui_selenium_automation import run_automation, choose_slot, collate_dataframes, automate_time, initialise_driver, find_all_slots
 import ui_selenium_automation
 from configuration import get_config
+from collation import get_current_datetime, main_directory
 import PySimpleGUI as sg
 from psgtray import SystemTray
 import threading
@@ -8,7 +9,6 @@ import datetime as dt
 import time
 import os
 from collections import defaultdict
-
 # Add a touch of color
 sg.theme('DarkBlue3')  
 
@@ -172,6 +172,41 @@ def popup_remove_device(config):
             window.close()
             return values['-DEVICE-']
 
+def check_device_info(config):
+    accurate_devices_info = True
+    for device_num, device in config.devices.items():
+        for key, item in device.items():
+            sg.popup_quick_message('Checking device info...', keep_on_top=True, background_color='grey')
+            if key == 'ip':
+                ip = item
+                try:
+                    driver = initialise_driver(ip, device['password'], device_num)
+                    driver.implicitly_wait(10)
+                    all_slots = find_all_slots(driver)
+                    print(all_slots)
+                    driver.close()
+                except:
+                    sg.popup_error(f"Unable to connect to {device_num} ({ip}). Please check your device IP.")
+                    accurate_devices_info = False
+                    break
+            if key == 'slots':
+                for _, slot_name in item.items():
+                    if slot_name in all_slots:
+                        pass
+                    else:
+                        sg.popup_error(f"Slot {slot_name} does not exist on {device_num}. Please check your device's slot names.")
+                        accurate_devices_info = False
+                        current_date = get_current_datetime()
+                        os.chdir(main_directory)
+                        file = open('error_log.txt','a')
+                        file.write(f'{current_date} - Configuration Error: {device_num}\'s slot: \'{slot_name}\' is not valid/spelled incorrectly. \n')
+                        file.close()
+    if accurate_devices_info:
+        sg.popup_ok('All device information is correct! You may proceed to start the daily scheduler.')  
+    else:
+        sg.popup_error('Please check your device(s) information and try again.')                
+    
+                
 def update_device_display(window, config):
     device_num_dict = defaultdict()
     for device_num, device in config.devices.items():
@@ -241,7 +276,8 @@ def build():
          sg.InputCombo(('Edit Configuration',
                         'Automate Collation (Repeated)',
                         'Download all data (Non-repeated)', 
-                        'Choose specific slots to download (Non-repeated)',), default_value='Edit Configuration', enable_events=True, size=(70, 4), key='-OPTION-')],
+                        'Choose specific slots to download (Non-repeated)',), default_value='Edit Configuration', enable_events=True, size=(None, 4), key='-OPTION-', expand_x=True),
+                        sg.Button('Check Device Info', key='-CHECK_DEVICE_INFO-', tooltip='Click to check device info', visible=False)],
         [sg.Button('Start Collation', key='-COLLATE_FILES-', tooltip='Click to collate files in the chosen folder', visible=False), 
          sg.Button('Stop Collation', key='-STOP_SCHEDULER-', tooltip='Click to stop scheduler', visible=False, disabled=True)],
          [sg.Text('Status: ', size=(5, 1), key='-STATUS_text-', visible=False), sg.Text('Scheduler not started', size=(20, 1), key='-STATUS-', text_color='firebrick3', visible=False)],
@@ -368,6 +404,7 @@ def interface():
             window['-STOP_SCHEDULER-' ].update(visible=False)
             window['-STATUS_text-'].update(visible=False)
             window['-STATUS-'].update(visible=False)
+            window['-CHECK_DEVICE_INFO-'].update(visible=False)
 
         # Run daily automation
         if values['-OPTION-'] == 'Automate Collation (Repeated)':
@@ -377,6 +414,8 @@ def interface():
             window['-STOP_SCHEDULER-' ].update(visible=True)
             window['-STATUS_text-'].update(visible=True)
             window['-STATUS-'].update(visible=True)
+            window['-CHECK_DEVICE_INFO-'].update(visible=True)
+
 
         # Download all data
         if values['-OPTION-'] == 'Download all data (Non-repeated)':
@@ -386,6 +425,7 @@ def interface():
             window['-STOP_SCHEDULER-' ].update(visible=False)
             window['-STATUS_text-'].update(visible=False)
             window['-STATUS-'].update(visible=False)
+            window['-CHECK_DEVICE_INFO-'].update(visible=False)
 
         # Download specific slots in a specific date range
         if values['-OPTION-'] == 'Choose specific slots to download (Non-repeated)':
@@ -395,6 +435,7 @@ def interface():
             window['-STOP_SCHEDULER-' ].update(visible=False)
             window['-STATUS_text-'].update(visible=False)
             window['-STATUS-'].update(visible=False)
+            window['-CHECK_DEVICE_INFO-'].update(visible=False)
 
         # Set default start date to 00:00:00
         if event == '-START_DATE-':
@@ -497,7 +538,10 @@ def interface():
                 driver.quit()
             else:
                 sg.popup('Connection failed!', icon='error')
-            
+        
+        if event == '-CHECK_DEVICE_INFO-':
+            check_device_info(config)
+
         if event == '-COLLATE_FILES-' or event == '-DATES_CHOSEN-':
             if window['-OPTION-'] == '':
                 sg.popup(title='No Option Selected', custom_text = 'Please select an option first', button_type=sg.POPUP_BUTTONS_OK, icon='error')
