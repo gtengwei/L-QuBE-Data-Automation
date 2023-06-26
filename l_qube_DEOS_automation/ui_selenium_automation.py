@@ -14,25 +14,33 @@ import pytz
 stop_thread = False
 
 def initialise_driver(ip, password, device_num):
-    # Must wait for 'Run' LED light to start blinking before running the program
-    directory = os.getcwd()
-    chrome_prefs = {"download.default_directory": directory} # (windows)
+    try:
+        # Must wait for 'Run' LED light to start blinking before running the program
+        directory = os.getcwd()
+        chrome_prefs = {"download.default_directory": directory} # (windows)
 
-    options = webdriver.ChromeOptions()
-    options.add_experimental_option('excludeSwitches', ['enable-logging'])
-    options.experimental_options["prefs"] = chrome_prefs
+        options = webdriver.ChromeOptions()
+        options.add_experimental_option('excludeSwitches', ['enable-logging'])
+        options.experimental_options["prefs"] = chrome_prefs
 
-    # For headless version of software
-    options.add_argument("--headless=new")
-    options.add_argument("--no-sandbox")
-    options.add_argument("--disable-dev-shm-usage")
-    
-    # To prevent python terminal from opening
-    chrome_service = ChromeService()
-    chrome_service.creation_flags = CREATE_NO_WINDOW
-    #initialise driver with curated options
-    driver = webdriver.Chrome(service=chrome_service, options=options)
-    # driver.get("http://192.168.253.20")
+        # For headless version of software
+        options.add_argument("--headless=new")
+        options.add_argument("--no-sandbox")
+        options.add_argument("--disable-dev-shm-usage")
+        
+        # To prevent python terminal from opening
+        chrome_service = ChromeService()
+        chrome_service.creation_flags = CREATE_NO_WINDOW
+        #initialise driver with curated options
+        driver = webdriver.Chrome(service=chrome_service, options=options)
+        # driver.get("http://192.168.253.20")
+    except:
+        current_date = get_current_datetime()
+        os.chdir(main_directory)
+        file = open('error_log.txt','a')
+        file.write(f'{current_date} - Configuration Error: Chromedriver not installed properly. \n')
+        file.close()
+        return None
     
     # Initialise driver with ip given. If ip is invalid, this means that there is an issue with the IP address
     try:
