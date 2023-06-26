@@ -585,6 +585,7 @@ def interface():
                         window['-SELECT_SLOTS_BTN-'].update(visible=True)
                         window['-COLLATE_FILES-'].update(visible=False)
                         window['-DATES_CHOSEN-'].update(disabled=True)
+                        window['-SLOTS_CHOSEN-'].update(disabled=False)
         
         # Stop scheduler within UI
         if event == '-STOP_SCHEDULER-':
