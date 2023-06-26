@@ -528,6 +528,14 @@ def interface():
                     window['-COLLATE_FILES-'].update(visible=False)
                     window['-DATES_CHOSEN-'].update(disabled=True)
                     driver, slots, directory = run_automation(config, 'choose', window)
+                    if driver is None:
+                        sg.popup('Error occurred!', icon='warning')
+                        continue
+                    else:
+                        window['-SLOTS_COL-'].update(visible=True)
+                        window['-SELECT_SLOTS_BTN-'].update(visible=True)
+                        window['-COLLATE_FILES-'].update(visible=False)
+                        window['-DATES_CHOSEN-'].update(disabled=True)
         
         # Stop scheduler within UI
         if event == '-STOP_SCHEDULER-':

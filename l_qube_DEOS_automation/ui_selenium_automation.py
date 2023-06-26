@@ -268,10 +268,16 @@ def run_automation(config, option, window):
             ip = device['ip']
             directory = create_new_directory(ip, config.directory, option)
             driver = initialise_driver(ip, device['password'], config.device_choice)
-            # run_to_trend_export_page(driver)
-            driver.implicitly_wait(10)
-
-            driver, slots = download_csv(driver, device, option, config.device_choice, window)
-            # collate_dataframes(option, directory)
-            return driver, slots, directory
+            if driver is not None:
+                driver.implicitly_wait(10)
+                driver, slots = download_csv(driver, device, option, config.device_choice, window)
+                return driver, slots, directory
+            else:
+                current_date = get_current_datetime()
+                os.chdir(main_directory)
+                file = open('error_log.txt','a')
+                file.write(f'{current_date} - Connection Error: Chromedriver is not properly installed. \n')
+                file.close()
+                return None, None, None
+            
     
