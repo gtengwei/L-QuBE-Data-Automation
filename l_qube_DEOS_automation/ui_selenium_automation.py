@@ -104,7 +104,7 @@ def run_to_trend_export_page(driver, password, device_num):
     print('switched to frame')
 
 def automate_time(config, window):
-    open('error_log.txt', 'w').close()
+    # open('error_log.txt', 'w').close()
     SG = pytz.timezone('Asia/Singapore')
     scheduler = BackgroundScheduler()
     scheduler.start()
