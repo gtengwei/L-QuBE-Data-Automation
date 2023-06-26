@@ -556,6 +556,9 @@ def interface():
         
         if event == '-CHECK_DEVICE_INFO-':
             check_device_info(config)
+            file = open('error_log.txt','r')
+            window['-ERROR_LOG-'].update(value=file.read())   
+            file.close()
 
         if event == '-COLLATE_FILES-' or event == '-DATES_CHOSEN-':
             if window['-OPTION-'] == '':
