@@ -1,4 +1,4 @@
-from collation import main_directory, create_new_directory, collate_dataframes
+from collation import main_directory, create_new_directory, collate_dataframes, get_current_datetime
 from selenium import webdriver
 import time
 from selenium.webdriver.common.by import By
@@ -40,9 +40,10 @@ def initialise_driver(ip, password, device_num):
         run_to_trend_export_page(driver, password, device_num)
         return driver
     except:
+        current_date = get_current_datetime()
         os.chdir(main_directory)
         file = open('error_log.txt','a')
-        file.write(f'Configuration Error: {device_num}\'s IP address {ip} is not valid/incorrect. \n')
+        file.write(f'{current_date} - Configuration Error: {device_num}\'s IP address {ip} is not valid/incorrect. \n')
         file.close()
         
     
@@ -78,9 +79,10 @@ def run_to_trend_export_page(driver, password, device_num):
         system.click()
         print('clicked system button')
     except:
+        current_date = get_current_datetime()
         os.chdir(main_directory)
         file = open('error_log.txt','a')
-        file.write(f'Configuration Error: {device_num}\'s password {password} is not valid/incorrect. \n')
+        file.write(f'{current_date} - Configuration Error: {device_num}\'s password {password} is not valid/incorrect. \n')
         file.close()
 
     time.sleep(1)
@@ -197,9 +199,10 @@ def download_csv(driver, device, option, device_num, window):
                 daily_button.click()
                 print('downloaded csv file')
             except:
+                current_date = get_current_datetime()
                 os.chdir(main_directory)
                 file = open('error_log.txt','a')
-                file.write(f'Configuration Error: {device_num}\'s slot: \'{slot}\' is not valid/spelled incorrectly. \n')
+                file.write(f'{current_date} - Configuration Error: {device_num}\'s slot: \'{slot}\' is not valid/spelled incorrectly. \n')
                 file.close()
     
     # If the user wants to download all files' data for today
