@@ -111,9 +111,9 @@ def automate_time(config, window):
 
     scheduler.add_executor(DebugExecutor(), 'consecutive')
     scheduler.add_job(run_automation, args=[config,'daily', window], trigger=cron_trigger, id='daily', 
-                      executor='consecutive', misfire_grace_time=600, max_instances=1)
+                      executor='consecutive', misfire_grace_time=1800, max_instances=1)
     scheduler.add_job(run_automation, args=[config,'daily_selected', window], trigger=cron_trigger, id='daily_selected', 
-                      executor='consecutive', misfire_grace_time=600, max_instances=1)
+                      executor='consecutive', misfire_grace_time=1800, max_instances=1)
 
     while True:
         time.sleep(5)
