@@ -60,7 +60,7 @@ def run_to_trend_export_page(driver, password, device_num):
     # password_button.click()
     password_button = driver.find_element('xpath', "//span[text()='Password']")
     password_button.click()
-    print('clicked password button')
+    # print('clicked password button')
 
     driver.implicitly_wait(10)
     password_textbox = driver.find_element(By.CLASS_NAME, "gwt-PasswordTextBox")
@@ -68,7 +68,7 @@ def run_to_trend_export_page(driver, password, device_num):
 
     driver.implicitly_wait(10)
     password_textbox.send_keys(u'\ue007')
-    print('entered and submitted password')
+    # print('entered and submitted password')
     # password_submit_button = driver.find_element(By.CLASS_NAME, "gwt-Button")
 
     time.sleep(2)
@@ -79,7 +79,7 @@ def run_to_trend_export_page(driver, password, device_num):
     try:
         system = driver.find_element('xpath', "//span[text()='system']")
         system.click()
-        print('clicked system button')
+        # print('clicked system button')
     except:
         current_date = get_current_datetime()
         os.chdir(main_directory)
@@ -91,18 +91,18 @@ def run_to_trend_export_page(driver, password, device_num):
     # trend_export = driver.find_element('id', "elem_115")
     trend_export = driver.find_element('xpath', "//span[text()='Trend-Export']")
     trend_export.click()
-    print('clicked trend export button')
+    # print('clicked trend export button')
 
     driver.implicitly_wait(10)
     driver.switch_to.frame(1)
-    print('switched to frame')
+    # print('switched to frame')
 
 def automate_time(config, window):
     # open('error_log.txt', 'w').close()
     SG = pytz.timezone('Asia/Singapore')
     scheduler = BackgroundScheduler()
     scheduler.start()
-    print('starting scheduler')
+    # print('starting scheduler')
     window.write_event_value('-START_SCHEDULER-', None)
     cron_trigger = CronTrigger(
         year="*", month="*", day="*", 
@@ -117,7 +117,7 @@ def automate_time(config, window):
 
     while True:
         time.sleep(5)
-        print(stop_thread)
+        # print(stop_thread)
         if stop_thread:
             break
     
@@ -127,7 +127,6 @@ def automate_time(config, window):
 def download_csv(driver, device, option, device_num, window):
     # Find all of the csv download buttons
     files = driver.find_elements('xpath', "//*[@id[contains(.,'csvlink')]]")
-    print(len(files))
 
     # Find all the checkboxes to toggle appearance of csv files
     checkboxes = driver.find_elements('xpath', "//*[@id[contains(.,'checkbox')]]")
@@ -139,17 +138,17 @@ def download_csv(driver, device, option, device_num, window):
             checkboxes[i].click()
             # time.sleep(0.5)
             files[i+1].click()
-            print('downloaded csv ' + str(i+1))
+            # print('downloaded csv ' + str(i+1))
     
     # If the user wants to download all files' data for the past day
     elif option == 'daily':
         period_button = driver.find_element('id', "periodselection")
         period_button.click()
-        print('clicked period button')
+        # print('clicked period button')
         driver.implicitly_wait(10)
         date = driver.find_element('id', "gestern") # yesterday
         date.click()
-        print('chose yesterday')
+        # print('chose yesterday')
 
         daily_csvlink = driver.find_element('id', "csvlink")
         daily_button = daily_csvlink.find_element('xpath', "//img[@alt='csvicon']")
@@ -157,15 +156,15 @@ def download_csv(driver, device, option, device_num, window):
         for i in range(len(checkboxes)):
             checkboxes[i].click()
             daily_button.click()
-            print('downloaded csv ' + str(i+1))
+            # print('downloaded csv ' + str(i+1))
 
     # If the user wants to choose and download selected files' data for the specified duration
     elif option == 'choose':
         slots = find_all_slots(driver)
         window.write_event_value('CHOOSING SLOTS', None)
-        print('This is the list of slot names: ')
+        # print('This is the list of slot names: ')
         for i in range(len(slots)):
-            print(str(i+1) + '. ' + slots[i])
+            # print(str(i+1) + '. ' + slots[i])
             window['-SLOT' + str(i+1) + '-'].update(text = slots[i])
             window['-SLOT' + str(i+1) + '-'].update(visible = True)
         return driver, slots
@@ -175,19 +174,19 @@ def download_csv(driver, device, option, device_num, window):
     elif option == 'daily_selected':
         period_button = driver.find_element('id', "periodselection")
         period_button.click()
-        print('clicked period button')
+        # print('clicked period button')
         driver.implicitly_wait(10)
         date = driver.find_element('id', "gestern") # yesterday
         date.click()
-        print('chose yesterday')
+        # print('chose yesterday')
 
         for _, slot in device['slots'].items():
             try:
                 slot_name = driver.find_element('xpath', "//*[.='" + slot + "']").get_attribute("id")
-                print(slot_name)
+                # print(slot_name)
                 time.sleep(0.5)
                 slot_num = slot_name[7:]
-                print(slot_num)
+                # print(slot_num)
 
                 checkbox = driver.find_element('id', "checkbox" + slot_num)
                 checkbox.click()
@@ -196,7 +195,7 @@ def download_csv(driver, device, option, device_num, window):
                 daily_csvlink = driver.find_element('id', "csvlink")
                 daily_button = daily_csvlink.find_element('xpath', "//img[@alt='csvicon']")
                 daily_button.click()
-                print('downloaded csv file')
+                # print('downloaded csv file')
             except:
                 current_date = get_current_datetime()
                 os.chdir(main_directory)
@@ -212,12 +211,11 @@ def download_csv(driver, device, option, device_num, window):
         for i in range(len(checkboxes)):
             checkboxes[i].click()
             daily_button.click()
-            print('downloaded csv ' + str(i+1))
+            # print('downloaded csv ' + str(i+1))
 
 def find_all_slots(driver):
     slots = []
     slot_names = driver.find_elements('xpath', "//*[@id[contains(.,'slotbez')]]")
-    print(len(slot_names))
     for slot_name in slot_names:
         slots.append(slot_name.text)
     return slots
@@ -232,12 +230,9 @@ def choose_slot(driver, chosen_slots, window):
 
         csv = driver.find_element('id', "csvlink" + slot_num)
         csv.click()
-        print('downloaded csv file')
+        # print('downloaded csv file')
     window.write_event_value('EXECUTION DONE', None)
         
-
-
-
 def run_automation(config, option, window):
         if option != 'choose':
             for device_num, device in config.devices.items():
@@ -246,7 +241,7 @@ def run_automation(config, option, window):
                         ip = item
                         if option == 'daily_selected':
                             if len(device['slots']) == 0:
-                                print('No slots selected')
+                                # print('No slots selected')
                                 continue
                         try:
                             directory = create_new_directory(ip, config.directory, option)
@@ -274,5 +269,3 @@ def run_automation(config, option, window):
                 file.write(f'{current_date} - Connection Error: Chromedriver is not properly installed. \n')
                 file.close()
                 return None, None, None
-            
-    

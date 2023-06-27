@@ -106,16 +106,13 @@ def popup_add_device(config):
             sg.popup_quick_message('Finding all slots on device. Please wait...', keep_on_top=True, background_color='grey')
             try:
                 device_num = f'device_{len(config.devices) + 1}'
-                print(values['-IP-'], values['-PASSWORD-'], device_num)
                 driver = initialise_driver(values['-IP-'], values['-PASSWORD-'], device_num)
                 driver.implicitly_wait(10)
                 slots = find_all_slots(driver)
                 window['-SLOTS_COL-'].update(visible=True)
                 window['-SELECT_SLOTS_BTN-'].update(visible=True)
                 window['-FIND_All_SLOTS-'].update(visible=False)
-                print('This is the list of slot names: ')
                 for i in range(len(slots)):
-                    print(str(i+1) + '. ' + slots[i])
                     window['-SLOT' + str(i+1) + '-'].update(text = slots[i])
                     window['-SLOT' + str(i+1) + '-'].update(visible = True)
             except:
@@ -167,7 +164,6 @@ def check_device_info(config):
                     driver = initialise_driver(ip, device['password'], device_num)
                     driver.implicitly_wait(10)
                     all_slots = find_all_slots(driver)
-                    print(all_slots)
                     driver.close()
                 except:
                     sg.popup_error(f"Unable to connect to {device_num} ({ip}). Please check your device IP.")
@@ -350,7 +346,6 @@ def interface():
         if event in (sg.WIN_CLOSED, 'Exit'):
             break
         
-        print(event)
         tray.show_message(title=event)
 
         # When user stops scheduler via tray menu
@@ -461,7 +456,6 @@ def interface():
             window['-SLOTS-'].update(visible=True)
             device_num = values['-DEVICE-'].split(' ')[0]
             device = config.devices[device_num]
-            print(device)
             window['-IP-'].update(value=device['ip'])
             window['-PASSWORD-'].update(value=device['password'])
             window['-SLOTS-'].update(value='')
@@ -478,7 +472,6 @@ def interface():
             config.devices[device_num]['password'] = values['-PASSWORD-']
             config.devices[device_num]['slots'].clear()
             slots_list = values['-SLOTS-'].split('\n')
-            print(slots_list)
             slots_list = [slot for slot in slots_list if slot != '']
             for i in range(len(slots_list)):
                 slots_list[i] = slots_list[i].strip()
@@ -511,7 +504,6 @@ def interface():
                 device.num = f'device_{len(config.devices) + 1}'
                 config.devices[device.num] = {'ip': device.ip, 'password': device.password, 'slots': {}}
                 slots_list = device.slots.split('\n')
-                print(slots_list)
                 slots_list = [slot.strip() for slot in slots_list if slot.strip() != '']
                 for i in range(len(slots_list)):
                     slots_list[i] = slots_list[i].strip()
@@ -532,7 +524,6 @@ def interface():
 
         # Test connection to device
         if event == '-TEST_IP-':
-            print(values['-IP-'], values['-PASSWORD-'], values['-DEVICE-'].split(' ')[0])
             sg.popup_quick_message('Testing connection to device...', keep_on_top=True, background_color='grey')
             driver = initialise_driver(values['-IP-'], values['-PASSWORD-'], values['-DEVICE-'].split(' ')[0])
             if driver:
@@ -611,7 +602,6 @@ def interface():
             for i in range(len(slots)):
                 if window[f'-SLOT{i+1}-'].get() == True:
                     chosen_slots.append(slots[i])
-            print(chosen_slots)
             window['-SLOTS_CHOSEN-'].update(disabled=True)
             sg.popup_quick_message('Please wait for the download to complete...', keep_on_top=True, background_color='grey')
             choose_slot(driver, chosen_slots, window)
