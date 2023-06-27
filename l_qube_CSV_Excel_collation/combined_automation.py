@@ -90,7 +90,6 @@ def csv_collation(file, collated_df, files_with_errors, files_with_duplicate_tim
         return csv_excel_df_manipulation(file, collated_df, df, files_with_duplicate_timestamp_dict, missing_minutes_dict, empty_cells_timestamp_dict)
         
     except Exception as e:
-        print(e)
         files_with_errors.append((file, e, 'There is no column header in the CSV file.'))
         return collated_df
 
@@ -113,13 +112,11 @@ def excel_collation(file, collated_df, files_with_errors, files_with_duplicate_t
         df = df.reset_index()
         df = df.dropna(how='all')
         df.drop(columns=['index'], axis=1, inplace=True)
-        print(file)
 
         # From here onwards, its the same as csv collation
         return csv_excel_df_manipulation(file, collated_df, df, files_with_duplicate_timestamp_dict, missing_minutes_dict, empty_cells_timestamp_dict)
         
     except Exception as e:
-        print(e)
         files_with_errors.append((file, e, 'There is no column header in the CSV file.'))
         return collated_df
 
