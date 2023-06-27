@@ -201,9 +201,12 @@ def update_device_display(window, config):
         window['-SLOTS-'].update(f'{slot}\n', append=True)
 
 def update_error_log_display(window):
-    file = open('error_log.txt','r')
-    window['-ERROR_LOG-'].update(value=file.read())   
-    file.close()
+    try:
+        file = open('error_log.txt','r')
+        window['-ERROR_LOG-'].update(value=file.read())   
+        file.close()
+    except:
+        open('error_log.txt', 'w').close()
     
 # Build the GUI
 def build():
