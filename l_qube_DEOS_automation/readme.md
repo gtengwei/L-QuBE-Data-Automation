@@ -47,8 +47,11 @@ Allow users to choose to download specific slots over a specific time period.
 ## Outcome
 The downloaded raw data and collated file will be categorised according to their IP and option chosen.
 ![IP](./images/result_ip.PNG)  
+  
 ![Option](./images/result_option.PNG)  
+
 ![Collated](./images/result_collation.PNG)  
+
 ![Raw Data](./images/result_raw_data.PNG)
 
 ## Technology
