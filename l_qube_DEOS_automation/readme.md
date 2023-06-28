@@ -21,7 +21,7 @@ Inform users of any error faced during collation.
 ![](./images/automate_collation.PNG)
 
 * Running in the background  
-Preventing accidental closure of the application.
+Preventing accidental closure of the application.  
 ![](./images/background_run.png)
 
 * System notification  
@@ -30,7 +30,7 @@ Always notify users when scheduler is starting/stopping.
 ![](./images/system_notification_stop.png)
 
 * Tray menu control  
-Control daily collation via Windows System Tray.
+Control daily collation via Windows System Tray.  
 ![](./images/traymenu.png)
 
 ## Download all data
