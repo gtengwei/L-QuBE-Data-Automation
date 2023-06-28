@@ -2,5 +2,5 @@
 __pycache__/
 *.xlsx
 *.exe
-*.txt
+error_log.txt
 build/
