@@ -158,6 +158,9 @@ def popup_remove_device(config):
             window.close()
             return None
         if event == 'Remove':
+            if len(config.devices) == 1:
+                sg.popup('You cannot remove the last device', keep_on_top=True)
+                continue
             window.close()
             return values['-DEVICE-']
 
