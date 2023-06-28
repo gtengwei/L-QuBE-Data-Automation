@@ -172,9 +172,9 @@ def check_device_info(config):
             sg.popup_quick_message('Checking device info...', keep_on_top=True, background_color='grey')
             if key == 'ip':
                 ip = item
-                try:
-                    driver = initialise_driver(ip, device_num)
-                except:
+                
+                driver = initialise_driver(ip, device_num)
+                if driver == None:
                     sg.popup_error(f"Unable to connect to {device_num} ({ip}). Please check your device IP.")
                     accurate_devices_info = False
                     break
