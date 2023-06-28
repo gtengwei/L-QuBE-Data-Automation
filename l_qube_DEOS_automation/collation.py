@@ -190,8 +190,6 @@ def collate_dataframes(option, change_directory):
         yesterday_date = get_yesterday_date()
         filled_collated_df.to_excel(f"Daily_{yesterday_date}_collated.xlsx", index = False)
     
-
-    
     elif option == 'daily_selected':
         os.chdir(change_directory)
         yesterday_date = get_yesterday_date()

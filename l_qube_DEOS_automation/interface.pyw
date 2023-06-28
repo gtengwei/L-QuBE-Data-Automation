@@ -624,6 +624,8 @@ def interface():
                 if window['-OPTION-'].get() == 'Download all data (Non-repeated)':
                     sg.popup_quick_message('Please wait for the data to be downloaded...', keep_on_top=True, background_color='grey')
                     run_automation(config, 'all', window)
+                    sg.popup('Data downloaded successfully!', icon='success')
+                    tray.show_message('Download all data', 'All data downloaded successfully!')
 
                 elif window['-OPTION-'].get() == 'Choose specific slots to download (Non-repeated)':
                     sg.popup_quick_message('Please wait for the slots to be displayed...', keep_on_top=True, background_color='grey')
