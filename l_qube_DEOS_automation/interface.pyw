@@ -276,7 +276,7 @@ def build():
     ]
     
     error_log_multiline= [
-        [sg.Multiline(key='-ERROR_LOG-', tooltip='Error log', enable_events=True, size=(30, 8), autoscroll=True, expand_x=True, expand_y=True)],
+        [sg.Multiline(key='-ERROR_LOG-', tooltip='Error log', enable_events=True, size=(30, 11), autoscroll=True, expand_x=True, expand_y=True)],
         [sg.Button('Clear Error Log', key='-CLEAR_ERROR_LOG-', tooltip='Click to clear error log')]
     ]
 
@@ -506,7 +506,7 @@ def interface():
             if ip_validity == False:
                 sg.popup('Please enter a valid IP address', icon='error')
                 continue
-            
+
             config.devices[device_num]['ip'] = values['-IP-']
             config.devices[device_num]['password'] = values['-PASSWORD-']
             config.devices[device_num]['slots'].clear()
