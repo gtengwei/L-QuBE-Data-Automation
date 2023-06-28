@@ -1,6 +1,6 @@
 # DEOS Automation
 This is an automation application that reduces the manual workload for L-QuBE by 80% during their yearly audit.  
-It automates the downloading and collation of the data collected from DEOS devices, through the web browser GUI.
+It automates the downloading and collation of the CSV data collected from DEOS devices, through the web browser GUI.
 
 ## Features
 ### Edit Configuration
@@ -42,6 +42,14 @@ Manually downloading will waste alot of the user's time as the user has to wait 
 Allow users to choose to download specific slots over a specific time period.
 ![](./images/specific_slots.PNG)
 ![](./images/specific_slots_choose_date.PNG)
+
+
+## Outcome
+The downloaded raw data and collated file will be categorised according to their IP and option chosen.
+![IP](./images/result_ip.PNG)
+![Option](./images/result_option.PNG)
+![Collated](./images/result_collation.PNG)
+![Raw Data](./images/result_raw_data.PNG)
 
 ## Technology
 * [PySimpleGUI](https://github.com/PySimpleGUI/PySimpleGUI) - Python package that enables Python programmers of all levels to create GUIs
