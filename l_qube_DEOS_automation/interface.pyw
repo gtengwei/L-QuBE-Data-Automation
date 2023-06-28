@@ -8,6 +8,7 @@ import threading
 import datetime as dt
 import os
 from collections import defaultdict
+import ipaddress
 
 # Add a touch of color
 sg.theme('DarkBlue3')  
@@ -88,11 +89,18 @@ def popup_add_device(config):
                 sg.popup('Please fill in both IP and Password field', keep_on_top=True)
                 continue
             exist = False
+
             for device_num, device_info in config.devices.items():
                 if device_info['ip'] == values['-IP-']:
                     sg.popup('IP already exists', keep_on_top=True)
                     exist = True
                     break
+
+            ip_validity = check_ip(values['-IP-'])
+            if ip_validity == False:
+                sg.popup('Please enter a valid IP address', icon='error')
+                continue
+
             if not exist:
                 window.close()
                 device.ip = values['-IP-']
@@ -207,6 +215,13 @@ def update_error_log_display(window):
         file.close()
     except:
         open('error_log.txt', 'w').close()
+
+def check_ip(ip):
+    try:
+        ipaddress.ip_address(ip)
+        return True
+    except:
+        return False
     
 # Build the GUI
 def build():
@@ -476,7 +491,7 @@ def interface():
         if event == '-SAVE_CONFIG-':
             device_num = values['-DEVICE-'].split(' ')[0]
             config.directory = values['-DIRECTORY-']
-            
+
             # Check if time is valid and within 24hr format
             if values['-HOUR-'] == '' or values['-MINUTE-'] == '' \
             or int(values['-HOUR-']) > 23 or int(values['-HOUR-']) < 0   \
@@ -486,6 +501,12 @@ def interface():
 
             config.hour = values['-HOUR-']
             config.minute = values['-MINUTE-']
+
+            ip_validity = check_ip(values['-IP-'])
+            if ip_validity == False:
+                sg.popup('Please enter a valid IP address', icon='error')
+                continue
+            
             config.devices[device_num]['ip'] = values['-IP-']
             config.devices[device_num]['password'] = values['-PASSWORD-']
             config.devices[device_num]['slots'].clear()
