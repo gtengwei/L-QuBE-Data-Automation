@@ -465,10 +465,25 @@ def interface():
             for slot_num, slot in device['slots'].items(): 
                 window['-SLOTS-'].update(f'{slot}\n', append=True)
 
+        # Check if time is in digits
+        if event == '-HOUR-' or event == '-MINUTE-':
+            if values['-HOUR-'][-1] not in ('0123456789') or values['-MINUTE-'][-1] not in ('0123456789'):
+                sg.popup("Only digits allowed")
+                window['-HOUR-'].update(config.hour)
+                window['-MINUTE-'].update(config.minute)
+
         # Save configuration
         if event == '-SAVE_CONFIG-':
             device_num = values['-DEVICE-'].split(' ')[0]
             config.directory = values['-DIRECTORY-']
+            
+            # Check if time is valid and within 24hr format
+            if values['-HOUR-'] == '' or values['-MINUTE-'] == '' \
+            or int(values['-HOUR-']) > 23 or int(values['-HOUR-']) < 0   \
+            or int(values['-MINUTE-']) > 59  or int(values['-MINUTE-']) < 0:
+                sg.popup('Please enter a valid time', icon='error')
+                continue
+
             config.hour = values['-HOUR-']
             config.minute = values['-MINUTE-']
             config.devices[device_num]['ip'] = values['-IP-']
