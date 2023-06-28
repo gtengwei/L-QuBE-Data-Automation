@@ -52,6 +52,7 @@ def initialise_driver(ip, device_num):
         file = open('error_log.txt','a')
         file.write(f'{current_date} - Configuration Error: {device_num}\'s IP address {ip} is not valid/incorrect. \n')
         file.close()
+        driver.close()
         
 def run_to_trend_export_page(driver, password, device_num):
     
@@ -86,6 +87,7 @@ def run_to_trend_export_page(driver, password, device_num):
         file = open('error_log.txt','a')
         file.write(f'{current_date} - Configuration Error: {device_num}\'s password {password} is not valid/incorrect. \n')
         file.close()
+        driver.close()
 
     time.sleep(1)
     # trend_export = driver.find_element('id', "elem_115")
@@ -202,6 +204,7 @@ def download_csv(driver, device, option, device_num, window):
                 file = open('error_log.txt','a')
                 file.write(f'{current_date} - Configuration Error: {device_num}\'s slot: \'{slot}\' is not valid/spelled incorrectly. \n')
                 file.close()
+                driver.close()
     
     # If the user wants to download all files' data for today
     elif option == 'today':
