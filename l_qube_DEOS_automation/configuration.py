@@ -29,8 +29,21 @@ def get_config():
                                json_config['hour'], json_config['minute'])
         return config
     except Exception as e:
-        file = open('error_log.txt','a')
-        file.write(f'JSON Formatting Error: {str(e)} \n')
-        file.close()
-        return None
+        json_skeleton = {
+            "directory": "",
+            "device_choice": "device_1",
+            "devices": {
+                "device_1": {
+                    "ip": "",
+                    "password": "",
+                    "slots": {
+                    }
+                }
+            },
+            "hour": "00",
+            "minute": "00"
+        }
+        with open('config.json', 'w') as f:
+            json.dump(json_skeleton, f, indent=4)
+        return get_config()
 
