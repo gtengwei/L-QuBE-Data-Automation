@@ -252,6 +252,8 @@ def run_automation(config, option, window):
                             download_csv(driver, device, option, device_num, window)
                             collate_dataframes(option, directory)
                             driver.close()
+                            if option != 'all':
+                                window.write_event_value('DAILY COLLATION COMPLETE', None)
                         except:
                             pass
         else:

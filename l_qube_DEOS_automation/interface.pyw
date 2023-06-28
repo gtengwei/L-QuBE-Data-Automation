@@ -670,6 +670,9 @@ def interface():
             driver.close()
             sg.popup(custom_text = 'Download successfully!', button_type=sg.POPUP_BUTTONS_OK, icon='success')
         
+        if event == 'DAILY COLLATION COMPLETE':
+            tray.show_message('Daily Collation', 'Daily collation has been completed')
+
     tray.close()
     window.close()
 
