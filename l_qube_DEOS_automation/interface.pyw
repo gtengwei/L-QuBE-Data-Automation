@@ -486,6 +486,14 @@ def interface():
                 sg.popup("Only digits allowed")
                 window['-HOUR-'].update(config.hour)
                 window['-MINUTE-'].update(config.minute)
+            
+            if int(values['-HOUR-']) > 23 or int(values['-HOUR-']) < 0:
+                sg.popup("Hour must be between 0 and 23")
+                window['-HOUR-'].update(config.hour)
+            
+            if int(values['-MINUTE-']) > 59 or int(values['-MINUTE-']) < 0:
+                sg.popup("Minute must be between 0 and 59")
+                window['-MINUTE-'].update(config.minute)
 
         # Save configuration
         if event == '-SAVE_CONFIG-':
