@@ -292,7 +292,7 @@ def build():
          sg.Button('Stop Collation', key='-STOP_SCHEDULER-', tooltip='Click to stop scheduler', visible=False, disabled=True)],
         [sg.Text('Status: ', size=(5, 1), key='-STATUS_text-', visible=False), sg.Text('Scheduler not started', size=(20, 1), key='-STATUS-', text_color='firebrick3', visible=False)],
         [sg.pin(sg.Column(error_log_multiline, key='-ERROR_FRAME-', visible=False, pad=(0,0), expand_x=True, expand_y=True), expand_x=True, expand_y=True)],
-        [sg.Frame('Choose Time Period', date_frame, size=(WIDTH,HEIGHT), visible=False, key='-DATES_FRAME-', expand_x=True, expand_y=True)],
+        [sg.pin(sg.Frame('Choose Time Period', date_frame, size=(WIDTH,HEIGHT), visible=False, key='-DATES_FRAME-', expand_x=True, expand_y=True), expand_x=True, expand_y=True)],
     ]
 
     slots_frame = [[sg.Text('Choose the slots to collate')]]
