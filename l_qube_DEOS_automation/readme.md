@@ -35,7 +35,7 @@ Control daily collation via Windows System Tray.
 
 ## Download all data
 Download all data across the entire time period.  
-Manually downloading will waste alot of the user's time as the user has to wait for one file to finish downloading before downloading the next file.
+Manually downloading will waste alot of time as the user has to wait for one file to finish downloading before downloading the next file.  
 ![](./images/all_download.PNG)
 
 ## Specific slots and time period download
@@ -46,9 +46,9 @@ Allow users to choose to download specific slots over a specific time period.
 
 ## Outcome
 The downloaded raw data and collated file will be categorised according to their IP and option chosen.
-![IP](./images/result_ip.PNG)
-![Option](./images/result_option.PNG)
-![Collated](./images/result_collation.PNG)
+![IP](./images/result_ip.PNG)  
+![Option](./images/result_option.PNG)  
+![Collated](./images/result_collation.PNG)  
 ![Raw Data](./images/result_raw_data.PNG)
 
 ## Technology
