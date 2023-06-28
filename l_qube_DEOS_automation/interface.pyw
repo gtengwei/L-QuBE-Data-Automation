@@ -490,6 +490,10 @@ def interface():
         # Save configuration
         if event == '-SAVE_CONFIG-':
             device_num = values['-DEVICE-'].split(' ')[0]
+
+            if values['-DIRECTORY-'] == '':
+                sg.popup('Please enter a valid directory', icon='error')
+                continue
             config.directory = values['-DIRECTORY-']
 
             # Check if time is valid and within 24hr format
@@ -498,7 +502,6 @@ def interface():
             or int(values['-MINUTE-']) > 59  or int(values['-MINUTE-']) < 0:
                 sg.popup('Please enter a valid time', icon='error')
                 continue
-
             config.hour = values['-HOUR-']
             config.minute = values['-MINUTE-']
 
