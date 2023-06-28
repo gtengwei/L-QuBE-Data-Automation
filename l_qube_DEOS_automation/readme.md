@@ -59,6 +59,7 @@ The downloaded raw data and collated file will be categorised according to their
 * [APScheduler](https://github.com/agronholm/apscheduler) - Python library that lets you schedule your Python code to be executed
 * [Selenium](https://github.com/SeleniumHQ/selenium) - Automate web browser interaction from Python.
 * [Pandas](https://github.com/pandas-dev/pandas) - Python package that provides fast, flexible, and expressive data structures designed to make working with "relational" or "labeled" data both easy and intuitive.
+* [psgtray](https://github.com/PySimpleGUI/psgtray) - Add a System Tray Icon to your tkinter port of PySimpleGUI.
 ## Setup
 Clone this repo to your desktop and run  
  `pip install -r requirements.txt`   
