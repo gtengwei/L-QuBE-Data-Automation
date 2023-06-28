@@ -12,7 +12,7 @@ import pytz
 
 stop_thread = False
 
-def initialise_driver(ip, password, device_num):
+def initialise_driver(ip, device_num):
     try:
         # Must wait for 'Run' LED light to start blinking before running the program
         directory = os.getcwd()
@@ -44,7 +44,7 @@ def initialise_driver(ip, password, device_num):
     # Initialise driver with ip given. If ip is invalid, this means that there is an issue with the IP address
     try:
         driver.get("http://" + ip)
-        run_to_trend_export_page(driver, password, device_num)
+        # run_to_trend_export_page(driver, password, device_num)
         return driver
     except:
         current_date = get_current_datetime()
@@ -245,7 +245,8 @@ def run_automation(config, option, window):
                                 continue
                         try:
                             directory = create_new_directory(ip, config.directory, option)
-                            driver = initialise_driver(ip, device['password'], device_num)
+                            driver = initialise_driver(ip, device_num)
+                            run_to_trend_export_page(driver, device['password'], device_num)
                             driver.implicitly_wait(10)
 
                             download_csv(driver, device, option, device_num, window)
@@ -257,8 +258,9 @@ def run_automation(config, option, window):
             device = config.devices[config.device_choice]
             ip = device['ip']
             directory = create_new_directory(ip, config.directory, option)
-            driver = initialise_driver(ip, device['password'], config.device_choice)
+            driver = initialise_driver(ip, config.device_choice)
             if driver is not None:
+                run_to_trend_export_page(driver, device['password'], config.device_choice)
                 driver.implicitly_wait(10)
                 driver, slots = download_csv(driver, device, option, config.device_choice, window)
                 return driver, slots, directory

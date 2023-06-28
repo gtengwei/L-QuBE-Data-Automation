@@ -1,4 +1,4 @@
-from ui_selenium_automation import run_automation, choose_slot, collate_dataframes, automate_time, initialise_driver, find_all_slots
+from ui_selenium_automation import run_automation, choose_slot, collate_dataframes, automate_time, initialise_driver, find_all_slots, run_to_trend_export_page
 import ui_selenium_automation
 from configuration import get_config
 from collation import get_current_datetime, main_directory
@@ -114,7 +114,8 @@ def popup_add_device(config):
             sg.popup_quick_message('Finding all slots on device. Please wait...', keep_on_top=True, background_color='grey')
             try:
                 device_num = f'device_{len(config.devices) + 1}'
-                driver = initialise_driver(values['-IP-'], values['-PASSWORD-'], device_num)
+                driver = initialise_driver(values['-IP-'], device_num)
+                run_to_trend_export_page(driver, values['-PASSWORD-'], device_num)
                 driver.implicitly_wait(10)
                 slots = find_all_slots(driver)
                 window['-SLOTS_COL-'].update(visible=True)
@@ -172,14 +173,21 @@ def check_device_info(config):
             if key == 'ip':
                 ip = item
                 try:
-                    driver = initialise_driver(ip, device['password'], device_num)
-                    driver.implicitly_wait(10)
-                    all_slots = find_all_slots(driver)
-                    driver.close()
+                    driver = initialise_driver(ip, device_num)
                 except:
                     sg.popup_error(f"Unable to connect to {device_num} ({ip}). Please check your device IP.")
                     accurate_devices_info = False
                     break
+                try:
+                    run_to_trend_export_page(driver, device['password'], device_num)
+                except:
+                    sg.popup_error(f"Unable to login to {device_num} ({ip}). Please check your device password.")
+                    accurate_devices_info = False
+                    break
+                driver.implicitly_wait(10)
+                all_slots = find_all_slots(driver)
+                driver.close()
+               
             if key == 'slots':
                 for _, slot_name in item.items():
                     if slot_name in all_slots:
@@ -578,7 +586,7 @@ def interface():
         # Test connection to device
         if event == '-TEST_IP-':
             sg.popup_quick_message('Testing connection to device...', keep_on_top=True, background_color='grey')
-            driver = initialise_driver(values['-IP-'], values['-PASSWORD-'], values['-DEVICE-'].split(' ')[0])
+            driver = initialise_driver(values['-IP-'], values['-DEVICE-'].split(' ')[0])
             if driver:
                 sg.popup('Connection successful!', icon='success')
                 driver.quit()
