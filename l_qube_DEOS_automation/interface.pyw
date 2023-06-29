@@ -493,6 +493,8 @@ def interface():
 
         # Check if time is in digits
         if event == '-HOUR-' or event == '-MINUTE-':
+            if values['-HOUR-'] == '' or values['-MINUTE-'] == '':
+                continue
             if values['-HOUR-'][-1] not in ('0123456789') or values['-MINUTE-'][-1] not in ('0123456789'):
                 sg.popup("Only digits allowed")
                 window['-HOUR-'].update(config.hour)
