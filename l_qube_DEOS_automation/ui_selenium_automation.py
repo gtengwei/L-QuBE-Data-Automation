@@ -39,7 +39,7 @@ def initialise_driver(ip, device_num):
         file = open('error_log.txt','a')
         file.write(f'{current_date} - Configuration Error: Chromedriver not installed properly. \n')
         file.close()
-        return None
+        return 'chromedriver error'
     
     # Initialise driver with ip given. If ip is invalid, this means that there is an issue with the IP address
     try:
@@ -53,6 +53,7 @@ def initialise_driver(ip, device_num):
         file.write(f'{current_date} - Configuration Error: {device_num}\'s IP address {ip} is not valid/incorrect. \n')
         file.close()
         driver.close()
+        return None
         
 def run_to_trend_export_page(driver, password, device_num):
     

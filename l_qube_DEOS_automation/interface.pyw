@@ -174,6 +174,10 @@ def check_device_info(config):
                 ip = item
                 
                 driver = initialise_driver(ip, device_num)
+                if driver == 'chromedriver error':
+                    sg.popup_error('Unable to find chromedriver.exe. Please make sure it is installed properly.')
+                    accurate_devices_info = False
+                    break
                 if driver == None:
                     sg.popup_error(f"Unable to connect to {device_num} ({ip}). Please check your device IP.")
                     accurate_devices_info = False
