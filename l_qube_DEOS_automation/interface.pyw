@@ -528,6 +528,19 @@ def interface():
             if ip_validity == False:
                 sg.popup('Please enter a valid IP address', icon='error')
                 continue
+            
+            ip_exist = False
+            for device_number, device_info in config.devices.items():
+                if device_info['ip'] == values['-IP-']:
+                    ip_exist = True
+                    continue  
+
+            if config.devices[device_num]['ip'] == values['-IP-']:
+                ip_exist = False
+    
+            if ip_exist == True:
+                sg.popup('IP already exists', keep_on_top=True)
+                continue  
 
             config.devices[device_num]['ip'] = values['-IP-']
             config.devices[device_num]['password'] = values['-PASSWORD-']
