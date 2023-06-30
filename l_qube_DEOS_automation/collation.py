@@ -32,6 +32,7 @@ def clean_dataframe(csv, option):
     
     slot_name = result[0]
     slot_name = slot_name.split(':')[1][1:]
+    # set_current_slot_sequence(slot_name)
     count = 1
     if option == 'all' or option == 'choose' or option == 'today':
         current_date = get_current_date()
@@ -146,6 +147,44 @@ def insert_empty_slot(df):
         df.loc[len(df)] = empty_row
     df = df.sort_values(by=['Timestamp'], ascending=True)
     return df
+
+# second iteration: call in clean_dataframe after splitting slot name to ensure correct folder
+def set_current_slot_sequence(slot_name):
+    file = open('slot_sequence.txt','a')
+    file.write(slot_name +"\n")
+    file.close()
+
+def rearrange_slot_sequence(option):
+    path = os.getcwd()
+    directory = os.path.join("c:\\",path)
+    if option == 'all':
+        directory = os.path.join(directory, 'All_Collation')
+    elif option == 'daily':
+        directory = os.path.join(directory, 'Daily_Collation')
+    elif option == 'choose':
+        directory = os.path.join(directory, 'Selected_Collation')
+    
+    os.chdir(directory)
+
+    user_sequence = []
+    file = open('slot_sequence.txt','r')
+    for line in file.readlines():
+        user_sequence.append(line.strip())
+    file.close()
+    # print(user_sequence)
+    user_sequence.insert(0,'Date')
+    user_sequence.insert(1,'Timestamp')
+    
+    for root,dirs,files in os.walk(directory):
+        for file in files:
+            # Ignore collated file to avoid errors
+            if file.endswith("collated.csv"):
+                    file_name = os.path.basename(file)
+                    df = pd.read_csv(file)
+                    print(df)
+                    df=df.reindex(columns=user_sequence)
+                    df.to_csv(file_name, index = False)
+    os.chdir(main_directory)
 
 def collate_dataframes(option, change_directory):
     time.sleep(0.5)

@@ -9,16 +9,8 @@
                 "1": "Trend1",
                 "2": "Trend1"
             }
-        },
-        "device_2": {
-            "ip": "192.168.170.104",
-            "password": "0007",
-            "slots": {
-                "1": "HDR_CDW_FL",
-                "2": "HDR2_CDW_FL"
-            }
         }
     },
-    "hour": "14",
-    "minute": "54"
+    "hour": "15",
+    "minute": "10"
 }
