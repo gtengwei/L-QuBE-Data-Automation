@@ -1,6 +1,5 @@
 *.csv
 __pycache__/
 *.xlsx
-*.exe
 error_log.txt
 build/
