@@ -3,15 +3,17 @@
     "device_choice": "device_1",
     "devices": {
         "device_1": {
-            "ip": "192.168.170.101",
+            "ip": "192.168.0.155",
             "password": "0007",
-            "slots": {
-                "1": "Trend1",
-                "2": "Trend1"
-            }
+            "slots": {}
         },
         "device_2": {
-            "ip": "192.168.0.155",
+            "ip": "192.168.170.102",
+            "password": "0007",
+            "slots": {}
+        },
+        "device_3": {
+            "ip": "192.168.170.101",
             "password": "0007",
             "slots": {}
         }

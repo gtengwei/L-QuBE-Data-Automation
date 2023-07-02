@@ -598,6 +598,7 @@ def interface():
             if device:
                 device = device.split(' ')[0]
                 del config.devices[device]
+                config.devices = {f'device_{i+1}': device_info for i, (device, device_info) in enumerate(config.devices.items())}
                 update_device_display(window, config)
                 config.save()
                 sg.popup('Device removed successfully!', icon='success')
