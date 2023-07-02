@@ -246,13 +246,13 @@ def build():
          sg.CalendarButton('Choose Start Date', target='-START_DATE-', key='-CALENDAR-', tooltip='Click to choose date', size=(20, 1), format='%m-%d-%Y %H:%M:%S', )],
         [sg.InputText('', size=(20, 1), key='-END_DATE-', disabled=True, tooltip='End Date', enable_events=True),
          sg.CalendarButton('Choose End Date', target='-END_DATE-', key='-CALENDAR-', tooltip='Click to choose date', size=(20, 1), format='%m-%d-%Y %H:%M:%S')],
-        [sg.InputCombo('default', size=(24, 5), key='-DEVICE_CHOICE-', tooltip='Choose which device to choose slots from', enable_events=True)],
+        [sg.InputCombo('default', size=(24, 5), key='-DEVICE_CHOICE-', tooltip='Choose which device to choose slots from', enable_events=True, readonly=True)],
         [sg.Button('Select Dates', key='-DATES_CHOSEN-', tooltip='Click to select dates to collate')],
 
     ]
 
     device_input_combo = [
-        sg.InputCombo(('default'), size=(24, 5), default_value=next(iter(config.devices)), key='-DEVICE-', tooltip='Device Name', enable_events=True),
+        sg.InputCombo(('default'), size=(24, 5), default_value=next(iter(config.devices)), key='-DEVICE-', tooltip='Device Name', enable_events=True, readonly=True),
         sg.Button('Test IP', key='-TEST_IP-', tooltip='Click to test IP address'),
     ]
     
@@ -301,7 +301,7 @@ def build():
          sg.InputCombo(('Edit Configuration',
                         'Automate Collation (Repeated)',
                         'Download all data (Non-repeated)', 
-                        'Choose specific slots to download (Non-repeated)',), default_value='Edit Configuration', enable_events=True, size=(None, 4), key='-OPTION-', expand_x=True),
+                        'Choose specific slots to download (Non-repeated)',), default_value='Edit Configuration', enable_events=True, size=(None, 4), key='-OPTION-', expand_x=True, readonly=True),
                         sg.Button('Check Device Info', key='-CHECK_DEVICE_INFO-', tooltip='Click to check device info', visible=False)],
         [sg.Button('Start Collation', key='-COLLATE_FILES-', tooltip='Click to collate files in the chosen folder', visible=False), 
          sg.Button('Stop Collation', key='-STOP_SCHEDULER-', tooltip='Click to stop scheduler', visible=False, disabled=True)],
